@@ -20,12 +20,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.team3128.common.game_elements.Ball;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.Timer;
 
 
 
-public class Hopper extends Threaded {
+public class Hopper implements Subsystem {
 
     public enum ActionState {
         STANDBY, INTAKING, SHOOTING, ORGANIZING, EJECTING, RUNNING;
@@ -90,7 +90,7 @@ public class Hopper extends Threaded {
     }
 
     @Override
-    public void update() {
+    public void periodic() {
         hopper_update_count++;
 
         SENSOR_0_STATE = detectsBall0();
