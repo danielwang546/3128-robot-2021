@@ -32,8 +32,9 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class FalconDrive extends Drive {
+public class FalconDrive implements Subsystem {
 
 	public enum DriveState {
 		TELEOP, RAMSETECONTROL, TURN, DONE
@@ -317,7 +318,7 @@ public class FalconDrive extends Drive {
 	}
 
 	@Override
-	public void update() {
+	public void periodic() {
 		// velocityController();
 		DriveState snapDriveState;
 		synchronized (this) {

@@ -13,7 +13,9 @@ import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.math.Translation2D;
 
-public class RobotTracker extends Threaded {
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
+public class RobotTracker implements Subsystem {
 
 	private static final RobotTracker trackingInstance = new RobotTracker();
 
@@ -56,7 +58,7 @@ public class RobotTracker extends Threaded {
 	 * the right and left sides of the drivetrain)
 	 */
 	@Override
-	public void update() {
+	public void periodic() {
 		currentDistance = drive.getDistance();
 		currentTheta = drive.getAngle();
 
