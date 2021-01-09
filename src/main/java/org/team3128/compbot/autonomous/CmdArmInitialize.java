@@ -1,6 +1,6 @@
 package org.team3128.compbot.autonomous;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import org.team3128.compbot.autonomous.CmdSetArm;
 import org.team3128.compbot.subsystems.Arm.ArmState;
@@ -10,13 +10,15 @@ import org.team3128.compbot.subsystems.Hopper;
 import org.team3128.common.utility.Log;
 
 
-public class CmdArmInitialize extends CommandGroup {
+public class CmdArmInitialize extends SequentialCommandGroup {
     
     public CmdArmInitialize(Arm arm, Hopper hopper) {
-        addSequential(new CmdSetIntake(hopper, Constants.IntakeConstants.INTAKE_MOTOR_REVERSE_VALUE));
-        addSequential(new CmdSetArm(arm, ArmState.STARTING_DOWN, 1000)); 
-        addSequential(new CmdSetArm(arm, ArmState.STARTING, 1000));
-        addSequential(new CmdSetIntake(hopper, Constants.IntakeConstants.INTAKE_MOTOR_OFF_VALUE));
+        addCommands(
+            new CmdSetIntake(hopper, Constants.IntakeConstants.INTAKE_MOTOR_REVERSE_VALUE),
+            new CmdSetArm(arm, ArmState.STARTING_DOWN, 1000),
+            new CmdSetArm(arm, ArmState.STARTING, 1000),
+            new CmdSetIntake(hopper, Constants.IntakeConstants.INTAKE_MOTOR_OFF_VALUE)
+        );
     }
 
 }

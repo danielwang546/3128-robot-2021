@@ -20,9 +20,9 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.drive.AutoDriveSignal;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
-public class CmdBallPursuit extends Command {
+public class CmdBallPursuit implements Command {
     NEODrive drive;
     Gyro gyro;
 
@@ -243,8 +243,8 @@ public class CmdBallPursuit extends Command {
         Log.info("CmdAutoAim", "Command Finished.");
     }
 
-    @Override
-    protected void interrupted() {
+
+    public void interrupted() {
         drive.stopMovement();
       
         NarwhalDashboard.put("align_status", "blind");

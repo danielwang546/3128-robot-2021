@@ -16,7 +16,7 @@ import org.team3128.common.utility.datatypes.PIDConstants;
 import org.team3128.common.utility.units.Angle;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command; 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.team3128.compbot.subsystems.Constants;
@@ -29,7 +29,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.team3128.compbot.commands.*;
 
-public class CmdAlignShoot extends Command {
+public class CmdAlignShoot implements Command {
     FalconDrive drive;
     Shooter shooter;
     Hopper hopper;
@@ -90,6 +90,8 @@ public class CmdAlignShoot extends Command {
         this.goalHorizontalOffset = goalHorizontalOffset;
 
         this.numBallsToShoot = numBallsToShoot;
+
+        addRequirements(drive, shooter, arm, hopper);
     }
 
     @Override
@@ -277,8 +279,8 @@ public class CmdAlignShoot extends Command {
         hopper.setAction(Hopper.ActionState.ORGANIZING);
     }
 
-    @Override
-    protected void interrupted() {
+
+    public void interrupted() {
         end();
     }
 }
