@@ -12,8 +12,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
-public class Arm extends Threaded {
+public class Arm extends PIDSubsystem{
     public static enum ArmState {
         STOWED(0), // arm is all the way down
         INTAKE(0), // intaking balls
@@ -29,6 +30,7 @@ public class Arm extends Threaded {
         public double armAngle;
 
         private ArmState(double angle) {
+            
             this.armAngle = angle;
         }
     }
@@ -47,13 +49,22 @@ public class Arm extends Threaded {
     public int plateauCount = 0;
 
     public static Arm getInstance() {
+        
         return instance;
     }
 
     private Arm() {
+
+        super(new PIDController(Constants.ArmConstants.ARM_PID.kP, Constants.ArmConstants.ARM_PID.kI, Constants.ArmConstants.ARM_PID.kD)); 
+        getController().setTolerance(Constants.ArmConstants.ANGLE_THRESHOLD);
+        // ask about setDistance
         configMotors();
         configSensors();
         setState(ArmState.STARTING);
+    }
+
+    public void useOutput(double output, double setpoint) {
+        ARM_MOTOR_LEADER.setVoltage(output + armFeedForward.calculate(setpoint)); 
     }
 
     private void configSensors() {
@@ -74,20 +85,16 @@ public class Arm extends Threaded {
 
     }
 
-    private void setSetpoint(double desiredPos) {
-        setpoint = desiredPos;
-    }
-
     public void setState(ArmState armState) {
         ARM_STATE = armState;
-        setSetpoint(armState.armAngle);
+        Arm.setSetpoint(armState.armAngle);
     }
 
     public double armFeedForward(double desired) {
         return -0.3; // true value = -0.46
     }
 
-    public double getAngle() {
+    public double getMeasurement() {
         return (((getEncoderPos() / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION)
                 / Constants.ArmConstants.ARM_GEARING) * 360) % 360; // TODO: account for
                                                                     // possible negative
@@ -114,70 +121,7 @@ public class Arm extends Threaded {
     }
 
     @Override
-    public void update() {         
-        if (setpoint > Constants.ArmConstants.MAX_ARM_ANGLE) {
-            setpoint = Constants.ArmConstants.MAX_ARM_ANGLE;
-        }
-
-        if (setpoint < 0) {
-            setpoint = 0;
-        }
-
-
-        if (getLimitStatus()) {
-            ARM_MOTOR_LEADER.setSelectedSensorPosition(0);
-            ARM_MOTOR_FOLLOWER.setSelectedSensorPosition(0);
-        }
-        
-        if (ARM_STATE.armAngle != setpoint) {
-            Log.info("ARM", "Setpoint override (setpoint has been set without using ArmState)");
-        }
-        
-        current = getAngle();
-        error = setpoint - current;
-        accumulator += error * Constants.MechanismConstants.DT;
-        if (accumulator > Constants.ArmConstants.ARM_SATURATION_LIMIT) {
-            accumulator = Constants.ArmConstants.ARM_SATURATION_LIMIT;
-        } else if (accumulator < -Constants.ArmConstants.ARM_SATURATION_LIMIT) {
-            accumulator = -Constants.ArmConstants.ARM_SATURATION_LIMIT;
-        }
-        double kP_term = Constants.ArmConstants.ARM_PID.kP * error;
-        double kI_term = Constants.ArmConstants.ARM_PID.kI * accumulator;
-        double kD_term = Constants.ArmConstants.ARM_PID.kD * (error - prevError) / Constants.MechanismConstants.DT;
-
-        double voltage_output = armFeedForward(setpoint) + kP_term + kI_term + kD_term;
-        double voltage = RobotController.getBatteryVoltage();
-
-        output = voltage_output / voltage;
-        if (output > 1) {
-            // Log.info("ARM",
-            //         "WARNING: Tried to set power above available voltage! Saturation limit SHOULD take care of this");
-            output = 1;
-        } else if (output < -1) {
-            // Log.info("ARM",
-            //         "WARNING: Tried to set power above available voltage! Saturation limit SHOULD take care of this ");
-            output = -1;
-        }
-
-        if (Math.abs(error) < Constants.ArmConstants.ANGLE_THRESHOLD) {
-            plateauCount++;
-        } else {
-            plateauCount = 0;
-        }
-
-
-        if((setpoint == 0) && !getLimitStatus()) {
-            output = Constants.ArmConstants.ZEROING_POWER;
-            // Log.info("Arm", "Using ZEROING_POWER to finish zeroing the arm.");
-        } else if((setpoint == 0) && getLimitStatus()) {
-            output = 0;
-            // Log.info("Arm", "In zero position, setting output to 0.");
-        }
-
-
-        ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, output);
-
-        prevError = error;
+    public void periodic() {         
 
     }
 

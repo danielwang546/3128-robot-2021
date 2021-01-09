@@ -12,8 +12,9 @@ import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
-public class Shooter extends Threaded {
+public class Shooter extends PIDSubsystem {
     public static enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
@@ -46,9 +47,19 @@ public class Shooter extends Threaded {
     public ShooterState SHOOTER_STATE = ShooterState.MID_RANGE;
 
     private Shooter() {
+
+        super(new PIDController(ShooterConstants.SHOOTER_PID.kP, ShooterConstants.SHOOTER_PID.kI, ShooterConstants.SHOOTER_PID.kD));
+        getController().setTolerance(RPM_THRESHOLD);
+        //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+
+
         configMotors();
         configEncoders();
         setSetpoint(0);
+    }
+
+    public boolean atSetpoint() {
+        return m_controller.atSetpoint();
     }
 
     private void configMotors() {
@@ -70,7 +81,7 @@ public class Shooter extends Threaded {
         return instance;
     }
 
-    public static double getRPM() {
+    public static double getMeasurement() {
         return Constants.ShooterConstants.SHOOTER_GEARING * SHOOTER_ENCODER.getVelocity();
     }
 
@@ -86,52 +97,8 @@ public class Shooter extends Threaded {
     }
 
     @Override
-    public void update() {
-        current = getRPM();
-        // Log.info("Shooter", "Shooter RPM is " + String.valueOf(current));
-        error = setpoint - current;
-        accumulator += error * Constants.MechanismConstants.DT;
-        if (accumulator > Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT) {
-            accumulator = Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT;
-        } else if (accumulator < -Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT) {
-            accumulator = -Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT;
-        }
-        double kP_term = Constants.ShooterConstants.SHOOTER_PID.kP * error;
-        double kI_term = Constants.ShooterConstants.SHOOTER_PID.kI * accumulator;
-        double kD_term = Constants.ShooterConstants.SHOOTER_PID.kD * (error - prevError)
-                / Constants.MechanismConstants.DT;
-
-        double voltage_output = shooterFeedForward(setpoint) + kP_term + kI_term + kD_term;
-        double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
-
-        output = voltage_output / voltage;
-
-        prevError = error;
-
-        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
-            plateauCount++;
-        } else {
-            plateauCount = 0;
-        }
-
-        if (output > 1) {
-            // Log.info("SHOOTER",
-            // "WARNING: Tried to set power above available voltage! Saturation limit SHOULD
-            // take care of this ");
-            output = 1;
-        } else if (output < -1) {
-            // Log.info("SHOOTER",
-            // "WARNING: Tried to set power above available voltage! Saturation limit SHOULD
-            // take care of this ");
-            output = -1;
-        }
-
-        if(setpoint == 0) {
-            output = 0;
-        }
-
-        LEFT_SHOOTER.set(output);
-        RIGHT_SHOOTER.set(-output);
+    public void periodic() {
+       
     }
 
     public double shooterFeedForward(double desiredSetpoint) {
