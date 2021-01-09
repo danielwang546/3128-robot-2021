@@ -1,14 +1,14 @@
 package org.team3128.compbot.autonomous;
 
 import org.team3128.compbot.subsystems.Constants;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import org.team3128.compbot.subsystems.Arm.ArmState;
 import org.team3128.compbot.subsystems.FalconDrive;
 import org.team3128.common.utility.Log;
 import edu.wpi.first.wpilibj.Timer;
 import org.team3128.common.drive.DriveSignal;
 
-public class CmdDrive extends Command {
+public class CmdDrive implements Command {
     
     FalconDrive drive;
     double timeoutMs, startTime;
@@ -16,6 +16,7 @@ public class CmdDrive extends Command {
     public CmdDrive(FalconDrive drive, double timeoutMs) {
         this.drive = drive;
         this.timeoutMs = timeoutMs;
+        addRequirements(drive);
     }
     
     @Override
@@ -38,8 +39,8 @@ public class CmdDrive extends Command {
         drive.setWheelPower(new DriveSignal(0, 0));
     }
 
-    @Override
-    protected void interrupted() {
+  
+    public void interrupted() {
         end();
     }
 

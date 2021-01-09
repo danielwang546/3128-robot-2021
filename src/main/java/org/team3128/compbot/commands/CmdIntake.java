@@ -8,14 +8,14 @@ import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Hopper;
 import org.team3128.compbot.subsystems.Arm;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import org.team3128.common.utility.Log;
 
 import edu.wpi.first.wpilibj.Timer;
 
 
-public class CmdIntake extends Command {
+public class CmdIntake implements Command {
     Hopper hopper;
     Arm arm;
     int startingBallCount;
@@ -23,6 +23,7 @@ public class CmdIntake extends Command {
     public CmdIntake(Hopper hopper, Arm arm) {
         this.hopper = hopper;
         this.arm = arm;
+        addRequirements(hopper, arm);
     }
 
     @Override

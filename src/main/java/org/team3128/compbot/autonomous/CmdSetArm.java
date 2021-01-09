@@ -1,13 +1,13 @@
 package org.team3128.compbot.autonomous;
 
 import org.team3128.compbot.subsystems.Constants;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import org.team3128.compbot.subsystems.Arm.ArmState;
 import org.team3128.compbot.subsystems.Arm;
 import org.team3128.common.utility.Log;
 import edu.wpi.first.wpilibj.Timer;
 
-public class CmdSetArm extends Command {
+public class CmdSetArm implements Command {
     
     Arm arm;
     ArmState armState;
@@ -17,6 +17,7 @@ public class CmdSetArm extends Command {
         this.arm = arm;
         this.armState = armState;
         this.timeoutMs = timeoutMs;
+        addRequirements(arm);
     }
     
     @Override

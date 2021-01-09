@@ -7,7 +7,7 @@ import java.util.Arrays;
 import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Arm;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import org.team3128.common.utility.Log;
 
@@ -23,7 +23,7 @@ import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 
-public class CmdArmFF extends Command {
+public class CmdArmFF implements Command {
 
     Arm arm;
 
@@ -44,6 +44,7 @@ public class CmdArmFF extends Command {
 
     public CmdArmFF(Arm arm) {
         this.arm = arm;
+        addRequirements(arm);
     }
 
     @Override
@@ -132,8 +133,8 @@ public class CmdArmFF extends Command {
         arm.ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, 0);
     }
 
-    @Override
-    protected void interrupted() {
+
+    public void interrupted() {
         end();
     }
 

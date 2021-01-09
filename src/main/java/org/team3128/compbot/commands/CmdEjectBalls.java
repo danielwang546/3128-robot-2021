@@ -9,14 +9,14 @@ import java.util.Arrays;
 import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Hopper;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import org.team3128.common.utility.Log;
 
 import edu.wpi.first.wpilibj.Timer;
 
 
-public class CmdEjectBalls extends Command {
+public class CmdEjectBalls implements Command {
     Hopper hopper;
     int adjustBallCount;
     double currentTime;
@@ -26,6 +26,7 @@ public class CmdEjectBalls extends Command {
 
     public CmdEjectBalls(Hopper hopper) {
         this.hopper = hopper;
+        addRequirements(hopper);
     }
 
     @Override
@@ -55,8 +56,8 @@ public class CmdEjectBalls extends Command {
         hopper.setMotorPowers(0, 0, 0);
     }
 
-    @Override
-    protected void interrupted() {
+
+    public void interrupted() {
         end();
     }
 }

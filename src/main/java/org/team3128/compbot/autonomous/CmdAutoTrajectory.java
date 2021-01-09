@@ -10,12 +10,12 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.compbot.subsystems.Constants;
 import org.team3128.common.utility.Log;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.ArrayList;
 
-public class CmdAutoTrajectory extends Command { 
+public class CmdAutoTrajectory implements Command { 
     public ArrayList<Pose2D> waypoints = new ArrayList<Pose2D>();
     public Trajectory trajectory;
 
@@ -32,6 +32,8 @@ public class CmdAutoTrajectory extends Command {
         for(Pose2D ele : inputWaypoints) {
             waypoints.add(ele);
         }
+
+        addRequirements(drive);
     }
 
     @Override protected void initialize() { 
@@ -56,7 +58,8 @@ public class CmdAutoTrajectory extends Command {
         drive.setWheelVelocity(new DriveSignal(0, 0));
     }
 
-    @Override public void interrupted() {
+   
+    public void interrupted() {
         end();
         Log.info("CmdAutoTrajectory", "Interrupted.");
     }

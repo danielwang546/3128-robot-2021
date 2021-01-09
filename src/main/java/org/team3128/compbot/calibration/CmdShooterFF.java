@@ -3,7 +3,7 @@ package org.team3128.compbot.calibration;
 import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Shooter;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import org.team3128.common.utility.Log;
 
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import edu.wpi.first.wpilibj.RobotController;
 
-public class CmdShooterFF extends Command {
+public class CmdShooterFF implements Command {
 
     Shooter shooter;
 
@@ -31,6 +31,7 @@ public class CmdShooterFF extends Command {
 
     public CmdShooterFF(Shooter shooter) {
         this.shooter = shooter;
+        addRequirements(shooter);
     }
 
     @Override
@@ -121,8 +122,8 @@ public class CmdShooterFF extends Command {
         shooter.RIGHT_SHOOTER.set(0);
     }
 
-    @Override
-    protected void interrupted() {
+  
+    public void interrupted() {
         end();
     }
 
