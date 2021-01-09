@@ -51,7 +51,6 @@ import java.util.concurrent.*;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
-import org.team3128.common.generics.ThreadScheduler;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;

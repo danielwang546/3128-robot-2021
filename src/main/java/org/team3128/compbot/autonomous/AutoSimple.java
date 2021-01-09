@@ -18,12 +18,10 @@ import org.team3128.compbot.subsystems.Arm.ArmState;
 import org.team3128.compbot.subsystems.*;
 import org.team3128.common.utility.Log;
 import com.kauailabs.navx.frc.AHRS;
-import org.team3128.common.generics.ThreadScheduler;
-
 
 public class AutoSimple extends CommandGroup {
 
-    public AutoSimple(FalconDrive drive, Shooter shooter, Arm arm, Hopper hopper, AHRS ahrs, Limelight limelight, DriveCommandRunning cmdRunning, double timeoutMs, ThreadScheduler scheduler) {       
+    public AutoSimple(FalconDrive drive, Shooter shooter, Arm arm, Hopper hopper, AHRS ahrs, Limelight limelight, DriveCommandRunning cmdRunning, double timeoutMs) {       
         Log.info("AutoSimple", "started");
         hopper.setBallCount(3);
         addSequential(new CmdSetIntake(hopper, Constants.IntakeConstants.INTAKE_MOTOR_REVERSE_VALUE));
