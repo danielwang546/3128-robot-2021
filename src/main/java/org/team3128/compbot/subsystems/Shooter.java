@@ -36,7 +36,6 @@ public class Shooter extends PIDSubsystem {
     public static CANEncoder SHOOTER_ENCODER;
 
     public static boolean DEBUG = true;
-    public static double setpoint = 0; // rotations per minute
     double current = 0;
     double error = 0;
     public double output = 0;
@@ -125,7 +124,6 @@ public class Shooter extends PIDSubsystem {
 
     public void setSetpoint(double passedSetpoint) {
         plateauCount = 0;
-        setpoint = passedSetpoint;
         super.setSetpoint(passedSetpoint);
         //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
     }
@@ -143,7 +141,7 @@ public class Shooter extends PIDSubsystem {
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
         double ff = (0.00147 * desiredSetpoint)  - 0.2; // 0
-        if (setpoint != 0) {
+        if (getSetpoint() != 0) {
             return ff;
         } else {
             return 0;

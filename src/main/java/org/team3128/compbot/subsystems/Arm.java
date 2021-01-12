@@ -87,7 +87,7 @@ public class Arm extends PIDSubsystem{
 
     public void setState(ArmState armState) {
         ARM_STATE = armState;
-        super.setSetpoint(armState.armAngle);
+        setSetpoint(armState.armAngle);
     }
 
     public double armFeedForward(double desired) {
