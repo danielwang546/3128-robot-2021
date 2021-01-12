@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -53,8 +53,6 @@ import java.util.concurrent.*;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
-import org.team3128.common.generics.ThreadScheduler;
-
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -67,7 +65,7 @@ public class MainAthos extends NarwhalRobot {
     RobotTracker robotTracker = RobotTracker.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(4);
-    ThreadScheduler scheduler = new ThreadScheduler();
+    CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
     
     Limelight limelight = new Limelight("limelight-c", 26.0, 0, 0, 30);
@@ -120,9 +118,6 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void constructHardware() {
-
-        scheduler.schedule(drive, executor);
-        scheduler.schedule(robotTracker, executor);
 
         // Instatiator if we're using the NavX
         gyro = new NavX();
@@ -362,14 +357,14 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
-        scheduler.resume();
+        //scheduler.resume();
     }
 
     @Override
     protected void autonomousInit() {
         trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
         Log.info("MainAthos", "going into autonomousinit");
-        scheduler.resume();
+        //scheduler.resume();
         robotTracker.resetOdometry();
         drive.setAutoTrajectory(trajectory, false);
         drive.startTrajectory();
@@ -378,7 +373,7 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void disabledInit() {
-        scheduler.pause();
+        //scheduler.pause();
     }
 
     public static void main(String... args) {
