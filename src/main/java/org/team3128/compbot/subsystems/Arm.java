@@ -9,10 +9,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 public class Arm extends PIDSubsystem{
     public static enum ArmState {
@@ -64,7 +64,7 @@ public class Arm extends PIDSubsystem{
     }
 
     public void useOutput(double output, double setpoint) {
-        ARM_MOTOR_LEADER.setVoltage(output + armFeedForward.calculate(setpoint)); 
+        ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, output + armFeedForward(setpoint)); 
     }
 
     private void configSensors() {
@@ -87,13 +87,14 @@ public class Arm extends PIDSubsystem{
 
     public void setState(ArmState armState) {
         ARM_STATE = armState;
-        Arm.setSetpoint(armState.armAngle);
+        super.setSetpoint(armState.armAngle);
     }
 
     public double armFeedForward(double desired) {
         return -0.3; // true value = -0.46
     }
 
+    @Override
     public double getMeasurement() {
         return (((getEncoderPos() / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION)
                 / Constants.ArmConstants.ARM_GEARING) * 360) % 360; // TODO: account for

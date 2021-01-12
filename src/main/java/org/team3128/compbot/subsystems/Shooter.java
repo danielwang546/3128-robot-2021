@@ -6,13 +6,15 @@ import org.team3128.common.utility.test_suite.CanDevices;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
+import org.team3128.compbot.subsystems.Constants;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.controller.PIDController;
+
 
 public class Shooter extends PIDSubsystem {
     public static enum ShooterState {
@@ -48,8 +50,8 @@ public class Shooter extends PIDSubsystem {
 
     private Shooter() {
 
-        super(new PIDController(ShooterConstants.SHOOTER_PID.kP, ShooterConstants.SHOOTER_PID.kI, ShooterConstants.SHOOTER_PID.kD));
-        getController().setTolerance(RPM_THRESHOLD);
+        super(new PIDController(Constants.ShooterConstants.SHOOTER_PID.kP, Constants.ShooterConstants.SHOOTER_PID.kI, Constants.ShooterConstants.SHOOTER_PID.kD));
+        getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD);
         //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
 
 
@@ -81,13 +83,50 @@ public class Shooter extends PIDSubsystem {
         return instance;
     }
 
-    public static double getMeasurement() {
+    @Override
+    public double getMeasurement() {
         return Constants.ShooterConstants.SHOOTER_GEARING * SHOOTER_ENCODER.getVelocity();
+    }
+
+    @Override
+    public void useOutput(double output, double setpoint) {
+        double voltageOutput = shooterFeedForward(setpoint) + output;
+        double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
+
+        output = voltageOutput / voltage;
+
+        prevError = error;
+
+        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
+            plateauCount++;
+        } else {
+            plateauCount = 0;
+        }
+
+        if (output > 1) {
+            // Log.info("SHOOTER",
+            // "WARNING: Tried to set power above available voltage! Saturation limit SHOULD
+            // take care of this ");
+            output = 1;
+        } else if (output < -1) {
+            // Log.info("SHOOTER",
+            // "WARNING: Tried to set power above available voltage! Saturation limit SHOULD
+            // take care of this ");
+            output = -1;
+        }
+
+        if(setpoint == 0) {
+            output = 0;
+        }
+
+        LEFT_SHOOTER.set(output);
+        RIGHT_SHOOTER.set(-output);
     }
 
     public void setSetpoint(double passedSetpoint) {
         plateauCount = 0;
         setpoint = passedSetpoint;
+        super.setSetpoint(passedSetpoint);
         //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
     }
 

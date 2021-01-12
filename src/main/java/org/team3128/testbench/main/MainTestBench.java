@@ -44,6 +44,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -52,13 +54,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-import org.team3128.common.generics.ThreadScheduler;
 
 public class MainTestBench extends NarwhalRobot {
     Shooter shooter = Shooter.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(4);
-    ThreadScheduler scheduler = new ThreadScheduler();
+    CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
 
     public DigitalInput digitalInput;
@@ -82,8 +83,6 @@ public class MainTestBench extends NarwhalRobot {
 
     @Override
     protected void constructHardware() {
-
-        scheduler.schedule(shooter, executor);
 
         digitalInput = new DigitalInput(0);
         digitalInput2 = new DigitalInput(1);
@@ -170,7 +169,7 @@ public class MainTestBench extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
-        scheduler.resume();
+        //scheduler.resume();
     }
 
     @Override
@@ -185,7 +184,7 @@ public class MainTestBench extends NarwhalRobot {
     @Override
     protected void disabledInit() {
         //shooter.setSetpoint(0);
-        scheduler.pause();
+        //scheduler.pause();
     }
 
     public static void main(String... args) {

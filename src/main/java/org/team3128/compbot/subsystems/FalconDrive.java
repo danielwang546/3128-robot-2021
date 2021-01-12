@@ -4,7 +4,6 @@
 package org.team3128.compbot.subsystems;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.control.RateLimiter;
 import org.team3128.common.control.AsynchronousPid;
 import org.team3128.common.control.motion.RamseteController;
@@ -32,9 +31,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class FalconDrive implements Subsystem {
+public class FalconDrive extends Drive {
 
 	public enum DriveState {
 		TELEOP, RAMSETECONTROL, TURN, DONE

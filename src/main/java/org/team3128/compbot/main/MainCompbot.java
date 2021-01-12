@@ -67,7 +67,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class MainCompbot extends NarwhalRobot {
 
-    public Command triggerCommand;
+    public CmdAlignShoot triggerCommand;
     public Command armFFCommand;
     public Command shooterFFCommand;
     public Command ejectBallsCommand;
@@ -282,7 +282,8 @@ public class MainCompbot extends NarwhalRobot {
         listenerRight.addButtonDownListener("AlignShoot", () -> {
             triggerCommand = new CmdAlignShoot(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning,
                     Constants.VisionConstants.TX_OFFSET, 5);
-            triggerCommand.start();
+            //triggerCommand.start();
+            scheduler.schedule(triggerCommand);
             Log.info("MainCompbot.java", "[Vision Alignment] Started");
         });
         listenerRight.addButtonUpListener("AlignShoot", () -> {
@@ -471,7 +472,7 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void updateDashboard() {
-        SmartDashboard.putString("Arm Angle", String.valueOf(arm.getAngle()));
+        SmartDashboard.putString("Arm Angle", String.valueOf(arm.getMeasurement()));
         NarwhalDashboard.put("time", DriverStation.getInstance().getMatchTime());
         NarwhalDashboard.put("voltage", RobotController.getBatteryVoltage());
         NarwhalDashboard.put("ball_count", hopper.getBallCount());
@@ -578,8 +579,8 @@ public class MainCompbot extends NarwhalRobot {
     protected void autonomousInit() {
         hopper.setAction(ActionState.STANDBY);
         drive.resetGyro();
-        Command auto = new AutoSimple(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning, 10000);
-        auto.start();
+        AutoSimple auto = new AutoSimple(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning, 10000);
+        scheduler.schedule(auto);
     }
 
     @Override

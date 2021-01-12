@@ -7,13 +7,13 @@ import org.team3128.common.utility.test_suite.CanDevices;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class Shooter extends Threaded {
+public class Shooter implements Subsystem {
 
     public static final Shooter instance = new Shooter();
     public static LazyCANSparkMax LEFT_SHOOTER;
@@ -62,7 +62,7 @@ public class Shooter extends Threaded {
     }
 
     @Override
-    public void update() {
+    public void periodic() {
         currentTime = Timer.getFPGATimestamp();
         currentError = setpoint - getRPM();
 

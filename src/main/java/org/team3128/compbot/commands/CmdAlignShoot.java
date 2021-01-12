@@ -17,6 +17,7 @@ import org.team3128.common.utility.units.Angle;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command; 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.team3128.compbot.subsystems.Constants;
@@ -26,6 +27,8 @@ import org.team3128.compbot.subsystems.Hopper.ActionState;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import java.util.Set;
+import java.util.HashSet;
 
 import org.team3128.compbot.commands.*;
 
@@ -59,6 +62,8 @@ public class CmdAlignShoot implements Command {
     private double desiredRPM;
     private double effective_distance;
 
+    private Set<Subsystem> requirements;
+
     private StateTracker stateTracker = StateTracker.getInstance();
 
     private Command hopperShoot, organize;
@@ -77,10 +82,15 @@ public class CmdAlignShoot implements Command {
 
     public CmdAlignShoot(FalconDrive drive, Shooter shooter, Arm arm, Hopper hopper, AHRS ahrs, Limelight limelight,
             DriveCommandRunning cmdRunning, double goalHorizontalOffset, int numBallsToShoot) {
+        this.requirements = new HashSet<Subsystem>();
         this.drive = drive;
+        this.requirements.add(drive);
         this.shooter = shooter;
+        this.requirements.add(shooter);
         this.arm = arm;
+        this.requirements.add(arm);
         this.hopper = hopper;
+        this.requirements.add(hopper);
         this.ahrs = ahrs;
         this.limelight = limelight;
         this.visionPID = Constants.VisionConstants.VISION_PID;
@@ -90,12 +100,15 @@ public class CmdAlignShoot implements Command {
         this.goalHorizontalOffset = goalHorizontalOffset;
 
         this.numBallsToShoot = numBallsToShoot;
-
-        addRequirements(drive, shooter, arm, hopper);
     }
 
     @Override
-    protected void initialize() {
+    public Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public void initialize() {
         limelight.setLEDMode(LEDMode.ON);
         cmdRunning.isRunning = false;
         arm.setState(stateTracker.getState().targetArmState);
@@ -105,7 +118,7 @@ public class CmdAlignShoot implements Command {
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
         switch (aimState) {
             case SEARCHING:
                 NarwhalDashboard.put("align_status", "searching");
@@ -260,7 +273,7 @@ public class CmdAlignShoot implements Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if (hopper.isEmpty() || numBallsShot >= numBallsToShoot) {
         return true;
         } else {
@@ -269,7 +282,7 @@ public class CmdAlignShoot implements Command {
     }
 
     @Override
-    protected void end() {
+    public void end(boolean interrupted) {
         limelight.setLEDMode(LEDMode.OFF);
         drive.stopMovement();
         shooter.setSetpoint(0);
@@ -277,10 +290,5 @@ public class CmdAlignShoot implements Command {
 
         Log.info("CmdAlignShoot", "Command Finished.");
         hopper.setAction(Hopper.ActionState.ORGANIZING);
-    }
-
-
-    public void interrupted() {
-        end();
     }
 }
