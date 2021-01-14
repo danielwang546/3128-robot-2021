@@ -99,7 +99,7 @@ public class CmdBallPursuit implements Command {
         this.blindPID = blindPID;
         this.blindThreshold = blindThreshold;
 
-        requirements = new HashSet<Subsystem>();
+        this.requirements = new HashSet<Subsystem>();
     }
 
     @Override

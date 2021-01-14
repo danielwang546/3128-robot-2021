@@ -8,6 +8,7 @@ import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import org.team3128.common.utility.Log;
 
@@ -19,13 +20,17 @@ import edu.wpi.first.wpilibj.RobotController;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
+
+import java.util.Set;
+import java.util.HashSet;
 
 public class CmdArmFF implements Command {
 
     Arm arm;
+
+    private Set<Subsystem> requirements;
 
     double currentAngle = 0;
     double error = 0;
@@ -44,19 +49,25 @@ public class CmdArmFF implements Command {
 
     public CmdArmFF(Arm arm) {
         this.arm = arm;
-        addRequirements(arm);
+        this.requirements = new HashSet<Subsystem>();
+        this.requirements.add(arm);
     }
 
     @Override
-    protected void initialize() {
-        previousAngle = arm.getAngle();
+    public Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public void initialize() {
+        previousAngle = arm.getMeasurement();
         pastTime = Timer.getFPGATimestamp();
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
 
-        currentAngle = arm.getAngle();
+        currentAngle = arm.getMeasurement();
 
         error = setpoint - currentAngle;
         accumulator += error * Constants.MechanismConstants.DT;
@@ -88,7 +99,7 @@ public class CmdArmFF implements Command {
         arm.ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, output);
 
         currentTime = Timer.getFPGATimestamp();
-        currentAngle = arm.getAngle();
+        currentAngle = arm.getMeasurement();
 
         if (Math.abs((previousAngle - currentAngle) / (pastTime - currentTime)) <= 0.001) {
             counter += 1;
@@ -117,7 +128,7 @@ public class CmdArmFF implements Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if (setpoint >= 85) {
             Log.info("Shooter", "Finished with automated loop");
             setpoint = 0;
@@ -129,13 +140,8 @@ public class CmdArmFF implements Command {
     }
 
     @Override
-    protected void end() {
+    public void end(boolean interrupted) {
         arm.ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, 0);
-    }
-
-
-    public void interrupted() {
-        end();
     }
 
 }

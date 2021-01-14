@@ -4,6 +4,7 @@ import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import org.team3128.common.utility.Log;
 
@@ -11,9 +12,14 @@ import edu.wpi.first.wpilibj.Timer;
 
 import edu.wpi.first.wpilibj.RobotController;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class CmdShooterFF implements Command {
 
     Shooter shooter;
+
+    Set<Subsystem> requirements;
 
     double current = 0;
     double error = 0;
@@ -31,16 +37,22 @@ public class CmdShooterFF implements Command {
 
     public CmdShooterFF(Shooter shooter) {
         this.shooter = shooter;
-        addRequirements(shooter);
+        this.requirements = new HashSet<Subsystem>();
+        this.requirements.add(shooter);
     }
 
     @Override
-    protected void initialize() {
+    public Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public void initialize() {
 
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
 
         /*
          * current = shooter.getRPM(); error = setpoint - current; accumulator += error
@@ -80,12 +92,12 @@ public class CmdShooterFF implements Command {
 
         currentTime = Timer.getFPGATimestamp();
 
-        if (Math.abs(setpoint - shooter.getRPM()) <= 300) {
+        if (Math.abs(setpoint - shooter.getMeasurement()) <= 300) {
             counter += 1;
 
             //sumOutput += output;
             //sumBatteryVoltage += RobotController.getBatteryVoltage();
-            sumRPM += shooter.getRPM();
+            sumRPM += shooter.getMeasurement();
             sumVoltage += shooter.LEFT_SHOOTER.getBusVoltage() * shooter.LEFT_SHOOTER.getAppliedOutput();
 
             if ((increment) != 0 && (counter >= 100)) {
@@ -105,7 +117,7 @@ public class CmdShooterFF implements Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if (setpoint >= 4500) {
             Log.info("Shooter", "Finished with automated loop");
             setpoint = 0;
@@ -117,14 +129,9 @@ public class CmdShooterFF implements Command {
     }
 
     @Override
-    protected void end() {
+    public void end(boolean interrupted) {
         shooter.LEFT_SHOOTER.set(0);
         shooter.RIGHT_SHOOTER.set(0);
-    }
-
-  
-    public void interrupted() {
-        end();
     }
 
 }
