@@ -21,7 +21,27 @@ public class Constants extends RobotConstants {
         // (relation between encoder rotations and wheel
         // rotations) = in/s
 
+        public static class MechanismConstants {
+                public static final double ENCODER_RESOLUTION_PER_ROTATION = 2048;
+                public static final double inchesToMeters = 0.0254;
+                public static final double DT = 0.005; // time between update() method calls for mechanisms
+        }
+
         // ---- DRIVE
+
+        public static class DriveConstants {
+                public static final double kDriveInchesPerSecPerNUp100ms = (1000d / 1)
+                                * (1 / MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION)
+                                * (Constants.DriveConstants.WHEEL_DIAMETER * Math.PI)
+                                * Constants.DriveConstants.WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION / 100;
+                
+                public static final double WHEEL_DIAMETER = 3.55;
+                public static final double ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION = 72 / 8; // basically your gearing. Ask Mech for gear teeth number to gear teeth number ratio: 8.3333333
+
+                public static final double WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION = 1
+                                / Constants.DriveConstants.ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION;
+        }
+
         public static final MotorType MOTOR_TYPE = MotorType.kBrushless; // indicates that we are using brushless motors
         public static final IdleMode DRIVE_IDLE_MODE = IdleMode.kBrake;
 

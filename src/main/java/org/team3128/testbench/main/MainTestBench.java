@@ -16,7 +16,7 @@ import org.team3128.common.hardware.gyroscope.NavX;
 import org.team3128.common.utility.units.Angle;
 import org.team3128.common.utility.units.Length;
 import org.team3128.common.vision.CmdHorizontalOffsetFeedbackDrive;
-import org.team3128.athos.subsystems.Constants;
+import org.team3128.testbench.subsystems.Constants;
 import org.team3128.common.utility.Log;
 import org.team3128.common.utility.RobotMath;
 import org.team3128.common.utility.datatypes.PIDConstants;
@@ -25,6 +25,7 @@ import org.team3128.common.listener.ListenerManager;
 import org.team3128.common.listener.controllers.ControllerExtreme3D;
 import org.team3128.common.listener.controltypes.Button;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
+import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.testbench.subsystems.Shooter;
@@ -56,7 +57,7 @@ import java.util.concurrent.*;
 
 
 public class MainTestBench extends NarwhalRobot {
-    Shooter shooter = Shooter.getInstance();
+    //  Shooter shooter = Shooter.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(4);
     CommandScheduler scheduler = CommandScheduler.getInstance();
@@ -71,6 +72,8 @@ public class MainTestBench extends NarwhalRobot {
     public NetworkTable table;
     public NetworkTable limelightTable;
 
+    public LazyTalonFX testMotor;
+
     public double startTime = 0;
 
     public String trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
@@ -84,8 +87,10 @@ public class MainTestBench extends NarwhalRobot {
     @Override
     protected void constructHardware() {
 
-        digitalInput = new DigitalInput(0);
-        digitalInput2 = new DigitalInput(1);
+        //digitalInput = new DigitalInput(0);
+        //digitalInput2 = new DigitalInput(1);
+
+        testMotor = new LazyTalonFX(0);
 
         joystick = new Joystick(1);
         lm = new ListenerManager(joystick);
@@ -102,64 +107,84 @@ public class MainTestBench extends NarwhalRobot {
         lm.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         lm.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
         lm.nameControl(new Button(6), "PrintCSV");
-        lm.nameControl(new Button(3), "ClearTracker");
-        lm.nameControl(new Button(4), "setSetpoint0");
+        lm.nameControl(new Button(3), "forwardMotor");
+        lm.nameControl(new Button(4), "reverseMotor");
         lm.nameControl(new Button(5), "setSetpoint1");
         lm.nameControl(new Button(7), "EndVoltage");
 
+        // lm.addButtonDownListener("forwardMotor", () -> {
+        //     testMotor.set(ControlMode.PercentOutput, 0.5);
+        // });
+        // lm.addButtonUpListener("forwardMotor", () -> {
+        //     testMotor.set(ControlMode.PercentOutput, 0);
+        // });
+
+        // lm.addButtonDownListener("reverseMotor", () -> {
+        //     testMotor.set(ControlMode.PercentOutput, -0.5);
+        // });
+        // lm.addButtonUpListener("reverseMotor", () -> {
+        //     testMotor.set(ControlMode.PercentOutput, 0);
+        // });
+
+        // lm.addMultiListener(() -> {
+        //     // drive.arcadeDrive(-0.7 * RobotMath.thresh(lm.getAxis("MoveTurn"), 0.1),
+        //     // -1.0 * RobotMath.thresh(lm.getAxis("MoveForwards"), 0.1), -1.0 *
+        //     // lm.getAxis("Throttle"), true);
+
         lm.addMultiListener(() -> {
-            // drive.arcadeDrive(-0.7 * RobotMath.thresh(lm.getAxis("MoveTurn"), 0.1),
-            // -1.0 * RobotMath.thresh(lm.getAxis("MoveForwards"), 0.1), -1.0 *
-            // lm.getAxis("Throttle"), true);
+            testMotor.set(ControlMode.PercentOutput, RobotMath.clampPosNeg1(lm.getAxis("MoveForwards")));
+        }, "MoveForwards");
 
-        }, "MoveTurn", "MoveForwards", "Throttle");
+        // }, "MoveTurn", "MoveForwards", "Throttle");
 
-        lm.nameControl(ControllerExtreme3D.TRIGGER, "AlignToTarget");
-        lm.addButtonDownListener("AlignToTarget", () -> {
-            // TODO: Add current implementation of vision alignment
-            Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've started");
-        });
-        lm.addButtonUpListener("AlignToTarget", () -> {
-            Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've ended");
-        });
+        // lm.nameControl(ControllerExtreme3D.TRIGGER, "AlignToTarget");
+        // lm.addButtonDownListener("AlignToTarget", () -> {
+        //     // TODO: Add current implementation of vision alignment
+        //     Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've started");
+        // });
+        // lm.addButtonUpListener("AlignToTarget", () -> {
+        //     Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've ended");
+        // });
 
-        lm.addButtonDownListener("setSetpoint0", () -> {
-            shooter.setSetpoint(0);
-            Log.info("Button4", "pressed");
-        });
+        // lm.addButtonDownListener("setSetpoint0", () -> {
+        //     //shooter.setSetpoint(0);
+        //     Log.info("Button4", "pressed");
+        // });
 
-        lm.addButtonDownListener("setSetpoint1", () -> {
-            Log.info("Button5", "pressed");
-            Log.info("Shooter", "Start Voltage: " + String.valueOf(RobotController.getBatteryVoltage()));
-            shooter.setSetpoint(250);
-        });
-
+        // lm.addButtonDownListener("setSetpoint1", () -> {
+        //     Log.info("Button5", "pressed");
+        //     Log.info("Shooter", "Start Voltage: " + String.valueOf(RobotController.getBatteryVoltage()));
+        //     //shooter.setSetpoint(250);
+        // });
 
 
-        lm.addButtonDownListener("EndVoltage", () -> {
-            Log.info("Shooter", String.valueOf(RobotController.getBatteryVoltage())); 
 
-        });
+        // lm.addButtonDownListener("EndVoltage", () -> {
+        //     Log.info("Shooter", String.valueOf(RobotController.getBatteryVoltage())); 
+
+        // });
 
     }
 
     @Override
     protected void teleopPeriodic() {
-        if (inPlace == false && digitalInput.get()) {
-            countBalls++;
-            System.out.println("Number of balls: " + countBalls);
-            inPlace = true;
-        } else if (!digitalInput.get()) {
-            inPlace = false;
-        }
+        // if (inPlace == false && digitalInput.get()) {
+        //     countBalls++;
+        //     System.out.println("Number of balls: " + countBalls);
+        //     inPlace = true;
+        // } else if (!digitalInput.get()) {
+        //     inPlace = false;
+        // }
 
-        if (inPlace2 == false && digitalInput2.get()) {
-            countBalls--;
-            System.out.println("Number of balls: " + countBalls);
-            inPlace2 = true;
-        } else if (!digitalInput2.get()) {
-            inPlace2 = false;
-        }
+        // if (inPlace2 == false && digitalInput2.get()) {
+        //     countBalls--;
+        //     System.out.println("Number of balls: " + countBalls);
+        //     inPlace2 = true;
+        // } else if (!digitalInput2.get()) {
+        //     inPlace2 = false;
+        // }
+
+        Log.info("MainTestBench", "Test motor speed: " + testMotor.getSelectedSensorVelocity() * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION + " RPM");
     }
 
     @Override
