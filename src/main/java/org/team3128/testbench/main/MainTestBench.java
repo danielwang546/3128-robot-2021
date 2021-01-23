@@ -16,7 +16,7 @@ import org.team3128.common.hardware.gyroscope.NavX;
 import org.team3128.common.utility.units.Angle;
 import org.team3128.common.utility.units.Length;
 import org.team3128.common.vision.CmdHorizontalOffsetFeedbackDrive;
-import org.team3128.athos.subsystems.Constants;
+import org.team3128.testbench.subsystems.Constants;
 import org.team3128.common.utility.Log;
 import org.team3128.common.utility.RobotMath;
 import org.team3128.common.utility.datatypes.PIDConstants;
@@ -184,7 +184,7 @@ public class MainTestBench extends NarwhalRobot {
         //     inPlace2 = false;
         // }
 
-        Log.info("MainTestBench", "Test motor speed: " + testMotor.getSelectedSensorVelocity());
+        Log.info("MainTestBench", "Test motor speed: " + testMotor.getSelectedSensorVelocity() * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION + " RPM");
     }
 
     @Override
