@@ -5,6 +5,8 @@
 package org.team3128.sim;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -50,7 +52,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_robotContainer.getAutonomousCommand().schedule();
+
+    new bounce(m_robotContainer).schedule();
+    
+    //m_robotContainer.getAutonomousCommand1().schedule();
+    
+    //m_robotContainer.getAutonomousCommand2().schedule();
   }
 
   @Override
