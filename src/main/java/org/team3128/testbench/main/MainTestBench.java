@@ -73,6 +73,7 @@ public class MainTestBench extends NarwhalRobot {
     public NetworkTable limelightTable;
 
     public LazyTalonFX testMotor;
+    public LazyTalonFX testMotor2;
 
     public double startTime = 0;
 
@@ -91,6 +92,9 @@ public class MainTestBench extends NarwhalRobot {
         //digitalInput2 = new DigitalInput(1);
 
         testMotor = new LazyTalonFX(0);
+        testMotor2 = new LazyTalonFX(1);
+        testMotor2.follow(testMotor);
+        testMotor2.setInverted(true);
 
         joystick = new Joystick(1);
         lm = new ListenerManager(joystick);
@@ -132,7 +136,7 @@ public class MainTestBench extends NarwhalRobot {
         //     // lm.getAxis("Throttle"), true);
 
         lm.addMultiListener(() -> {
-            testMotor.set(ControlMode.PercentOutput, RobotMath.clampPosNeg1(lm.getAxis("MoveForwards")));
+            testMotor.set(ControlMode.PercentOutput, -1 * RobotMath.clampPosNeg1(lm.getAxis("MoveForwards")));
         }, "MoveForwards");
 
         // }, "MoveTurn", "MoveForwards", "Throttle");

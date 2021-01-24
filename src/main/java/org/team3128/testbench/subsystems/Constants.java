@@ -1,6 +1,7 @@
 package org.team3128.testbench.subsystems;
 
 import org.team3128.common.utility.units.Length;
+import org.team3128.common.utility.datatypes.PIDConstants;
 import org.team3128.common.utility.units.Angle;
 
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -127,10 +128,14 @@ public class Constants extends RobotConstants {
         public static final double BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT = 0 * Length.in;
 
         // ---- SHOOTER
-        public static final int SHOOTER_MOTOR_LEFT_ID = 5;
-        public static final int SHOOTER_MOTOR_RIGHT_ID = 11;
+        public static final int SHOOTER_MOTOR_LEFT_ID = 0;
+        public static final int SHOOTER_MOTOR_RIGHT_ID = 1;
         public static final double K_SHOOTER_P = 0.0000009;
         public static final double K_SHOOTER_D = 0.00000051;
         public static final double K_SHOOTER_FF = 0.000000001; 
+        public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 0.000007, 0, 0);
+        public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
+        public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and the setpoint for a data point to be considered as a plataeu
+        public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
 
 }
