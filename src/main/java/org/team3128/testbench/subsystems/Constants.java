@@ -138,4 +138,7 @@ public class Constants extends RobotConstants {
         public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and the setpoint for a data point to be considered as a plataeu
         public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
 
+        // --- SHOOTER TESTING
+        public static final int SHOOTER_TESTING_RPM = 4500;
+        public static final int FALCON_MAX_RPM = 6400;
 }
