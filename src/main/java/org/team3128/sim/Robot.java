@@ -53,11 +53,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    new bounce(m_robotContainer).schedule();
-    
-    //m_robotContainer.getAutonomousCommand1().schedule();
-    
-    //m_robotContainer.getAutonomousCommand2().schedule();
+    new bounce(m_robotContainer, m_robotContainer.getRobotDrive()).schedule();
+
   }
 
   @Override

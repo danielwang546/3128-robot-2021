@@ -379,4 +379,50 @@ public class RobotContainer {
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
     }
     
+    public Trajectory getTrajectory(String trajPath) {
+        String trajectoryJSON = trajPath;
+        Trajectory exampleTrajectory = new Trajectory();
+
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
+        return exampleTrajectory;
+    }
+
+    public Command getAutonomousCommand(String trajPath) {
+
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
+        String trajectoryJSON = trajPath;
+        Trajectory exampleTrajectory = new Trajectory();
+
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
+
+
 }
