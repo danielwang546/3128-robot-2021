@@ -133,10 +133,10 @@ public class Shooter extends PIDSubsystem {
         setSetpoint(shooterState.shooterRPM);
     }
 
-    @Override
-    public void periodic() {
+    // @Override
+    // public void periodic() {
        
-    }
+    // }
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
