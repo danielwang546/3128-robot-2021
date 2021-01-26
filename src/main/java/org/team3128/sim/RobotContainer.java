@@ -138,298 +138,298 @@ public class RobotContainer {
 
 
 
-//     public Command getAutonomousCommand() {
+    public Command getAutonomousCommand() {
 
-//         // Create a voltage constraint to ensure we don't accelerate too fast
-//         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, 7);
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
 
-//         // Create config for trajectory
-//         // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-//         //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-//         //                 // Add kinematics to ensure max speed is actually obeyed
-//         //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-//         //                 // Apply the voltage constraint
-//         //                 .addConstraint(autoVoltageConstraint).setReversed(false);
+        // Create config for trajectory
+        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        //                 // Add kinematics to ensure max speed is actually obeyed
+        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
+        //                 // Apply the voltage constraint
+        //                 .addConstraint(autoVoltageConstraint).setReversed(false);
 
-//         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-//         //         new Pose2d(1.5, 0.7, new Rotation2d(0)),
-//         //         List.of(new Translation2d(2.5, 1.4), 
-//         //         new Translation2d(4.7, 2.8), 
-//         //         new Translation2d(6.6, 1.5),         
-//         //         new Translation2d(7.7, 0.7), 
-//         //         new Translation2d(8.5, 1.7), 
-//         //         new Translation2d(7.6, 2.5),  
-//         //         new Translation2d(6.6, 1.6), 
-//         //         new Translation2d(4.7, 0.7), 
-//         //         new Translation2d(2.6, 1.5)),
-//         //         new Pose2d(1.3, 2.4, new Rotation2d(3.14)),
-//         //         config);
+        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        //         new Pose2d(1.5, 0.7, new Rotation2d(0)),
+        //         List.of(new Translation2d(2.5, 1.4), 
+        //         new Translation2d(4.7, 2.8), 
+        //         new Translation2d(6.6, 1.5),         
+        //         new Translation2d(7.7, 0.7), 
+        //         new Translation2d(8.5, 1.7), 
+        //         new Translation2d(7.6, 2.5),  
+        //         new Translation2d(6.6, 1.6), 
+        //         new Translation2d(4.7, 0.7), 
+        //         new Translation2d(2.6, 1.5)),
+        //         new Pose2d(1.3, 2.4, new Rotation2d(3.14)),
+        //         config);
 
-//         String trajectoryJSON = "output/Bounce2.wpilib.json";
-//         Trajectory exampleTrajectory = new Trajectory();
-//         try {
-//             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-//             System.out.println("here");
-//             System.out.println(trajectoryPath);
-//             exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-//             System.out.println("here");
-//         } catch (IOException ex) {
-//             System.out.println(ex);
-//             // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-//             // ex.getStackTrace());
-//         }
+        String trajectoryJSON = "output/Bounce2.wpilib.json";
+        Trajectory exampleTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            System.out.println("here");
+            System.out.println(trajectoryPath);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            System.out.println("here");
+        } catch (IOException ex) {
+            System.out.println(ex);
+            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+            // ex.getStackTrace());
+        }
 
-//         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
-//                 new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 // RamseteCommand passes volts to the callback
-//                 m_robotDrive::tankDriveVolts, m_robotDrive);
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
 
-//         // Reset odometry to starting pose of trajectory.
-//         m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        // Reset odometry to starting pose of trajectory.
+        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-//         // Run path following command, then stop at the end.
-//         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-//     }
+        // Run path following command, then stop at the end.
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
-//     public Command getAutonomousCommand1() {
+    public Command getAutonomousCommand1() {
 
-//         // Create a voltage constraint to ensure we don't accelerate too fast
-//         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, 7);
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
 
-//         // Create config for trajectory
-//         // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-//         //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-//         //                 // Add kinematics to ensure max speed is actually obeyed
-//         //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-//         //                 // Apply the voltage constraint
-//         //                 .addConstraint(autoVoltageConstraint).setReversed(false);
+        // Create config for trajectory
+        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        //                 // Add kinematics to ensure max speed is actually obeyed
+        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
+        //                 // Apply the voltage constraint
+        //                 .addConstraint(autoVoltageConstraint).setReversed(false);
 
-//         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-//         //         new Pose2d(1.5, 2.3, new Rotation2d(0)),
-//         //         List.of(new Translation2d(2.3, 2.9)),
-//         //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
-//         //         config);
-
-
-//         String trajectoryJSON = "Pathweaver/output/Bounce1.wpilib.json";
-//         Trajectory exampleTrajectory = new Trajectory();
-//         try {
-//             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-//             System.out.println("here");
-//             System.out.println(trajectoryPath);
-//             exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-//             System.out.println("here");
-//         } catch (IOException ex) {
-//             System.out.println(ex);
-//             // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-//             // ex.getStackTrace());
-//         }
+        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        //         new Pose2d(1.5, 2.3, new Rotation2d(0)),
+        //         List.of(new Translation2d(2.3, 2.9)),
+        //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
+        //         config);
 
 
+        String trajectoryJSON = "Pathweaver/output/Bounce1.wpilib.json";
+        Trajectory exampleTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            System.out.println("here");
+            System.out.println(trajectoryPath);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            System.out.println("here");
+        } catch (IOException ex) {
+            System.out.println(ex);
+            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+            // ex.getStackTrace());
+        }
 
 
-//         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
-//                 new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 // RamseteCommand passes volts to the callback
-//                 m_robotDrive::tankDriveVolts, m_robotDrive);
 
-//         // Reset odometry to starting pose of trajectory.
-//         m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-//         // Run path following command, then stop at the end.
-//         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-//     }
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
 
-//     public Command getAutonomousCommand2() {
+        // Reset odometry to starting pose of trajectory.
+        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-//         // Create a voltage constraint to ensure we don't accelerate too fast
-//         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, 7);
+        // Run path following command, then stop at the end.
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
-//         // Create config for trajectory
-//         // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-//         //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-//         //                 // Add kinematics to ensure max speed is actually obeyed
-//         //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-//         //                 // Apply the voltage constraint
-//         //                 .addConstraint(autoVoltageConstraint).setReversed(true);
+    public Command getAutonomousCommand2() {
 
-//         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-//         //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
-//         //         List.of(new Translation2d(2.8, 2), 
-//         //         new Translation2d(3.8, 0.9)),
-//         //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
-//         //         config);
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
 
-//         String trajectoryJSON = "Pathweaver/output/Bounce2.wpilib.json";
-//         Trajectory exampleTrajectory = new Trajectory();
-//         try {
-//             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-//             System.out.println("here");
-//             System.out.println(trajectoryPath);
-//             exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-//             System.out.println("here");
-//         } catch (IOException ex) {
-//             System.out.println(ex);
-//             // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-//             // ex.getStackTrace());
-//         }
+        // Create config for trajectory
+        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        //                 // Add kinematics to ensure max speed is actually obeyed
+        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
+        //                 // Apply the voltage constraint
+        //                 .addConstraint(autoVoltageConstraint).setReversed(true);
 
-//         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
-//                 new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 // RamseteCommand passes volts to the callback
-//                 m_robotDrive::tankDriveVolts, m_robotDrive);
+        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
+        //         List.of(new Translation2d(2.8, 2), 
+        //         new Translation2d(3.8, 0.9)),
+        //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
+        //         config);
 
-//         // Reset odometry to starting pose of trajectory.
-//         //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        String trajectoryJSON = "Pathweaver/output/Bounce2.wpilib.json";
+        Trajectory exampleTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            System.out.println("here");
+            System.out.println(trajectoryPath);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            System.out.println("here");
+        } catch (IOException ex) {
+            System.out.println(ex);
+            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+            // ex.getStackTrace());
+        }
 
-//         // Run path following command, then stop at the end.
-//         //Timer.delay(10.0);
-//         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-//     }
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
 
-//     public Command getAutonomousCommand3() {
+        // Reset odometry to starting pose of trajectory.
+        //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-//         // Create a voltage constraint to ensure we don't accelerate too fast
-//         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, 7);
+        // Run path following command, then stop at the end.
+        //Timer.delay(10.0);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
-//         // Create config for trajectory
-//         // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-//         //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-//         //                 // Add kinematics to ensure max speed is actually obeyed
-//         //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-//         //                 // Apply the voltage constraint
-//         //                 .addConstraint(autoVoltageConstraint).setReversed(true);
+    public Command getAutonomousCommand3() {
 
-//         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-//         //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
-//         //         List.of(new Translation2d(2.8, 2), 
-//         //         new Translation2d(3.8, 0.9)),
-//         //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
-//         //         config);
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
 
-//         String trajectoryJSON = "Pathweaver/output/Bounce3.wpilib.json";
-//         Trajectory exampleTrajectory = new Trajectory();
-//         try {
-//             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-//             System.out.println("here");
-//             System.out.println(trajectoryPath);
-//             exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-//             System.out.println("here");
-//         } catch (IOException ex) {
-//             System.out.println(ex);
-//             // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-//             // ex.getStackTrace());
-//         }
+        // Create config for trajectory
+        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        //                 // Add kinematics to ensure max speed is actually obeyed
+        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
+        //                 // Apply the voltage constraint
+        //                 .addConstraint(autoVoltageConstraint).setReversed(true);
 
-//         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
-//                 new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 // RamseteCommand passes volts to the callback
-//                 m_robotDrive::tankDriveVolts, m_robotDrive);
+        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
+        //         List.of(new Translation2d(2.8, 2), 
+        //         new Translation2d(3.8, 0.9)),
+        //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
+        //         config);
 
-//         // Reset odometry to starting pose of trajectory.
-//         //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        String trajectoryJSON = "Pathweaver/output/Bounce3.wpilib.json";
+        Trajectory exampleTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            System.out.println("here");
+            System.out.println(trajectoryPath);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            System.out.println("here");
+        } catch (IOException ex) {
+            System.out.println(ex);
+            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+            // ex.getStackTrace());
+        }
 
-//         // Run path following command, then stop at the end.
-//         //Timer.delay(10.0);
-//         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-//     }
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
 
-//     public Command getAutonomousCommand4() {
+        // Reset odometry to starting pose of trajectory.
+        //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-//         // Create a voltage constraint to ensure we don't accelerate too fast
-//         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, 7);
+        // Run path following command, then stop at the end.
+        //Timer.delay(10.0);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
-//         // Create config for trajectory
-//         // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-//         //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-//         //                 // Add kinematics to ensure max speed is actually obeyed
-//         //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-//         //                 // Apply the voltage constraint
-//         //                 .addConstraint(autoVoltageConstraint).setReversed(true);
+    public Command getAutonomousCommand4() {
 
-//         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-//         //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
-//         //         List.of(new Translation2d(2.8, 2), 
-//         //         new Translation2d(3.8, 0.9)),
-//         //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
-//         //         config);
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, 7);
 
-//         String trajectoryJSON = "Pathweaver/output/Bounce4.wpilib.json";
-//         Trajectory exampleTrajectory = new Trajectory();
-//         try {
-//             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-//             System.out.println("here");
-//             System.out.println(trajectoryPath);
-//             exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-//             System.out.println("here");
-//         } catch (IOException ex) {
-//             System.out.println(ex);
-//             // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-//             // ex.getStackTrace());
-//         }
+        // Create config for trajectory
+        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        //                 // Add kinematics to ensure max speed is actually obeyed
+        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
+        //                 // Apply the voltage constraint
+        //                 .addConstraint(autoVoltageConstraint).setReversed(true);
 
-//         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
-//                 new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-//                 new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
-//                         Constants.DriveConstants.kvVoltSecondsPerMeter,
-//                         Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-//                 Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-//                 // RamseteCommand passes volts to the callback
-//                 m_robotDrive::tankDriveVolts, m_robotDrive);
+        // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
+        //         List.of(new Translation2d(2.8, 2), 
+        //         new Translation2d(3.8, 0.9)),
+        //         new Pose2d(4.6, 3.7, new Rotation2d(4.71)),
+        //         config);
 
-//         // Reset odometry to starting pose of trajectory.
-//         //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        String trajectoryJSON = "Pathweaver/output/Bounce4.wpilib.json";
+        Trajectory exampleTrajectory = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            System.out.println("here");
+            System.out.println(trajectoryPath);
+            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            System.out.println("here");
+        } catch (IOException ex) {
+            System.out.println(ex);
+            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+            // ex.getStackTrace());
+        }
 
-//         // Run path following command, then stop at the end.
-//         //Timer.delay(10.0);
-//         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-//     }
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts,
+                        Constants.DriveConstants.kvVoltSecondsPerMeter,
+                        Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, m_robotDrive);
+
+        // Reset odometry to starting pose of trajectory.
+        //m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+        // Run path following command, then stop at the end.
+        //Timer.delay(10.0);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
     
     
 
