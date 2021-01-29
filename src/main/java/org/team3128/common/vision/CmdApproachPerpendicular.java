@@ -12,9 +12,13 @@ import org.team3128.common.utility.datatypes.PIDConstants;
 import org.team3128.common.utility.enums.Direction;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class CmdApproachPerpendicular extends Command {
+import java.util.Set;
+import java.util.HashSet;
+
+public class CmdApproachPerpendicular implements Command {
     private SRXTankDrive drive;
 
     private Limelight limelight;
@@ -41,6 +45,8 @@ public class CmdApproachPerpendicular extends Command {
     private double feedbackPower;
     private double leftPower, rightPower;
 
+    private Set<Subsystem> requirements;
+
     private enum ApproachPerpendicularState {
         SEARCHING, DIRECTION_FINDING, APPROACHING_PERPENDICULAR, IN_RANGE;
     }
@@ -58,10 +64,17 @@ public class CmdApproachPerpendicular extends Command {
         this.targetHeight = targetHeight;
         this.goalWallIntersectDistance = wallIntersectDistance;
         this.xThreshold = xThreshold;
+
+        this.requirements = new HashSet<Subsystem>();
     }
 
     @Override
-    protected void initialize() {
+    public Set<Subsystem> getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public void initialize() {
         drive = SRXTankDrive.getInstance();
         limelight.setLEDMode(LEDMode.ON);
 
@@ -71,7 +84,7 @@ public class CmdApproachPerpendicular extends Command {
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
         switch (aimState) {
         case SEARCHING:
             if (limelight.hasValidTarget()) {
@@ -161,22 +174,30 @@ public class CmdApproachPerpendicular extends Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return aimState == ApproachPerpendicularState.IN_RANGE;
     }
 
     @Override
-    protected void end() {
-        Log.info("CmdContinuousPependicularAlign", "Arrived in mtA zone.");
+    public void end(boolean interrupted) {
+        if (!interrupted) {
+            Log.info("CmdContinuousPependicularAlign", "Arrived in mtA zone.");
+        } else {
+            drive.stopMovement();
+            limelight.setLEDMode(LEDMode.OFF);
+
+            cmdRunning.isRunning = false;
+
+            Log.info("CmdContinuousPependicularAlign", "Command Interrupted.");
+        }
     }
 
-    @Override
-    protected void interrupted() {
-        drive.stopMovement();
-        limelight.setLEDMode(LEDMode.OFF);
+    // protected void interrupted() {
+    //     drive.stopMovement();
+    //     limelight.setLEDMode(LEDMode.OFF);
 
-        cmdRunning.isRunning = false;
+    //     cmdRunning.isRunning = false;
 
-        Log.info("CmdContinuousPependicularAlign", "Command Interrupted.");
-    }
+    //     Log.info("CmdContinuousPependicularAlign", "Command Interrupted.");
+    // }
 }
