@@ -10,9 +10,39 @@ import org.team3128.common.generics.RobotConstants;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.utility.test_suite.*;
+
+
+
+
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
+import edu.wpi.first.wpiutil.math.numbers.N2;
+
+
+
 // the superclass is purely for semantic purposes
 public class Constants extends RobotConstants {
 
+        
+        //Ramsete Constants
+
+        public static final double ksVolts = 0.22;
+        public static final double kvVoltSecondsPerMeter = 1.98;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+        public static final double kRamseteB = 2;
+        public static final double kRamseteZeta = 0.7;
+        public static final double kPDriveVel = 8.5;
+        
+        public static final double kTrackwidthMeters = 0.69;
+        public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+        
+        
+        
+        
+        
         // MECHANISM CONSTANTS:
 
         public static final double inchesToMeters = 0.0254;

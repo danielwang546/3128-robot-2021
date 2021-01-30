@@ -28,6 +28,7 @@ import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.athos.subsystems.NEODrive;
+import org.team3128.athos.subsystems.PathFinding;
 import org.team3128.athos.subsystems.RobotTracker;
 import org.team3128.athos.autonomous.deprecated.CmdAutoBall;
 
@@ -59,6 +60,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.test_suite.*;
 import org.team3128.common.drive.Drive;
+
+import org.team3128.athos.subsystems.bounce;
 
 public class MainAthos extends NarwhalRobot {
     public static NEODrive drive = NEODrive.getInstance();
@@ -366,8 +369,12 @@ public class MainAthos extends NarwhalRobot {
         Log.info("MainAthos", "going into autonomousinit");
         //scheduler.resume();
         robotTracker.resetOdometry();
-        drive.setAutoTrajectory(trajectory, false);
-        drive.startTrajectory();
+        //drive.setAutoTrajectory(trajectory, false);
+        //drive.startTrajectory();
+        PathFinding pathfinder = new PathFinding();
+        new bounce(pathfinder, drive).schedule();
+        
+        
         startTime = Timer.getFPGATimestamp();
     }
 
