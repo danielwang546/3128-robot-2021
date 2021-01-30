@@ -85,6 +85,7 @@ public class Shooter extends PIDSubsystem {
 
     @Override
     public double getMeasurement() {
+        //Log.info("shooter", "getting measurement");
         return LEFT_SHOOTER.getSelectedSensorVelocity(0) * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION;
     }
 
@@ -94,6 +95,8 @@ public class Shooter extends PIDSubsystem {
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
         output = voltageOutput / voltage;
+
+        //Log.info("Shooter", "using output");
 
         prevError = error;
 
@@ -134,14 +137,15 @@ public class Shooter extends PIDSubsystem {
         setSetpoint(shooterState.shooterRPM);
     }
 
-    @Override
-    public void periodic() {
+    //@Override
+    //public void periodic() {
+        //Log.info("Shooter", "running periodic");
        
-    }
+    //}
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00147 * desiredSetpoint)  - 0.2; // 0
+        double ff = (0.00188 * desiredSetpoint); //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

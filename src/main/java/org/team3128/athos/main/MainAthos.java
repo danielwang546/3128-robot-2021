@@ -92,7 +92,7 @@ public class MainAthos extends NarwhalRobot {
     public Trajectory trajectory;
 
 
-    public Command ballCommand;
+    public CmdAutoBall ballCommand;
     public Limelight bottomLimelight;
     private DriveCommandRunning driveCmdRunning;
 
@@ -226,7 +226,7 @@ public class MainAthos extends NarwhalRobot {
 
         lm.addButtonDownListener("PursueBall", () -> {
             ballCommand = new CmdAutoBall(gyro, bottomLimelight, driveCmdRunning, visionPID, blindPID);
-			ballCommand.start();
+            scheduler.schedule(ballCommand);
         });
         lm.addButtonUpListener("PursueBall", () -> {
             ballCommand.cancel();

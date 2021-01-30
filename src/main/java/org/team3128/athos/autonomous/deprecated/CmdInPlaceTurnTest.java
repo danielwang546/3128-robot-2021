@@ -4,10 +4,10 @@ import org.team3128.common.utility.enums.Direction;
 
 import org.team3128.common.drive.SRXTankDrive;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class CmdInPlaceTurnTest extends CommandGroup {
+public class CmdInPlaceTurnTest extends SequentialCommandGroup {
     public CmdInPlaceTurnTest() {
-        addSequential(SRXTankDrive.getInstance().new CmdInPlaceTurn(360, Direction.RIGHT, 1.0, 10000));
+        addCommands(SRXTankDrive.getInstance().new CmdInPlaceTurn(360, Direction.RIGHT, 1.0, 10000).withTimeout(10));
     }
 }

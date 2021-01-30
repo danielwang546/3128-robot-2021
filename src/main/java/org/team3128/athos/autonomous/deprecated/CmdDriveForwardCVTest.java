@@ -7,9 +7,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import org.team3128.common.drive.SRXTankDrive;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class CmdDriveForwardCVTest extends CommandGroup {
+public class CmdDriveForwardCVTest extends SequentialCommandGroup {
 
     public NetworkTable table;
 
@@ -28,7 +28,7 @@ public class CmdDriveForwardCVTest extends CommandGroup {
 
         double d = (28.5 - 5) / (Math.tan((28.0 + valCurrent2) * (Math.PI / 180)));
         Log.info("distance calc", String.valueOf(d));
-        addSequential(drive.new CmdDriveStraight(-d, 1.0, 10000));
+        addCommands(drive.new CmdDriveStraight(-d, 1.0, 10000).withTimeout(10));
 
         Log.info("auto_tyav", String.valueOf(valCurrent2));
         // NarwhalDashboard.put("tyav", String.valueOf(valCurrent2));

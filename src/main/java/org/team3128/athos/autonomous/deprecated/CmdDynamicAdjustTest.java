@@ -5,10 +5,10 @@ import org.team3128.common.utility.datatypes.PIDConstants;
 import org.team3128.common.drive.SRXTankDrive;
 import org.team3128.common.hardware.limelight.Limelight;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.team3128.common.hardware.gyroscope.Gyro;
 
-public class CmdDynamicAdjustTest extends CommandGroup {
+public class CmdDynamicAdjustTest extends SequentialCommandGroup {
     /**
      * 
      * @param gyro
@@ -17,6 +17,6 @@ public class CmdDynamicAdjustTest extends CommandGroup {
     public CmdDynamicAdjustTest(Gyro gyro, Limelight limelight) {
         SRXTankDrive drive = SRXTankDrive.getInstance();
         PIDConstants visionPID = new PIDConstants(0, 0.0005, 0, 0.00009);
-        addSequential(drive.new CmdTargetAlignSimple(gyro, limelight, 0.3, visionPID, 10000));
+        addCommands(drive.new CmdTargetAlignSimple(gyro, limelight, 0.3, visionPID, 10000).withTimeout(10));
     }
 }
