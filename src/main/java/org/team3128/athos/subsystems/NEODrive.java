@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
+import org.team3128.athos.main.MainAthos;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
@@ -139,7 +140,10 @@ public class NEODrive extends Drive {
 	}
 
 	public Pose2d getPose() {
-		return RobotTracker.getInstance().getOdometry2d();
+		
+		return MainAthos.ekfPosition;
+		
+		//return RobotTracker.getInstance().getOdometry2d();
 	}
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {

@@ -28,12 +28,22 @@ public class Constants extends RobotConstants {
         
         //Ramsete Constants
 
-        public static final double ksVolts = 0.22;
-        public static final double kvVoltSecondsPerMeter = 1.98;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+        // public static final double ksVolts = 0.22;
+        // public static final double kvVoltSecondsPerMeter = 1.98;
+        // public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+        // public static final double kRamseteB = 2;
+        // public static final double kRamseteZeta = 0.7;
+        // public static final double kPDriveVel = 8.5;
+        
+        // public static final double kTrackwidthMeters = 0.69;
+        // public static final DifferentialDriveKinematics kDriveKinematics =
+        // new DifferentialDriveKinematics(kTrackwidthMeters);
+        public static final double ksVolts = 0;
+        public static final double kvVoltSecondsPerMeter = 0;
+        public static final double kaVoltSecondsSquaredPerMeter = 0;
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
-        public static final double kPDriveVel = 8.5;
+        public static final double kPDriveVel = 0.1;
         
         public static final double kTrackwidthMeters = 0.69;
         public static final DifferentialDriveKinematics kDriveKinematics =
@@ -83,7 +93,7 @@ public class Constants extends RobotConstants {
         // using
         // wheel diameter, as that is significantly easier to
         // measure.
-        public static final double WHEEL_DIAMETER = 3.55; // effective wheel diameter (measure first then tune this
+        public static final double WHEEL_DIAMETER = 5.3; // effective wheel diameter (measure first then tune this
                                                           // number until distances are accurate)
 
         public static final double LEFT_SPEEDSCALAR = 1.0; // purely for TELEOP drive (to make sure that when the drive
