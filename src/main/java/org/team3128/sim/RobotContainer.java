@@ -211,12 +211,12 @@ public class RobotContainer {
                 Constants.DriveConstants.kDriveKinematics, 7);
 
         // Create config for trajectory
-        // TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-        //         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        //                 // Add kinematics to ensure max speed is actually obeyed
-        //                 .setKinematics(Constants.DriveConstants.kDriveKinematics)
-        //                 // Apply the voltage constraint
-        //                 .addConstraint(autoVoltageConstraint).setReversed(false);
+        TrajectoryConfig config = new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                        // Add kinematics to ensure max speed is actually obeyed
+                        .setKinematics(Constants.DriveConstants.kDriveKinematics)
+                        // Apply the voltage constraint
+                        .addConstraint(autoVoltageConstraint).setReversed(false);
 
         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         //         new Pose2d(1.5, 2.3, new Rotation2d(0)),
@@ -224,20 +224,26 @@ public class RobotContainer {
         //         new Pose2d(2.4, 3.8, new Rotation2d(1.57)),
         //         config);
 
+        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0, 0, new Rotation2d(0)),
+                List.of(new Translation2d(3, 2)),
+                new Pose2d(5, 0, new Rotation2d(0)),
+                config);
 
-        String trajectoryJSON = "Pathweaver/output/Bounce1.wpilib.json";
-        Trajectory exampleTrajectory = new Trajectory();
-        try {
-            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            System.out.println("here");
-            System.out.println(trajectoryPath);
-            exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            System.out.println("here");
-        } catch (IOException ex) {
-            System.out.println(ex);
-            // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
-            // ex.getStackTrace());
-        }
+
+        // String trajectoryJSON = "Pathweaver/output/Bounce1.wpilib.json";
+        // Trajectory exampleTrajectory = new Trajectory();
+        // try {
+        //     Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+        //     System.out.println("here");
+        //     System.out.println(trajectoryPath);
+        //     exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        //     System.out.println("here");
+        // } catch (IOException ex) {
+        //     System.out.println(ex);
+        //     // DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON,
+        //     // ex.getStackTrace());
+        // }
 
 
 

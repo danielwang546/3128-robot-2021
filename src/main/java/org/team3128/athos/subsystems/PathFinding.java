@@ -95,7 +95,7 @@ public class PathFinding {
                 Constants.kDriveKinematics, 7);
         //String trajectoryJSON = trajPath;
         TrajectoryConfig config = new TrajectoryConfig(3,
-                20)
+                5)
                         // Add kinematics to ensure max speed is actually obeyed
                         .setKinematics(Constants.kDriveKinematics)
                         // Apply the voltage constraint
@@ -103,8 +103,8 @@ public class PathFinding {
         
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(new Translation2d(1, 1)),
-                new Pose2d(10, 0, new Rotation2d(0)),
+                List.of(new Translation2d(3, 2)),
+                new Pose2d(5, 0, new Rotation2d(0)),
                 config);
 
         // try {

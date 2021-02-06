@@ -9,13 +9,14 @@ import org.team3128.sim.subsystems.DriveSubsystem;
 public class bounce extends SequentialCommandGroup {
     public bounce(RobotContainer m_robotContainer, DriveSubsystem mRobotDrive){
          addCommands(
-            new InstantCommand(() -> {
-                mRobotDrive.resetOdometry(m_robotContainer.getTrajectory("Pathweaver/output/Bounce1.wpilib.json").getInitialPose());
-            }),
-            m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce1.wpilib.json"),
-            m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce2.wpilib.json"),
-            m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce3.wpilib.json"),
-            m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce4.wpilib.json")
+            // new InstantCommand(() -> {
+            // mRobotDrive.resetOdometry(m_robotContainer.getTrajectory("Pathweaver/output/Bounce1.wpilib.json").getInitialPose());
+            // }),
+            m_robotContainer.getAutonomousCommand1()
+            // m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce1.wpilib.json"),
+            // m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce2.wpilib.json"),
+            // m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce3.wpilib.json"),
+            // m_robotContainer.getAutonomousCommand("Pathweaver/output/Bounce4.wpilib.json")
         );
 
         // addCommands(

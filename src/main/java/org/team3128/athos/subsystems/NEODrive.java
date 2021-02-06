@@ -313,12 +313,17 @@ public class NEODrive extends Drive {
 	
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
 
+		leftVolts=leftVolts;
+		rightVolts=rightVolts;
 		//NOTE: THIS METHOD IS NEW AND KIND OF SKETCHY
 		//MAY NEED A CLAMP FOR VOLTAGE SO IT DOESNT TRY TO SEND TOO MANY
 		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
+		//Log.info("Volts", "Left "+ RobotMath.clamp(leftVolts, -12, 12)+" Right "+RobotMath.clamp(rightVolts, -12, 12));
+		
+		
 
-		leftSpark.setVoltage(leftVolts);
-		rightSpark.setVoltage(rightVolts);
+		leftSpark.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
+		rightSpark.setVoltage(RobotMath.clamp(rightVolts, -12, 12));
 
 	}
 
