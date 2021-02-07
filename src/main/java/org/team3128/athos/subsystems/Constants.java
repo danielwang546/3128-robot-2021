@@ -25,7 +25,7 @@ public class Constants extends RobotConstants {
 
         // ---- DRIVE
         public static final MotorType MOTOR_TYPE = MotorType.kBrushless; // indicates that we are using brushless motors
-        public static final IdleMode DRIVE_IDLE_MODE = IdleMode.kCoast;
+        public static final IdleMode DRIVE_IDLE_MODE = IdleMode.kBrake;
 
         public static final double ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION = 75 / 9; // basically your gearing. Ask
                                                                                       // Mech

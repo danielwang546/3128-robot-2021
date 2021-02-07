@@ -219,7 +219,7 @@ public class MainAthos extends NarwhalRobot {
         lm.nameControl(new Button(12), "LimitSwitch");
 
         lm.addMultiListener(() -> {
-            drive.arcadeDrive(-0.7 * RobotMath.thresh(lm.getAxis("MoveTurn"), 0.1),
+            drive.arcadeDrive(-0.5 * RobotMath.thresh(lm.getAxis("MoveTurn"), 0.1),
                     -1.0 * RobotMath.thresh(lm.getAxis("MoveForwards"), 0.1), -1.0 * lm.getAxis("Throttle"), true);
 
         }, "MoveTurn", "MoveForwards", "Throttle");
