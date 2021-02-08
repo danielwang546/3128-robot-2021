@@ -130,6 +130,7 @@ public class Constants extends RobotConstants {
         // ---- SHOOTER
         public static final int SHOOTER_MOTOR_LEFT_ID = 0;
         public static final int SHOOTER_MOTOR_RIGHT_ID = 1;
+        public static final int SHOOTER_SIDEKICK_ID = 2;
         public static final double K_SHOOTER_P = 0.0000009;
         public static final double K_SHOOTER_D = 0.00000051;
         public static final double K_SHOOTER_FF = 0.000000001; 
@@ -141,4 +142,7 @@ public class Constants extends RobotConstants {
         // --- SHOOTER TESTING
         public static final int SHOOTER_TESTING_RPM = 4500;
         public static final int FALCON_MAX_RPM = 6400;
+
+        public static final int CAN_TIMEOUT = 10; // ms
+
 }
