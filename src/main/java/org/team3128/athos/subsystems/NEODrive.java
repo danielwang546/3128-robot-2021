@@ -313,8 +313,6 @@ public class NEODrive extends Drive {
 	
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
 
-		leftVolts=leftVolts;
-		rightVolts=rightVolts;
 		//NOTE: THIS METHOD IS NEW AND KIND OF SKETCHY
 		//MAY NEED A CLAMP FOR VOLTAGE SO IT DOESNT TRY TO SEND TOO MANY
 		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
