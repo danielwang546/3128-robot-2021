@@ -170,8 +170,8 @@ public class MainTestBench extends NarwhalRobot {
         lm.addButtonDownListener("startShooter", () -> {
             zeroRPM = false;
             if (!throttleInput)
-                //shooter.setSetpoint(shooterRPM);
-                //sidekick.setSetpoint(sidekickRPM);
+                shooter.setSetpoint(shooterRPM);
+                sidekick.setSetpoint(sidekickRPM);
                 Log.info("TestBenchMain", "starting shooter");
         });
         
