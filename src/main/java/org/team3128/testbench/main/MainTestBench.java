@@ -198,9 +198,9 @@ public class MainTestBench extends NarwhalRobot {
         lm.addButtonDownListener("increaseRPM", () -> {
             if (!throttleInput) {
                 if (RPMModToggle)
-                    shooterRPM+=100;
+                    shooterRPM+=50;
                 else
-                    sidekickRPM+=100;
+                    sidekickRPM+=50;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
                 Log.info("MainTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
@@ -210,9 +210,9 @@ public class MainTestBench extends NarwhalRobot {
         lm.addButtonUpListener("decreaseRPM", () -> {
             if (!throttleInput) {
                 if (RPMModToggle)
-                    shooterRPM-=100;
+                    shooterRPM-=50;
                 else
-                    sidekickRPM-=100;
+                    sidekickRPM-=50;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
                 Log.info("MainTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
