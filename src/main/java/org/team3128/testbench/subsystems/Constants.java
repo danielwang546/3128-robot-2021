@@ -142,6 +142,7 @@ public class Constants extends RobotConstants {
 
         // --- SHOOTER TESTING
         public static final int SHOOTER_TESTING_RPM = 4500;
+        public static final int SIDEKICK_TESTING_RPM = 3000;
         public static final int FALCON_MAX_RPM = 6400;
 
         public static final int CAN_TIMEOUT = 10; // ms
