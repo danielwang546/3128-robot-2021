@@ -70,6 +70,8 @@ public class Sidekick extends PIDSubsystem {
         SIDEKICK = new LazyTalonSRX(Constants.SHOOTER_SIDEKICK_ID);
         SIDEKICK.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
                 Constants.CAN_TIMEOUT);
+        SIDEKICK.setInverted(true);
+        SIDEKICK.setSensorPhase(true);
         if (DEBUG) {
             Log.info("Shooter", "Config motors");
         }
@@ -152,7 +154,7 @@ public class Sidekick extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00188 * desiredSetpoint); //0.00147x - 0.2; // 0
+        double ff = (0.00245 * desiredSetpoint); //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

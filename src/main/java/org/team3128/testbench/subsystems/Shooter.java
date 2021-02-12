@@ -38,7 +38,6 @@ public class Shooter extends PIDSubsystem {
     public static final Shooter instance = new Shooter();
     public static LazyTalonFX LEFT_SHOOTER;
     public static LazyTalonFX RIGHT_SHOOTER;
-    public static LazyTalonSRX SIDEKICK;
 
     public static boolean DEBUG = true;
     double current = 0;
@@ -71,9 +70,6 @@ public class Shooter extends PIDSubsystem {
     private void configMotors() {
         LEFT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_LEFT_ID);
         RIGHT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_RIGHT_ID);
-        SIDEKICK = new LazyTalonSRX(Constants.SHOOTER_SIDEKICK_ID);
-        SIDEKICK.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-                Constants.CAN_TIMEOUT);
         if (DEBUG) {
             Log.info("Shooter", "Config motors");
         }
@@ -94,10 +90,6 @@ public class Shooter extends PIDSubsystem {
     public double getMeasurement() {
         //Log.info("shooter", "getting measurement");
         return LEFT_SHOOTER.getSelectedSensorVelocity(0) * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION;
-    }
-
-    public double getSidekickSpeed() {
-        return SIDEKICK.getSelectedSensorVelocity() * 10 * 60 / 4096;
     }
 
     @Override

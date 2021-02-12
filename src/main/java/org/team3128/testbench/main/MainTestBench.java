@@ -304,7 +304,7 @@ public class MainTestBench extends NarwhalRobot {
         double outRPMSidekick = sidekick.getMeasurement();
         teleopCounter++;
         if (!zeroRPM && (teleopCounter % 10) == 0) {
-            Log.info("MainTestBench", "Shooter speed: " + outRPM + " RPM\t\tSidekick speen: " + outRPMSidekick + " RPM");
+            Log.info("MainTestBench", "Shooter speed: " + outRPM + " RPM\t\tSidekick speed: " + outRPMSidekick + " RPM");
             teleopCounter = 0;
         }
     }
