@@ -46,6 +46,8 @@ public class Shooter extends PIDSubsystem {
     double accumulator = 0;
     double prevError = 0;
 
+    double value = 0, preValue = 0, time = 0, preTime = 0;
+
     int plateauCount = 0;
 
     // private StateTracker stateTracker = StateTracker.getInstance();
@@ -101,7 +103,13 @@ public class Shooter extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        prevError = error;
+        value = getMeasurement();
+        time = RobotController.getFPGATime() / 1e6;
+        
+        double accel = (value - preValue) / (time - preTime);
+        
+        preValue = value;
+        preTime = time;
 
         if ((Math.abs(error) <= Constants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
@@ -124,6 +132,9 @@ public class Shooter extends PIDSubsystem {
         if(setpoint == 0) {
             output = 0;
         }
+
+        if (accel > Constants.SHOOTER_MAX_ACCELERATION)
+            output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
 
         LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
