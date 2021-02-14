@@ -12,9 +12,9 @@ public class bounce extends SequentialCommandGroup {
         Log.info("MainAthos","2");
         addCommands(
            
-            m_robotContainer.getAutonomousCommandSlalom(mRobotDrive) 
+            //m_robotContainer.getAutonomousCommandSlalom(mRobotDrive) 
             
-            // m_robotContainer.getAutonomousCommandBarrel(mRobotDrive) 
+             m_robotContainer.getAutonomousCommandBarrel(mRobotDrive) 
            
             // m_robotContainer.getAutonomousCommandBounce1(mRobotDrive), 
             // m_robotContainer.getAutonomousCommandBounce2(mRobotDrive), 

@@ -151,17 +151,18 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0, 0, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(2.9, -0.2),
+                                new Translation2d(3.7, -0.2),
                                 new Translation2d(2.7, -1.2),
-                                new Translation2d(2.2, -0.5),
+                                new Translation2d(2, -0.5),
+                                new Translation2d(3, 0.4),
                                 new Translation2d(4.1, 0),
-                                new Translation2d(5.6, 0.6),
-                                new Translation2d(5.2, 1.5),
-                                new Translation2d(4.6, 0),
-                                new Translation2d(6.5, -1.2),
-                                new Translation2d(7.1, -0.5),
-                                new Translation2d(6.2, 0.4)),
-                                new Pose2d(-0.1, 0.5, new Rotation2d(3.14)),
+                                new Translation2d(5.8, 0.6),
+                                new Translation2d(5, 2),
+                                new Translation2d(4.4, 0),
+                                new Translation2d(7, -1.2),
+                                new Translation2d(7.7, -0.5),
+                                new Translation2d(6.7, 0.4)),
+                                new Pose2d(-1, 0.5, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -196,8 +197,8 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0, 0, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(1.1, 0.3)),
-                                new Pose2d(1.3, 1.2, new Rotation2d(1.57)),
+                                new Translation2d(1.1, 0.4)),
+                                new Pose2d(1.5, 1.5, new Rotation2d(1.57)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -230,11 +231,10 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(true);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(1.3, 1.2, new Rotation2d(1.57)),
+                                new Pose2d(1.5, 1.5, new Rotation2d(1.57)),
                                 List.of(
-                                new Translation2d(2.3, -1.2),
-                                new Translation2d(3.4, -0.9)),
-                                new Pose2d(3.5, 1.3, new Rotation2d(4.71)),
+                                new Translation2d(3, -1.5)),
+                                new Pose2d(3.8, 1.5, new Rotation2d(4.71)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -267,12 +267,12 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(false);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(3.5, 1.3, new Rotation2d(4.71)),
+                                new Pose2d(3.8, 1.5, new Rotation2d(4.71)),
                                 List.of(
-                                new Translation2d(3.7, -1),
-                                new Translation2d(4.9, -1.4),
-                                new Translation2d(5.5, -0.6)),
-                                new Pose2d(5.6, 1.2, new Rotation2d(1.57)),
+                                new Translation2d(4.5, 1.5),
+                                new Translation2d(4.5, -1.5),
+                                new Translation2d(5.2, -1.5)),
+                                new Pose2d(6, 1.5, new Rotation2d(1.57)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -305,10 +305,10 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(true);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(5.6, 1.2, new Rotation2d(1.57)),
+                                new Pose2d(6, 1.5, new Rotation2d(1.57)),
                                 List.of(
-                                new Translation2d(6.4, 0.1)),
-                                new Pose2d(7.1, 0.1, new Rotation2d(3.14)),
+                                new Translation2d(7, 0.5)),
+                                new Pose2d(7.5, 0, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
