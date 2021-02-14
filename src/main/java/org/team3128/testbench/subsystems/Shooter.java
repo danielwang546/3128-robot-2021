@@ -133,8 +133,8 @@ public class Shooter extends PIDSubsystem {
             output = 0;
         }
 
-        if (accel > Constants.SHOOTER_MAX_ACCELERATION)
-            output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
+        // if (accel > Constants.SHOOTER_MAX_ACCELERATION)
+        //     output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
 
         LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
