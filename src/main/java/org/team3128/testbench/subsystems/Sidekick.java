@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 
-public class Shooter extends PIDSubsystem {
+public class Sidekick extends PIDSubsystem {
     public static enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
@@ -35,9 +35,8 @@ public class Shooter extends PIDSubsystem {
         }
     }
 
-    public static final Shooter instance = new Shooter();
-    public static LazyTalonFX LEFT_SHOOTER;
-    public static LazyTalonFX RIGHT_SHOOTER;
+    public static final Sidekick instance = new Sidekick();
+    public static LazyTalonSRX SIDEKICK;
 
     public static boolean DEBUG = true;
     double current = 0;
@@ -46,16 +45,14 @@ public class Shooter extends PIDSubsystem {
     double accumulator = 0;
     double prevError = 0;
 
-    double value = 0, preValue = 0, time = 0, preTime = 0;
-
     int plateauCount = 0;
 
     // private StateTracker stateTracker = StateTracker.getInstance();
     public ShooterState SHOOTER_STATE = ShooterState.MID_RANGE;
 
-    private Shooter() {
+    private Sidekick() {
 
-        super(new PIDController(Constants.SHOOTER_PID.kP, Constants.SHOOTER_PID.kI, Constants.SHOOTER_PID.kD));
+        super(new PIDController(Constants.SIDEKICK_PID.kP, Constants.SIDEKICK_PID.kI, Constants.SIDEKICK_PID.kD));
         getController().setTolerance(Constants.RPM_THRESHOLD);
         //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
 
@@ -70,8 +67,11 @@ public class Shooter extends PIDSubsystem {
     }
 
     private void configMotors() {
-        LEFT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_LEFT_ID);
-        RIGHT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_RIGHT_ID);
+        SIDEKICK = new LazyTalonSRX(Constants.SHOOTER_SIDEKICK_ID);
+        SIDEKICK.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
+                Constants.CAN_TIMEOUT);
+        SIDEKICK.setInverted(true);
+        SIDEKICK.setSensorPhase(true);
         if (DEBUG) {
             Log.info("Shooter", "Config motors");
         }
@@ -84,14 +84,19 @@ public class Shooter extends PIDSubsystem {
         // }
     }
 
-    public static Shooter getInstance() {
+    public static Sidekick getInstance() {
         return instance;
     }
 
+    // @Override
+    // public double getMeasurement() {
+    //     //Log.info("shooter", "getting measurement");
+    //     return LEFT_SHOOTER.getSelectedSensorVelocity(0) * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION;
+    // }
+
     @Override
     public double getMeasurement() {
-        //Log.info("shooter", "getting measurement");
-        return LEFT_SHOOTER.getSelectedSensorVelocity(0) * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION;
+        return SIDEKICK.getSelectedSensorVelocity() * 10 * 60 / 4096;
     }
 
     @Override
@@ -103,13 +108,7 @@ public class Shooter extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        value = getMeasurement();
-        time = RobotController.getFPGATime() / 1e6;
-        
-        double accel = (value - preValue) / (time - preTime);
-        
-        preValue = value;
-        preTime = time;
+        prevError = error;
 
         if ((Math.abs(error) <= Constants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
@@ -133,11 +132,7 @@ public class Shooter extends PIDSubsystem {
             output = 0;
         }
 
-        if (accel > Constants.SHOOTER_MAX_ACCELERATION)
-            output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
-
-        LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
-        RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
+        SIDEKICK.set(ControlMode.PercentOutput, output);
     }
 
     public void setSetpoint(double passedSetpoint) {
@@ -159,7 +154,7 @@ public class Shooter extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00188 * desiredSetpoint); //0.00147x - 0.2; // 0
+        double ff = (0.00245 * desiredSetpoint); //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

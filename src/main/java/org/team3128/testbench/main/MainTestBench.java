@@ -29,6 +29,7 @@ import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.testbench.subsystems.Shooter;
+import org.team3128.testbench.subsystems.Sidekick;
 import org.team3128.common.drive.DriveSignal;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -58,14 +59,15 @@ import java.util.concurrent.*;
 
 public class MainTestBench extends NarwhalRobot {
     Shooter shooter = Shooter.getInstance();
+    Sidekick sidekick = Sidekick.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(4);
     CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
 
-    boolean joystickInput, throttleInput, zeroRPM;
+    boolean joystickInput, throttleInput, zeroRPM, RPMModToggle;
 
-    double shooterRPM;
+    double shooterRPM, sidekickRPM;
 
     public DigitalInput digitalInput;
     public DigitalInput digitalInput2;
@@ -89,6 +91,8 @@ public class MainTestBench extends NarwhalRobot {
     public int countBalls = 0;
     public int countBalls2 = 0;
 
+    public int teleopCounter = 0;
+
     @Override
     protected void constructHardware() {
 
@@ -106,10 +110,15 @@ public class MainTestBench extends NarwhalRobot {
 
         joystickInput = false;
         throttleInput = false;
+        RPMModToggle = true;
         zeroRPM = true;
         shooter.enable();
         shooter.setSetpoint(0);
+        sidekick.enable();
+        sidekick.setSetpoint(0);
         shooterRPM = Constants.SHOOTER_TESTING_RPM;
+        sidekickRPM = Constants.SIDEKICK_TESTING_RPM;
+        
     }
 
     @Override
@@ -128,7 +137,7 @@ public class MainTestBench extends NarwhalRobot {
         lm.nameControl(new Button(9), "decreaseRPM");
         lm.nameControl(new Button(11), "bigDecreaseRPM");
         lm.nameControl(new Button(12), "bigIncreaseRPM");
-        lm.nameControl(new Button(7), "toggleThrottleInput");
+        lm.nameControl(new Button(7), "toggleRPMMod");
 
         // lm.addButtonDownListener("forwardMotor", () -> {
         //     testMotor.set(ControlMode.PercentOutput, 0.5);
@@ -162,12 +171,14 @@ public class MainTestBench extends NarwhalRobot {
             zeroRPM = false;
             if (!throttleInput)
                 shooter.setSetpoint(shooterRPM);
+                sidekick.setSetpoint(sidekickRPM);
                 Log.info("TestBenchMain", "starting shooter");
         });
         
         lm.addButtonUpListener("zeroShooter", () -> {
             zeroRPM = true;
             shooter.setSetpoint(0);
+            sidekick.setSetpoint(0);
             Log.info("TestBenchMain", "Zeroing shooter");
         });
 
@@ -186,38 +197,58 @@ public class MainTestBench extends NarwhalRobot {
 
         lm.addButtonDownListener("increaseRPM", () -> {
             if (!throttleInput) {
-                shooterRPM+=100;
+                if (RPMModToggle)
+                    shooterRPM+=50;
+                else
+                    sidekickRPM+=50;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
+                Log.info("MainTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
             }
         });
 
         lm.addButtonUpListener("decreaseRPM", () -> {
             if (!throttleInput) {
-                shooterRPM-=100;
+                if (RPMModToggle)
+                    shooterRPM-=50;
+                else
+                    sidekickRPM-=50;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
+                Log.info("MainTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
             }
         });
 
         lm.addButtonDownListener("bigIncreaseRPM", () -> {
             if (!throttleInput) {
-                shooterRPM+=500;
+                if (RPMModToggle)
+                    shooterRPM+=500;
+                else
+                    sidekickRPM+=500;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
+                Log.info("MainTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
             }
         });
 
         lm.addButtonUpListener("bigDecreaseRPM", () -> {
             if (!throttleInput) {
-                shooterRPM-=500;
+                if (RPMModToggle)
+                    shooterRPM-=500;
+                else
+                    sidekickRPM-=500;
                 // shooter.setSetpoint(shooterRPM);
                 Log.info("MainTestBench", "Shooter RPM set to " + shooterRPM + " RPM");
+                Log.info("MaiTestBench", "Sidekick RPM set to " + sidekickRPM + " RPM");
             }
         });
 
-        lm.addButtonDownListener("toggleThrottleInput", () -> {
-            throttleInput = !throttleInput;
+        lm.addButtonDownListener("toggleRPMMod", () -> {
+            RPMModToggle = !RPMModToggle;
+            if (RPMModToggle)
+                Log.info("MainTestBench", "Modifying Shooter RPM");
+            else
+                Log.info("MainTestBench", "Modifying Sidekick RPM");
         });
 
         // }, "MoveTurn", "MoveForwards", "Throttle");
@@ -270,8 +301,12 @@ public class MainTestBench extends NarwhalRobot {
         // }
         //double outRPM =  testMotor.getSelectedSensorVelocity() * 10 * 60 / Constants.MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION;
         double outRPM = shooter.getMeasurement();
-        if (outRPM != 0 && !zeroRPM)
-            Log.info("MainTestBench", "Test motor speed: " + outRPM + " RPM");
+        double outRPMSidekick = sidekick.getMeasurement();
+        teleopCounter++;
+        if (!zeroRPM && (teleopCounter % 10) == 0) {
+            Log.info("MainTestBench", "Shooter speed: " + outRPM + " RPM\t\tSidekick speed: " + outRPMSidekick + " RPM");
+            teleopCounter = 0;
+        }
     }
 
     @Override
