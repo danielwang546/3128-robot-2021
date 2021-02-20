@@ -198,7 +198,7 @@ public class PathFinding {
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
                                 new Translation2d(40*0.0254, 10*0.0254)),
-                                new Pose2d(60*0.0254, 60*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(60*0.0254, 65*0.0254, new Rotation2d(1.57)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -231,11 +231,11 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(true);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(60*0.0254, 60*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(60*0.0254, 65*0.0254, new Rotation2d(1.57)),
                                 List.of(
                                 new Translation2d(90*0.0254, -30*0.0254),
                                 new Translation2d(140*0.0254, -45*0.0254)),
-                                new Pose2d(150*0.0254, 60*0.0254, new Rotation2d(4.71)),
+                                new Pose2d(150*0.0254, 95*0.0254, new Rotation2d(4.71)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -268,11 +268,11 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(false);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(150*0.0254, 60*0.0254, new Rotation2d(4.71)),
+                                new Pose2d(150*0.0254, 95*0.0254, new Rotation2d(4.71)),
                                 List.of(
-                                new Translation2d(180*0.0254, -60*0.0254),
-                                new Translation2d(220*0.0254, -60*0.0254)),
-                                new Pose2d(240*0.0254, 60*0.0254, new Rotation2d(1.57)),
+                                new Translation2d(150*0.0254, 5*0.0254),
+                                new Translation2d(220*0.0254, 5*0.0254)),
+                                new Pose2d(240*0.0254, 125*0.0254, new Rotation2d(1.57)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -305,10 +305,10 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(true);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(240*0.0254, 60*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(240*0.0254, 125*0.0254, new Rotation2d(1.57)),
                                 List.of(
-                                new Translation2d(270*0.0254, 0*0.0254)),
-                                new Pose2d(300*0.0254, 0*0.0254, new Rotation2d(3.14)),
+                                new Translation2d(270*0.0254, 100*0.0254)),
+                                new Pose2d(300*0.0254, 100*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -324,6 +324,44 @@ public class PathFinding {
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
     }
     
+    public Command getAutonomousCommandRedA(NEODrive m_robotDrive) {
+        Log.info("MainAthos","3");
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.ksVolts,
+                        Constants.kvVoltSecondsPerMeter,
+                        Constants.kaVoltSecondsSquaredPerMeter),
+                Constants.kDriveKinematics, 7);
+        //String trajectoryJSON = trajPath;
+        TrajectoryConfig config = new TrajectoryConfig(Constants.maxVelocity,
+        Constants.maxAcceleration)
+                        // Add kinematics to ensure max speed is actually obeyed
+                        .setKinematics(Constants.kDriveKinematics)
+                        // Apply the voltage constraint
+                        .addConstraint(autoVoltageConstraint).setReversed(false);
+        
+                        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
+                                List.of(
+                                new Translation2d(60*0.0254, 30*0.0254),
+                                new Translation2d(120*0.0254, 0*0.0254),
+                                new Translation2d(150*0.0254, 90*0.0254)                                                            
+                                ),
+                                new Pose2d(330*0.0254, 30*0.0254, new Rotation2d(0)),
+                                config);
+
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.ksVolts,
+                        Constants.kvVoltSecondsPerMeter,
+                        Constants.kaVoltSecondsSquaredPerMeter),
+                Constants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, (Subsystem) m_robotDrive);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
 
 
 
