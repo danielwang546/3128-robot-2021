@@ -16,10 +16,14 @@ public class bounce extends SequentialCommandGroup {
             
          //   m_robotContainer.getAutonomousCommandBarrel(mRobotDrive) 
            
-            m_robotContainer.getAutonomousCommandBounce1(mRobotDrive), 
-            m_robotContainer.getAutonomousCommandBounce2(mRobotDrive), 
-            m_robotContainer.getAutonomousCommandBounce3(mRobotDrive), 
-            m_robotContainer.getAutonomousCommandBounce4(mRobotDrive) 
+            // m_robotContainer.getAutonomousCommandBounce1(mRobotDrive), 
+            // m_robotContainer.getAutonomousCommandBounce2(mRobotDrive), 
+            // m_robotContainer.getAutonomousCommandBounce3(mRobotDrive), 
+            // m_robotContainer.getAutonomousCommandBounce4(mRobotDrive) 
+            // m_robotContainer.getAutonomousCommandRedA(mRobotDrive),
+            // m_robotContainer.getAutonomousCommandRedB(mRobotDrive) 
+            // m_robotContainer.getAutonomousCommandBlueA(mRobotDrive) 
+            m_robotContainer.getAutonomousCommandBlueB(mRobotDrive) 
         
         
         
