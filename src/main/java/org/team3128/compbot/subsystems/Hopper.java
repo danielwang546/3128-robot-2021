@@ -5,6 +5,7 @@ import org.team3128.compbot.subsystems.Arm.ArmState;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyVictorSPX;
 
@@ -19,12 +20,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.team3128.common.game_elements.Ball;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+
 import edu.wpi.first.wpilibj.Timer;
 
 
 
-public class Hopper implements Subsystem {
+public class Hopper extends Threaded {
 
     public enum ActionState {
         STANDBY, INTAKING, SHOOTING, ORGANIZING, EJECTING, RUNNING;
@@ -89,7 +90,7 @@ public class Hopper implements Subsystem {
     }
 
     @Override
-    public void periodic() {
+    public void update() {
         hopper_update_count++;
 
         SENSOR_0_STATE = detectsBall0();

@@ -20,13 +20,9 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.drive.AutoDriveSignal;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import java.util.Set;
-import java.util.HashSet;
+import edu.wpi.first.wpilibj.command.Command;
 
-
-public class CmdHorizontalOffsetFeedbackDrive implements Command {
+public class CmdHorizontalOffsetFeedbackDrive extends Command {
     NEODrive drive;
     Gyro gyro;
 
@@ -34,8 +30,6 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
 
     Limelight txLimelight;
     Limelight distanceLimelight;
-
-    Set<Subsystem> requirements;
 
     // private final double FEED_FORWARD_POWER = 0.55;
     // private final double MINIMUM_POWER = 0.1;
@@ -89,9 +83,6 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
         this.distanceLimelight = distanceLimelight;
         this.visionPID = visionPID;
 
-        this.requirements = new HashSet<Subsystem>();
-        this.requirements.add(NEODrive.getInstance());
-
         this.cmdRunning = cmdRunning;
 
         this.goalHorizontalOffset = goalHorizontalOffset;
@@ -108,12 +99,7 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
     }
 
     @Override
-    public Set<Subsystem> getRequirements() {
-        return requirements;
-    }
-
-    @Override
-    public void initialize() {
+    protected void initialize() {
         drive = NEODrive.getInstance();
         dcu = DriveCalibrationUtility.getInstance();
 
@@ -126,7 +112,7 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         switch (aimState) {
         case SEARCHING:
             NarwhalDashboard.put("align_status", "searching");
@@ -234,7 +220,7 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
     }
 
     @Override
-    public boolean isFinished() {
+    protected boolean isFinished() {
         if (aimState == HorizontalOffsetFeedbackDriveState.BLIND) {
             leftVel = Math.abs(drive.getLeftSpeed());
             rightVel = Math.abs(drive.getRightSpeed());
@@ -253,7 +239,7 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
+    protected void end() {
         drive.stopMovement();
         if (isLowHatch) {
             distanceLimelight.setStreamMode(StreamMode.DRIVER_CAMERA);
@@ -268,18 +254,19 @@ public class CmdHorizontalOffsetFeedbackDrive implements Command {
         Log.info("CmdAutoAim", "Command Finished.");
     }
 
-    // protected void interrupted() {
-    //     drive.stopMovement();
-    //     if (isLowHatch) {
-    //         distanceLimelight.setStreamMode(StreamMode.DRIVER_CAMERA);
-    //     }
-    //     txLimelight.setLEDMode(LEDMode.OFF);
-    //     distanceLimelight.setLEDMode(LEDMode.OFF);
+    @Override
+    protected void interrupted() {
+        drive.stopMovement();
+        if (isLowHatch) {
+            distanceLimelight.setStreamMode(StreamMode.DRIVER_CAMERA);
+        }
+        txLimelight.setLEDMode(LEDMode.OFF);
+        distanceLimelight.setLEDMode(LEDMode.OFF);
 
-    //     NarwhalDashboard.put("align_status", "blind");
+        NarwhalDashboard.put("align_status", "blind");
 
-    //     cmdRunning.isRunning = false;
+        cmdRunning.isRunning = false;
 
-    //     Log.info("CmdAutoAim", "Command Finished.");
-    // }
+        Log.info("CmdAutoAim", "Command Finished.");
+    }
 }

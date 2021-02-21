@@ -20,13 +20,9 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.drive.AutoDriveSignal;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj.command.Command;
 
-import java.util.Set;
-import java.util.HashSet;
-
-public class CmdBallPursuit implements Command {
+public class CmdBallPursuit extends Command {
     NEODrive drive;
     Gyro gyro;
 
@@ -67,8 +63,6 @@ public class CmdBallPursuit implements Command {
 
     private boolean isLowHatch;
 
-    private Set<Subsystem> requirements;
-
     int targetFoundCount;
     int plateauReachedCount;
 
@@ -98,17 +92,10 @@ public class CmdBallPursuit implements Command {
 
         this.blindPID = blindPID;
         this.blindThreshold = blindThreshold;
-
-        this.requirements = new HashSet<Subsystem>();
     }
 
     @Override
-    public Set<Subsystem> getRequirements() {
-        return requirements;
-    }
-
-    @Override
-    public void initialize() {
+    protected void initialize() {
         drive = NEODrive.getInstance();
         dcu = DriveCalibrationUtility.getInstance();
 
@@ -119,7 +106,7 @@ public class CmdBallPursuit implements Command {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         switch (aimState) {
         case SEARCHING:
             NarwhalDashboard.put("align_status", "searching");
@@ -227,7 +214,7 @@ public class CmdBallPursuit implements Command {
     }
 
     @Override
-    public boolean isFinished() {
+    protected boolean isFinished() {
         if (aimState == HorizontalOffsetFeedbackDriveState.BLIND) {
             leftVel = Math.abs(drive.getLeftSpeed());
             rightVel = Math.abs(drive.getRightSpeed());
@@ -246,9 +233,20 @@ public class CmdBallPursuit implements Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
+    protected void end() {
         drive.stopMovement();
         
+        NarwhalDashboard.put("align_status", "blind");
+
+        cmdRunning.isRunning = false;
+
+        Log.info("CmdAutoAim", "Command Finished.");
+    }
+
+    @Override
+    protected void interrupted() {
+        drive.stopMovement();
+      
         NarwhalDashboard.put("align_status", "blind");
 
         cmdRunning.isRunning = false;

@@ -4,6 +4,7 @@
 package org.team3128.compbot.subsystems;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.control.RateLimiter;
 import org.team3128.common.control.AsynchronousPid;
 import org.team3128.common.control.motion.RamseteController;
@@ -316,7 +317,7 @@ public class FalconDrive extends Drive {
 	}
 
 	@Override
-	public void periodic() {
+	public void update() {
 		// velocityController();
 		DriveState snapDriveState;
 		synchronized (this) {

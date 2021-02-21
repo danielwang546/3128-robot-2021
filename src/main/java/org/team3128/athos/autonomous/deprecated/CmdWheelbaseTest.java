@@ -6,9 +6,9 @@ import org.team3128.common.drive.SRXTankDrive;
 import org.team3128.common.utility.Log;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class CmdWheelbaseTest extends SequentialCommandGroup {
+public class CmdWheelbaseTest extends CommandGroup {
     public CmdWheelbaseTest(AHRS ahrs) {
         SRXTankDrive drive = SRXTankDrive.getInstance();
 
@@ -42,7 +42,7 @@ public class CmdWheelbaseTest extends SequentialCommandGroup {
             int leftPos = drive.getLeftMotors().getSelectedSensorPosition();
             int rightPos = drive.getRightMotors().getSelectedSensorPosition();
             double theta = Double.valueOf(ahrs.getYaw());
-            addCommands(drive.new CmdArcTurn(large_turn_radius, angle, Direction.LEFT, 1, 10000).withTimeout(10));
+            addSequential(drive.new CmdArcTurn(large_turn_radius, angle, Direction.LEFT, 1, 10000));
             theta = ahrs.getYaw() - theta;
             theta = theta * (Math.PI / 180);
             leftPos = drive.getLeftMotors().getSelectedSensorPosition() - leftPos;

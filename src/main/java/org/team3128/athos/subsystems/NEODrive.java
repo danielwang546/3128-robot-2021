@@ -4,6 +4,7 @@
 package org.team3128.athos.subsystems;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.control.RateLimiter;
 import org.team3128.common.control.AsynchronousPid;
 import org.team3128.common.control.motion.RamseteController;
@@ -308,8 +309,7 @@ public class NEODrive extends Drive {
 	}
 
 
-	@Override
-	public void periodic() {
+	@Override public void update() {
 		// System.out.println("L speed " + getLeftSpeed() + " position x " +
 		// RobotTracker.getInstance().getOdometry().translationMat.getX());
 		// System.out.println("R speed " + getRightSpeed() + " position y " +

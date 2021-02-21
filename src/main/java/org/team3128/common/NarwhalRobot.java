@@ -19,7 +19,7 @@ import edu.wpi.first.hal.NotifierJNI;
 
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 
@@ -255,7 +255,7 @@ public abstract class NarwhalRobot extends RobotBase {
                 disabledInit();
                 m_watchdog.addEpoch("disabledInit()");
 
-                CommandScheduler.getInstance().cancelAll();
+                Scheduler.getInstance().removeAll();
 
                 if (m_lastMode == Mode.kAutonomous) {
                     Log.info("NarwhalRobot", "Re-constructing autonomous sequences");
@@ -294,7 +294,7 @@ public abstract class NarwhalRobot extends RobotBase {
             }
 
             HAL.observeUserProgramAutonomous();
-            CommandScheduler.getInstance().run();
+            Scheduler.getInstance().run();
 
             // Listener managers should ONLY be ticked in the 2019 game, DESTINATION: DEEP
             // SPACE
@@ -310,7 +310,7 @@ public abstract class NarwhalRobot extends RobotBase {
                 LiveWindow.setEnabled(false);
                 Shuffleboard.disableActuatorWidgets();
 
-                CommandScheduler.getInstance().cancelAll();
+                Scheduler.getInstance().removeAll();
 
                 zeroOutListeners();
                 teleopInit();
@@ -321,7 +321,8 @@ public abstract class NarwhalRobot extends RobotBase {
             }
 
             HAL.observeUserProgramTeleop();
-            CommandScheduler.getInstance().run();
+            Scheduler.getInstance().run();
+
             tickListenerManagers();
             teleopPeriodic();
 
@@ -389,7 +390,7 @@ public abstract class NarwhalRobot extends RobotBase {
 
     private void setupAutoChooser() {
         Log.info("NarwhalRobot", "Setting Up Autonomous Chooser...");
-        CommandScheduler.getInstance().cancelAll();
+        Scheduler.getInstance().removeAll(); // get rid of any paused commands
 
         NarwhalDashboard.clearAutos();
         constructAutoPrograms();

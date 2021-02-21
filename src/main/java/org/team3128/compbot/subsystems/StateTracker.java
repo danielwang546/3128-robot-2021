@@ -1,5 +1,6 @@
 package org.team3128.compbot.subsystems;
 
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.utility.Log;
 import org.team3128.compbot.subsystems.Arm.ArmState;
 import org.team3128.compbot.subsystems.Shooter.ShooterState;
