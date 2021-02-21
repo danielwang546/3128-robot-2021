@@ -29,8 +29,13 @@ import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.command.Command;
+//import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Class which represents a tank drive powered by Talon SRXs on a robot.
@@ -100,6 +105,11 @@ public class SRXTankDrive implements ITankDrive {
 	 * Speed scalar for the left and right wheels. Affects autonomous and teleop.
 	 */
 	private double leftSpeedScalar, rightSpeedScalar;
+
+	/**
+	 * Empty list of requirements to return for all commands
+	 */
+	private Set<Subsystem> requirements;
 
 	private enum DriveMode {
 		TELEOP(NeutralMode.Coast), AUTONOMOUS(NeutralMode.Brake);
@@ -496,7 +506,7 @@ public class SRXTankDrive implements ITankDrive {
 	 *
 	 * Common logic shared by all of the autonomous movement commands
 	 */
-	public class CmdMotionMagicMove extends Command {
+	public class CmdMotionMagicMove implements Command {
 		final static double MOVEMENT_ERROR_THRESHOLD = 360 * Angle.DEGREES;
 		final static double ERROR_PLATEAU_THRESHOLD = 0.01 * Angle.DEGREES;
 
@@ -528,7 +538,7 @@ public class SRXTankDrive implements ITankDrive {
 		 */
 		public CmdMotionMagicMove(MoveEndMode endMode, double leftAngle, double rightAngle, double power,
 				boolean useScalars, double timeoutMs) {
-			super(timeoutMs / 1000.0);
+			//super(timeoutMs / 1000.0);
 
 			this.power = power;
 			this.leftAngle = leftAngle;
@@ -538,7 +548,13 @@ public class SRXTankDrive implements ITankDrive {
 			this.useScalars = useScalars;
 		}
 
-		protected void initialize() {
+		@Override
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			Log.info("CmdMotionMagicMove", "Initializing...");
 
 			clearEncoders();
@@ -625,11 +641,12 @@ public class SRXTankDrive implements ITankDrive {
 
 		// Make this return true when this Command no longer needs to run
 		// execute()
-		protected boolean isFinished() {
-			if (isTimedOut()) {
-				Log.unusual("CmdMotionMagicMove", "Autonomous Move Overtime.");
-				return true;
-			}
+		@Override
+		public boolean isFinished() {
+			// if (isTimedOut()) {
+			// 	Log.unusual("CmdMotionMagicMove", "Autonomous Move Overtime.");
+			// 	return true;
+			// }
 
 			leftError = leftMotors.getSelectedSensorPosition(0) * Angle.CTRE_MAGENC_NU - leftAngle;
 			rightError = rightMotors.getSelectedSensorPosition(0) * Angle.CTRE_MAGENC_NU - rightAngle;
@@ -675,7 +692,8 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		// Called once after isFinished returns true
-		protected void end() {
+		@Override
+		public void end(boolean interrupted) {
 			Log.info("CmdMotionMagicMove", "Ending normally.");
 			Log.debug("CmdMotionMagicMove",
 					"Final Errors:\n" + "  L=" + leftError + "deg\n" + "  R=" + rightError + "deg");
@@ -773,14 +791,20 @@ public class SRXTankDrive implements ITankDrive {
 		}
 	}
 
-	public abstract class CmdMotionProfileMove extends Command {
+	public abstract class CmdMotionProfileMove implements Command {
 		public CmdMotionProfileMove(double timeoutMs) {
-			super(timeoutMs / 1000.0);
+			//super(timeoutMs / 1000.0);
 
 			configureDriveMode(DriveMode.AUTONOMOUS);
 		}
 
-		protected void initialize() {
+		@Override
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			leftMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
 			rightMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
 
@@ -795,15 +819,14 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void execute() {
+		public void execute() {
 		}
 
 		@Override
-		protected boolean isFinished() {
-			return this.isTimedOut();
+		public boolean isFinished() {
+			return false; //this.isTimedOut();
 		}
 
-		@Override
 		public void interrupted() {
 			leftMotors.clearMotionProfileTrajectories();
 			rightMotors.clearMotionProfileTrajectories();
@@ -812,7 +835,7 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			leftMotors.clearMotionProfileTrajectories();
 			rightMotors.clearMotionProfileTrajectories();
 
@@ -912,12 +935,12 @@ public class SRXTankDrive implements ITankDrive {
 	 * 
 	 * processNotifier.close(); Log.info("CmdStaticRouteDrive", "Finished."); } }
 	 */
-	public class CmdDriveUntilStop extends Command {
+	public class CmdDriveUntilStop implements Command {
 		double power;
 		double timeout;
 
 		public CmdDriveUntilStop(double power, int timeoutMs) {
-			super(timeoutMs / 1000.0);
+			//super(timeoutMs / 1000.0);
 
 			timeout = timeoutMs / 1000.0;
 
@@ -925,7 +948,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void initialize() {
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			tankDrive(power, power, true);
 
 			try {
@@ -936,31 +964,31 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected boolean isFinished() {
-			if (timeSinceInitialized() < 0.5 * timeout)
-				return false;
+		public boolean isFinished() {
+			// if (timeSinceInitialized() < 0.5 * timeout)
+			// 	return false;
 
-			// return Math.abs(leftMotors.getSelectedSensorVelocity()) < 200
-			// && Math.abs(rightMotors.getSelectedSensorVelocity()) < 200 ||
-			return isTimedOut();
+			// // return Math.abs(leftMotors.getSelectedSensorVelocity()) < 200
+			// // && Math.abs(rightMotors.getSelectedSensorVelocity()) < 200 ||
+			// return isTimedOut();
+			return false;
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			stopMovement();
 
-			if (isTimedOut()) {
-				Log.unusual("CmdDriveUntilStopped", "Timed out.");
-			}
+			// if (isTimedOut()) {
+			// 	Log.unusual("CmdDriveUntilStopped", "Timed out.");
+			// }
 		}
 
-		@Override
 		protected void interrupted() {
-			end();
+			end(true);
 		}
 	}
 
-	public class CmdPleaseWorkTurn extends Command {
+	public class CmdPleaseWorkTurn implements Command {
 		Gyro gyro;
 
 		double angle;
@@ -982,7 +1010,7 @@ public class SRXTankDrive implements ITankDrive {
 
 		public CmdPleaseWorkTurn(Gyro gyro, double angle, double radius, Direction direction, double power,
 				PIDConstants innerPID, PIDConstants outerPID, int timeoutMs) {
-			super(timeoutMs / 1000.0);
+			//super(timeoutMs / 1000.0);
 
 			this.radius = ((direction == Direction.LEFT) ? 1 : -1) * radius;
 			this.power = power;
@@ -1004,7 +1032,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void initialize() {
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			vOuterCruise = power * robotMaxSpeed;
 
 			wCruise = vOuterCruise * wheelCircumfrence * 10 / 4096 / radius;
@@ -1016,23 +1049,23 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected boolean isFinished() {
+		public boolean isFinished() {
 			outerMotors.set(ControlMode.PercentOutput, outerPID.kP * outerMotors.getSelectedSensorVelocity());
 			innerMotors.set(ControlMode.PercentOutput, innerPID.kP * (wCruise - Math.toRadians(gyro.getRate())));
 
 			lastUpdateTime = RobotController.getFPGATime();
 
-			return gyro.getAngle() > angle || isTimedOut();
+			return gyro.getAngle() > angle;// || isTimedOut();
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			stopMovement();
 		}
 
 	}
 
-	public class CmdTargetAlignSimple extends Command {
+	public class CmdTargetAlignSimple implements Command {
 		Gyro gyro;
 
 		PIDConstants offsetPID;
@@ -1064,7 +1097,7 @@ public class SRXTankDrive implements ITankDrive {
 		 */
 		public CmdTargetAlignSimple(Gyro gyro, Limelight limelight, double feedForwardPower, PIDConstants offsetPID,
 				int timeoutMs) {
-			super(timeoutMs / 1000.0);
+			//super(timeoutMs / 1000.0);
 
 			this.feedForwardPower = feedForwardPower;
 
@@ -1075,7 +1108,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void initialize() {
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			rightMotors.set(ControlMode.PercentOutput, feedForwardPower);
 			leftMotors.set(ControlMode.PercentOutput, feedForwardPower);
 
@@ -1088,7 +1126,7 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected boolean isFinished() {
+		public boolean isFinished() {
 			data = limelight.getValues(5);
 
 			/**
@@ -1150,23 +1188,22 @@ public class SRXTankDrive implements ITankDrive {
 			}
 
 			// debug
-			if (isTimedOut()) {
-				Log.info("CmdTargetAlignSimple", "Timed out.");
-			}
+			// if (isTimedOut()) {
+			// 	Log.info("CmdTargetAlignSimple", "Timed out.");
+			// }
 			if (data.tx() == 0) {
 				Log.info("CmdTargetAlignSimple", "tx = 0");
 			}
 
-			return isTimedOut();
+			return false; //isTimedOut()
 		}
 
-		@Override
 		protected void interrupted() {
-			end();
+			end(true);
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			stopMovement();
 		}
 
@@ -1277,7 +1314,7 @@ public class SRXTankDrive implements ITankDrive {
 	 * difference, while a tank drive with pneumatic wheels will have a very large
 	 * difference.
 	 */
-	public class CmdCalculateWheelbase extends Command {
+	public class CmdCalculateWheelbase implements Command {
 		private final double VELOCITY_PLATEAU_RANGE = 25;// 2;
 		double leftPower, rightPower;
 
@@ -1301,7 +1338,7 @@ public class SRXTankDrive implements ITankDrive {
 		 */
 		public CmdCalculateWheelbase(WheelbaseSet wheelbaseSet, double leftPower, double rightPower, Gyro gyro,
 				double durationMs) {
-			super(durationMs / 1000.0);
+			//super(durationMs / 1000.0);
 
 			this.wheelbaseSet = wheelbaseSet;
 
@@ -1312,7 +1349,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void initialize() {
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			// might need to account for voltage:
 			// voltage = RobotController.getBatteryVoltage();
 			tankDrive(leftPower, rightPower);
@@ -1368,7 +1410,7 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void execute() {
+		public void execute() {
 			// radiusSum = 0;
 			try {
 				Thread.sleep(20);
@@ -1405,12 +1447,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected boolean isFinished() {
-			return isTimedOut();
+		public boolean isFinished() {
+			return false;//isTimedOut();
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			stopMovement();
 			double avgWheelbase = wheelbaseSum / inRangeCount;
 			double avgRadius = radiusSum / inRangeCount;
@@ -1476,7 +1518,7 @@ public class SRXTankDrive implements ITankDrive {
 		}
 	}
 
-	public class CmdGetFeedForwardPowerMultiplier extends Command {
+	public class CmdGetFeedForwardPowerMultiplier implements Command {
 		private final double VELOCITY_PLATEAU_RANGE = 2;
 
 		double leftPower, rightPower;
@@ -1500,7 +1542,7 @@ public class SRXTankDrive implements ITankDrive {
 
 		public CmdGetFeedForwardPowerMultiplier(FeedForwardPowerMultiplierSet feedForwardPowerMultiplierSet, Gyro gyro,
 				double leftPower, double rightPower, int durationMs) {
-			super(durationMs / 1000.0);
+			//super(durationMs / 1000.0);
 
 			this.feedForwardPowerMultiplierSet = feedForwardPowerMultiplierSet;
 
@@ -1511,7 +1553,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void initialize() {
+		public Set<Subsystem> getRequirements() {
+			return requirements;
+		}
+
+		@Override
+		public void initialize() {
 			voltage = RobotController.getBatteryVoltage();
 			tankDrive(leftPower, rightPower);
 
@@ -1558,7 +1605,7 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected void execute() {
+		public void execute() {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
@@ -1591,12 +1638,12 @@ public class SRXTankDrive implements ITankDrive {
 		}
 
 		@Override
-		protected boolean isFinished() {
-			return isTimedOut();
+		public boolean isFinished() {
+			return false;//isTimedOut();
 		}
 
 		@Override
-		protected void end() {
+		public void end(boolean interrupted) {
 			stopMovement();
 
 			double avgAngularVelocity = angularVelocitySum / inRangeCount;

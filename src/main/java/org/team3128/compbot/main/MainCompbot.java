@@ -63,11 +63,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-import org.team3128.common.generics.ThreadScheduler;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class MainCompbot extends NarwhalRobot {
 
-    public Command triggerCommand;
+    public CmdAlignShoot triggerCommand;
     public Command armFFCommand;
     public Command shooterFFCommand;
     public Command ejectBallsCommand;
@@ -84,7 +84,7 @@ public class MainCompbot extends NarwhalRobot {
     // RobotTracker robotTracker = RobotTracker.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(6);
-    ThreadScheduler scheduler = new ThreadScheduler();
+    CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
 
     public Joystick joystickRight, joystickLeft;
@@ -155,12 +155,6 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void constructHardware() {
-        scheduler.schedule(drive, executor);
-        scheduler.schedule(hopper, executor);
-        scheduler.schedule(shooter, executor);
-        scheduler.schedule(arm, executor);
-        //scheduler.schedule(robotTracker, executor);
-
         driveCmdRunning = new DriveCommandRunning();
 
         ahrs = drive.ahrs;
@@ -288,7 +282,8 @@ public class MainCompbot extends NarwhalRobot {
         listenerRight.addButtonDownListener("AlignShoot", () -> {
             triggerCommand = new CmdAlignShoot(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning,
                     Constants.VisionConstants.TX_OFFSET, 5);
-            triggerCommand.start();
+            //triggerCommand.start();
+            scheduler.schedule(triggerCommand);
             Log.info("MainCompbot.java", "[Vision Alignment] Started");
         });
         listenerRight.addButtonUpListener("AlignShoot", () -> {
@@ -449,7 +444,6 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void teleopPeriodic() {
-        scheduler.resume();
     }
 
     double maxLeftSpeed = 0;
@@ -478,7 +472,7 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void updateDashboard() {
-        SmartDashboard.putString("Arm Angle", String.valueOf(arm.getAngle()));
+        SmartDashboard.putString("Arm Angle", String.valueOf(arm.getMeasurement()));
         NarwhalDashboard.put("time", DriverStation.getInstance().getMatchTime());
         NarwhalDashboard.put("voltage", RobotController.getBatteryVoltage());
         NarwhalDashboard.put("ball_count", hopper.getBallCount());
@@ -573,7 +567,6 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
-        scheduler.resume();
         shooterLimelight.setLEDMode(LEDMode.OFF);
         arm.ARM_MOTOR_LEADER.setNeutralMode(Constants.ArmConstants.ARM_NEUTRAL_MODE);
         arm.ARM_MOTOR_FOLLOWER.setNeutralMode(Constants.ArmConstants.ARM_NEUTRAL_MODE);
@@ -584,11 +577,10 @@ public class MainCompbot extends NarwhalRobot {
 
     @Override
     protected void autonomousInit() {
-        scheduler.resume();
         hopper.setAction(ActionState.STANDBY);
         drive.resetGyro();
-        Command auto = new AutoSimple(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning, 10000, scheduler);
-        auto.start();
+        AutoSimple auto = new AutoSimple(drive, shooter, arm, hopper, ahrs, shooterLimelight, driveCmdRunning, 10000);
+        scheduler.schedule(auto);
     }
 
     @Override

@@ -6,14 +6,17 @@ import org.team3128.common.utility.test_suite.CanDevices;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
+import org.team3128.compbot.subsystems.Constants;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
-public class Shooter extends Threaded {
+
+public class Shooter extends PIDSubsystem {
     public static enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
@@ -33,7 +36,6 @@ public class Shooter extends Threaded {
     public static CANEncoder SHOOTER_ENCODER;
 
     public static boolean DEBUG = true;
-    public static double setpoint = 0; // rotations per minute
     double current = 0;
     double error = 0;
     public double output = 0;
@@ -46,9 +48,19 @@ public class Shooter extends Threaded {
     public ShooterState SHOOTER_STATE = ShooterState.MID_RANGE;
 
     private Shooter() {
+
+        super(new PIDController(Constants.ShooterConstants.SHOOTER_PID.kP, Constants.ShooterConstants.SHOOTER_PID.kI, Constants.ShooterConstants.SHOOTER_PID.kD));
+        getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD);
+        //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+
+
         configMotors();
         configEncoders();
         setSetpoint(0);
+    }
+
+    public boolean atSetpoint() {
+        return m_controller.atSetpoint();
     }
 
     private void configMotors() {
@@ -70,41 +82,17 @@ public class Shooter extends Threaded {
         return instance;
     }
 
-    public static double getRPM() {
+    @Override
+    public double getMeasurement() {
         return Constants.ShooterConstants.SHOOTER_GEARING * SHOOTER_ENCODER.getVelocity();
     }
 
-    public void setSetpoint(double passedSetpoint) {
-        plateauCount = 0;
-        setpoint = passedSetpoint;
-        //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
-    }
-
-    public void setState(ShooterState shooterState) {
-        SHOOTER_STATE = shooterState;
-        setSetpoint(shooterState.shooterRPM);
-    }
-
     @Override
-    public void update() {
-        current = getRPM();
-        // Log.info("Shooter", "Shooter RPM is " + String.valueOf(current));
-        error = setpoint - current;
-        accumulator += error * Constants.MechanismConstants.DT;
-        if (accumulator > Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT) {
-            accumulator = Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT;
-        } else if (accumulator < -Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT) {
-            accumulator = -Constants.ShooterConstants.SHOOTER_SATURATION_LIMIT;
-        }
-        double kP_term = Constants.ShooterConstants.SHOOTER_PID.kP * error;
-        double kI_term = Constants.ShooterConstants.SHOOTER_PID.kI * accumulator;
-        double kD_term = Constants.ShooterConstants.SHOOTER_PID.kD * (error - prevError)
-                / Constants.MechanismConstants.DT;
-
-        double voltage_output = shooterFeedForward(setpoint) + kP_term + kI_term + kD_term;
+    public void useOutput(double output, double setpoint) {
+        double voltageOutput = shooterFeedForward(setpoint) + output;
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
-        output = voltage_output / voltage;
+        output = voltageOutput / voltage;
 
         prevError = error;
 
@@ -134,10 +122,26 @@ public class Shooter extends Threaded {
         RIGHT_SHOOTER.set(-output);
     }
 
+    public void setSetpoint(double passedSetpoint) {
+        plateauCount = 0;
+        super.setSetpoint(passedSetpoint);
+        //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
+    }
+
+    public void setState(ShooterState shooterState) {
+        SHOOTER_STATE = shooterState;
+        setSetpoint(shooterState.shooterRPM);
+    }
+
+    // @Override
+    // public void periodic() {
+       
+    // }
+
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
         double ff = (0.00147 * desiredSetpoint)  - 0.2; // 0
-        if (setpoint != 0) {
+        if (getSetpoint() != 0) {
             return ff;
         } else {
             return 0;

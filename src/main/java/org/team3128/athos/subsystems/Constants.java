@@ -35,12 +35,12 @@ public class Constants extends RobotConstants {
         public static final double WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION = 1
                         / Constants.ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION;
 
-        public static final int RIGHT_DRIVE_FRONT_ID = 1;
-        public static final int RIGHT_DRIVE_MIDDLE_ID = 2;
+        public static final int RIGHT_DRIVE_FRONT_ID = 3;
+        public static final int RIGHT_DRIVE_MIDDLE_ID = 5;
         public static final int RIGHT_DRIVE_BACK_ID = 5;
 
-        public static final int LEFT_DRIVE_FRONT_ID = 3;
-        public static final int LEFT_DRIVE_MIDDLE_ID = 4;
+        public static final int LEFT_DRIVE_FRONT_ID = 1;
+        public static final int LEFT_DRIVE_MIDDLE_ID = 2;
         public static final int LEFT_DRIVE_BACK_ID = 6;
 
         public static final double TEST_SUITE_DRIVE_VELOCITY = 20; //power

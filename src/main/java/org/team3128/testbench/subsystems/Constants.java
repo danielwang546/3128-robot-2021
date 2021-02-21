@@ -1,6 +1,7 @@
 package org.team3128.testbench.subsystems;
 
 import org.team3128.common.utility.units.Length;
+import org.team3128.common.utility.datatypes.PIDConstants;
 import org.team3128.common.utility.units.Angle;
 
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -21,7 +22,27 @@ public class Constants extends RobotConstants {
         // (relation between encoder rotations and wheel
         // rotations) = in/s
 
+        public static class MechanismConstants {
+                public static final double ENCODER_RESOLUTION_PER_ROTATION = 2048;
+                public static final double inchesToMeters = 0.0254;
+                public static final double DT = 0.005; // time between update() method calls for mechanisms
+        }
+
         // ---- DRIVE
+
+        public static class DriveConstants {
+                public static final double kDriveInchesPerSecPerNUp100ms = (1000d / 1)
+                                * (1 / MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION)
+                                * (Constants.DriveConstants.WHEEL_DIAMETER * Math.PI)
+                                * Constants.DriveConstants.WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION / 100;
+                
+                public static final double WHEEL_DIAMETER = 3.55;
+                public static final double ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION = 72 / 8; // basically your gearing. Ask Mech for gear teeth number to gear teeth number ratio: 8.3333333
+
+                public static final double WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION = 1
+                                / Constants.DriveConstants.ENCODER_ROTATIONS_FOR_ONE_WHEEL_ROTATION;
+        }
+
         public static final MotorType MOTOR_TYPE = MotorType.kBrushless; // indicates that we are using brushless motors
         public static final IdleMode DRIVE_IDLE_MODE = IdleMode.kBrake;
 
@@ -107,10 +128,24 @@ public class Constants extends RobotConstants {
         public static final double BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT = 0 * Length.in;
 
         // ---- SHOOTER
-        public static final int SHOOTER_MOTOR_LEFT_ID = 5;
-        public static final int SHOOTER_MOTOR_RIGHT_ID = 11;
+        public static final int SHOOTER_MOTOR_LEFT_ID = 1;
+        public static final int SHOOTER_MOTOR_RIGHT_ID = 0;
+        public static final int SHOOTER_SIDEKICK_ID = 2;
         public static final double K_SHOOTER_P = 0.0000009;
         public static final double K_SHOOTER_D = 0.00000051;
         public static final double K_SHOOTER_FF = 0.000000001; 
+        public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 0.000045, 0, 2.25e-4);//0,0.000007,0,0
+        public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0.000065, 0, 0);
+        public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
+        public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and the setpoint for a data point to be considered as a plataeu
+        public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
+
+        // --- SHOOTER TESTING
+        public static final int SHOOTER_TESTING_RPM = 4500;
+        public static final int SIDEKICK_TESTING_RPM = 2000;
+        public static final int SHOOTER_MAX_ACCELERATION = 2000; //rpms per sec
+        public static final int FALCON_MAX_RPM = 6400;
+
+        public static final int CAN_TIMEOUT = 10; // ms
 
 }
