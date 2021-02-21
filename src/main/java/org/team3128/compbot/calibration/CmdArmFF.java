@@ -7,8 +7,7 @@ import java.util.Arrays;
 import org.team3128.compbot.subsystems.Constants;
 import org.team3128.compbot.subsystems.Arm;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj.command.Command;
 
 import org.team3128.common.utility.Log;
 
@@ -20,17 +19,13 @@ import edu.wpi.first.wpilibj.RobotController;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 
-import java.util.Set;
-import java.util.HashSet;
-
-public class CmdArmFF implements Command {
+public class CmdArmFF extends Command {
 
     Arm arm;
-
-    private Set<Subsystem> requirements;
 
     double currentAngle = 0;
     double error = 0;
@@ -49,25 +44,18 @@ public class CmdArmFF implements Command {
 
     public CmdArmFF(Arm arm) {
         this.arm = arm;
-        this.requirements = new HashSet<Subsystem>();
-        this.requirements.add(arm);
     }
 
     @Override
-    public Set<Subsystem> getRequirements() {
-        return requirements;
-    }
-
-    @Override
-    public void initialize() {
-        previousAngle = arm.getMeasurement();
+    protected void initialize() {
+        previousAngle = arm.getAngle();
         pastTime = Timer.getFPGATimestamp();
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
 
-        currentAngle = arm.getMeasurement();
+        currentAngle = arm.getAngle();
 
         error = setpoint - currentAngle;
         accumulator += error * Constants.MechanismConstants.DT;
@@ -99,7 +87,7 @@ public class CmdArmFF implements Command {
         arm.ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, output);
 
         currentTime = Timer.getFPGATimestamp();
-        currentAngle = arm.getMeasurement();
+        currentAngle = arm.getAngle();
 
         if (Math.abs((previousAngle - currentAngle) / (pastTime - currentTime)) <= 0.001) {
             counter += 1;
@@ -128,7 +116,7 @@ public class CmdArmFF implements Command {
     }
 
     @Override
-    public boolean isFinished() {
+    protected boolean isFinished() {
         if (setpoint >= 85) {
             Log.info("Shooter", "Finished with automated loop");
             setpoint = 0;
@@ -140,8 +128,13 @@ public class CmdArmFF implements Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
+    protected void end() {
         arm.ARM_MOTOR_LEADER.set(ControlMode.PercentOutput, 0);
+    }
+
+    @Override
+    protected void interrupted() {
+        end();
     }
 
 }

@@ -8,11 +8,11 @@ import org.team3128.common.utility.RobotMath;
 
 import org.team3128.common.drive.SRXTankDrive;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 import org.team3128.common.utility.Log;
 
-public class CmdHeadingThenArc extends SequentialCommandGroup {
+public class CmdHeadingThenArc extends CommandGroup {
     public CmdHeadingThenArc(Limelight limelight) {
         SRXTankDrive drive = SRXTankDrive.getInstance();
         LimelightData data = limelight.getValues(20);
@@ -39,7 +39,7 @@ public class CmdHeadingThenArc extends SequentialCommandGroup {
         Log.info("arc angle", String.valueOf(angleRadiusToHorizontal));
 
         // if we need to turn right but this angle is positive then we need to turn left
-        addCommands(drive.new CmdInPlaceTurn(angleTargetToTangent, inPlaceDir, 0.75, 10000).withTimeout(10),
-                    drive.new CmdArcTurn(radius * Length.in, (int) angleRadiusToHorizontal, arcDir, .75, 10000).withTimeout(10));
+        addSequential(drive.new CmdInPlaceTurn(angleTargetToTangent, inPlaceDir, 0.75, 10000));
+        addSequential(drive.new CmdArcTurn(radius * Length.in, (int) angleRadiusToHorizontal, arcDir, .75, 10000));
     }
 }

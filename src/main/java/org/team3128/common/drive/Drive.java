@@ -51,6 +51,7 @@ import java.util.concurrent.*;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
+import org.team3128.common.generics.ThreadScheduler;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
@@ -59,7 +60,9 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.test_suite.*;
 import org.team3128.common.drive.Drive;
 
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
+import org.team3128.common.generics.Threaded;
 import org.team3128.common.control.RateLimiter;
 import org.team3128.common.control.AsynchronousPid;
 import org.team3128.common.control.motion.RamseteController;
@@ -87,8 +90,6 @@ import org.team3128.common.utility.RobotMath;
 
 import edu.wpi.first.wpilibj.Timer;
 
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
 
 /** 
  * @author Tyler Costello and Daniel Wang 
@@ -96,7 +97,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 
 import org.team3128.common.utility.Log;
-public abstract class Drive implements Subsystem {
+public abstract class Drive extends Threaded {
 
     public abstract void debug();
 
@@ -157,7 +158,7 @@ public abstract class Drive implements Subsystem {
     public abstract void arcadeDrive(double joyX, double joyY, double throttle, boolean fullSpeed);
 
     @Override
-    public abstract void periodic();
+    public abstract void update();
 
     public abstract void setRotation(Rotation2D angle);
 
