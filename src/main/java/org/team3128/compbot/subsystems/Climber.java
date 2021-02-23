@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
 import org.team3128.common.hardware.motor.LazyVictorSPX;

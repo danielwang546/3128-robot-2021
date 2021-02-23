@@ -63,7 +63,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-import org.team3128.common.generics.ThreadScheduler;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class MainDrivetrain extends NarwhalRobot {
 
@@ -84,7 +84,7 @@ public class MainDrivetrain extends NarwhalRobot {
     // RobotTracker robotTracker = RobotTracker.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(6);
-    ThreadScheduler scheduler = new ThreadScheduler();
+    CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
 
     public Joystick joystickRight, joystickLeft;
@@ -115,11 +115,6 @@ public class MainDrivetrain extends NarwhalRobot {
 
     @Override
     protected void constructHardware() {
-        scheduler.schedule(drive, executor);
-        // scheduler.schedule(hopper, executor);
-        // scheduler.schedule(shooter, executor);
-        scheduler.schedule(arm, executor);
-        //scheduler.schedule(robotTracker, executor);
 
         driveCmdRunning = new DriveCommandRunning();
 
@@ -233,7 +228,6 @@ public class MainDrivetrain extends NarwhalRobot {
 
     @Override
     protected void teleopPeriodic() {
-        scheduler.resume();
     }
 
     double maxLeftSpeed = 0;
@@ -276,7 +270,6 @@ public class MainDrivetrain extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
-        scheduler.resume();
         shooterLimelight.setLEDMode(LEDMode.OFF);
         arm.ARM_MOTOR_LEADER.setNeutralMode(Constants.ArmConstants.ARM_NEUTRAL_MODE);
         arm.ARM_MOTOR_FOLLOWER.setNeutralMode(Constants.ArmConstants.ARM_NEUTRAL_MODE);
@@ -286,7 +279,6 @@ public class MainDrivetrain extends NarwhalRobot {
 
     @Override
     protected void autonomousInit() {
-        scheduler.resume();
         drive.resetGyro();
 
     }
