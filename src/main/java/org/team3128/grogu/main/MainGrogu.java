@@ -33,15 +33,7 @@ import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.test_suite.CanDevices;
 import org.team3128.common.utility.test_suite.ErrorCatcherUtility;
-import org.team3128.compbot.commands.*;
-import org.team3128.compbot.autonomous.AutoSimple;
-import org.team3128.compbot.calibration.*;
-import org.team3128.compbot.subsystems.*;
-import org.team3128.compbot.subsystems.Constants;
-import org.team3128.compbot.subsystems.RobotTracker;
-import org.team3128.compbot.subsystems.Arm.ArmState;
-import org.team3128.compbot.subsystems.Hopper.ActionState;
-import org.team3128.compbot.subsystems.StateTracker.RobotState;
+import org.team3128.grogu.subsystems.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -99,11 +91,7 @@ public class MainGrogu extends NarwhalRobot {
     public boolean inPlace = false;
     public boolean inPlace2 = false;
 
-    public int countBalls = 0;
-    public int countBalls2 = 0;
-
-    public Command povCommand;
-    public Command shooterFF;
+    public Intake intake;
 
     @Override
     protected void constructHardware() {
@@ -111,6 +99,8 @@ public class MainGrogu extends NarwhalRobot {
         driveCmdRunning = new DriveCommandRunning();
 
         ahrs = drive.ahrs;
+
+        intake = Intake.getInstance();
 
         joystickRight = new Joystick(1);
         listenerRight = new ListenerManager(joystickRight);
@@ -139,6 +129,9 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
         listenerRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         listenerRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
+        listenerRight.nameControl(new Button(3), "Intake");
+        listenerRight.nameControl(new Button(7), "MoveArmDown");
+        listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
@@ -149,6 +142,31 @@ public class MainGrogu extends NarwhalRobot {
                 drive.arcadeDrive(horiz, vert, throttle, true);
             }
         }, "MoveTurn", "MoveForwards", "Throttle");
+
+        listenerRight.addButtonDownListener("Intake", () -> {
+            intake.intake();
+        });
+
+        listenerRight.addButtonUpListener("Intake", () -> {
+            intake.stopIntake();
+        });
+
+        listenerRight.addButtonDownListener("MoveArmDown", () -> {
+            intake.moveArmDown();
+        });
+
+        listenerRight.addButtonUpListener("MoveArmDown", () -> {
+            intake.stopArm();
+        });
+
+        listenerRight.addButtonDownListener("MoveArmUp", () -> {
+            intake.moveArmUp();
+        });
+
+        listenerRight.addButtonUpListener("MoveArmUp", () -> {
+            intake.stopArm();
+        });
+
     }
 
     @Override
