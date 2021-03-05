@@ -96,7 +96,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 
 import org.team3128.common.utility.Log;
-public abstract class Drive extends SubsystemBase {
+public abstract class Drive implements SubsystemBase {
 
     public abstract void debug();
 
