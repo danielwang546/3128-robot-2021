@@ -3,6 +3,11 @@ package org.team3128.athos.main;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 //import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+
 import org.team3128.common.generics.RobotConstants;
 
 import org.team3128.common.NarwhalRobot;
@@ -28,6 +33,7 @@ import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.athos.subsystems.NEODrive;
+import org.team3128.athos.subsystems.PathFinding;
 import org.team3128.athos.subsystems.RobotTracker;
 import org.team3128.athos.autonomous.deprecated.CmdAutoBall;
 
@@ -60,10 +66,15 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.test_suite.*;
 import org.team3128.common.drive.Drive;
 
+import org.team3128.athos.subsystems.bounce;
+
+import org.team3128.athos.subsystems.EKF;
+
 public class MainAthos extends NarwhalRobot {
     public static NEODrive drive = NEODrive.getInstance();
     RobotTracker robotTracker = RobotTracker.getInstance();
 
+    public AHRS ahrs;
     ExecutorService executor = Executors.newFixedThreadPool(4);
     CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
@@ -76,6 +87,9 @@ public class MainAthos extends NarwhalRobot {
     public Gyro gyro;
 
     public PIDConstants visionPID, blindPID;
+
+    public static Pose2d ekfPosition;
+
 
     public NetworkTable table;
     public NetworkTable limelightTable;
@@ -91,6 +105,25 @@ public class MainAthos extends NarwhalRobot {
     public ArrayList<Pose2D> waypoints = new ArrayList<Pose2D>();
     public Trajectory trajectory;
 
+    static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
+    0.01, 1e-3, 0.01, 0.01);
+
+    ArrayList<Double> xList = new ArrayList<Double>();
+    ArrayList<Double> yList = new ArrayList<Double>();
+    ArrayList<Double> thetaList = new ArrayList<Double>();
+    ArrayList<Double> vlList = new ArrayList<Double>();
+    ArrayList<Double> vrList = new ArrayList<Double>();
+
+    ArrayList<Double> KxList = new ArrayList<Double>();
+    ArrayList<Double> KyList = new ArrayList<Double>();
+    ArrayList<Double> KthetaList = new ArrayList<Double>();
+    ArrayList<Double> KvlList = new ArrayList<Double>();
+    ArrayList<Double> KvrList = new ArrayList<Double>();
+
+    private double[] inputArray = new double[4];
+    private double[] kinematicArray = new double[6];
+    private double[] outputArray;
+    private double currentTime, previousTime, printerTime, initTime;
 
     public CmdAutoBall ballCommand;
     public Limelight bottomLimelight;
@@ -123,6 +156,8 @@ public class MainAthos extends NarwhalRobot {
 
         // Instatiator if we're using the NavX
         gyro = new NavX();
+
+       //ahrs = drive.ahrs;
 
         // Instatiator if we're using the KoP Gyro
         // gyro = new AnalogDevicesGyro();
@@ -277,6 +312,99 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void teleopPeriodic() {
+        currentTime=RobotController.getFPGATime()/1000000.0;
+        //currentTime = currentTime*1e-06;
+        //I'm not sure how to check if new readings are available so right now we are running predict and update every time
+        inputArray[0] = gyro.getAngle() * Math.PI / 180.0;
+        inputArray[1] = drive.getLeftSpeed() * 0.0254;
+        inputArray[2] = drive.getRightSpeed() * 0.0254;
+        inputArray[3] = currentTime-previousTime;
+       // where EKF is run
+        outputArray = ekf.runFilter(inputArray);
+
+        xList.add(outputArray[0]);
+        yList.add(outputArray[1]);
+        thetaList.add(outputArray[2]);
+        vlList.add(outputArray[3]);
+        vrList.add(outputArray[4]);
+
+
+
+
+        
+        
+        kinematicArray[0] = KxList.get(KxList.size()-1);
+        kinematicArray[1] = KyList.get(KyList.size()-1);
+        kinematicArray[2] = gyro.getAngle() * Math.PI / 180.0;
+        kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
+        kinematicArray[4] = drive.getRightSpeed() * 0.0254;
+        kinematicArray[5] = currentTime-previousTime;
+
+        outputArray = ekf.testFunction(kinematicArray);
+
+        KxList.add(outputArray[0]);
+        KyList.add(outputArray[1]);
+        KthetaList.add(outputArray[2]);
+        KvlList.add(outputArray[3]);
+        KvrList.add(outputArray[4]);
+       
+        //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
+        ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
+        Log.info("EKF", ekfPosition.toString());
+
+
+
+
+        previousTime=currentTime;
+        //Log.info("MainAthos", ((Double) robotTracker.getOdometry().getTranslation().getX()).toString());
+    }
+
+    @Override
+    protected void autonomousPeriodic() {
+        currentTime=RobotController.getFPGATime()/1000000.0;
+        //currentTime = currentTime*1e-06;
+        //I'm not sure how to check if new readings are available so right now we are running predict and update every time
+        inputArray[0] = gyro.getAngle() * Math.PI / 180.0;
+        inputArray[1] = drive.getLeftSpeed() * 0.0254;
+        inputArray[2] = drive.getRightSpeed() * 0.0254;
+        inputArray[3] = currentTime-previousTime;
+       // where EKF is run
+        outputArray = ekf.runFilter(inputArray);
+
+        xList.add(outputArray[0]);
+        yList.add(outputArray[1]);
+        thetaList.add(outputArray[2]);
+        vlList.add(outputArray[3]);
+        vrList.add(outputArray[4]);
+
+
+
+
+        
+        
+        kinematicArray[0] = KxList.get(KxList.size()-1);
+        kinematicArray[1] = KyList.get(KyList.size()-1);
+        kinematicArray[2] = gyro.getAngle() * Math.PI / 180.0;
+        kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
+        kinematicArray[4] = drive.getRightSpeed() * 0.0254;
+        kinematicArray[5] = currentTime-previousTime;
+
+        outputArray = ekf.testFunction(kinematicArray);
+
+        KxList.add(outputArray[0]);
+        KyList.add(outputArray[1]);
+        KthetaList.add(outputArray[2]);
+        KvlList.add(outputArray[3]);
+        KvrList.add(outputArray[4]);
+       
+        //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
+        ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
+        Log.info("EKF", ekfPosition.toString());
+
+
+
+
+        previousTime=currentTime;
     }
 
     double maxLeftSpeed = 0;
@@ -368,7 +496,22 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
+
+        gyro.reset();
         //scheduler.resume();
+        xList.add((double) 0);
+        yList.add((double) 0);
+        thetaList.add(Math.PI/2);
+        vlList.add((double) 0);
+        vrList.add((double) 0);
+
+        KxList.add((double) 0);
+        KyList.add((double) 0);
+        KthetaList.add(Math.PI/2);
+        KvlList.add((double) 0);
+        KvrList.add((double) 0);
+
+        initTime=RobotController.getFPGATime()/1000000.0;
     }
 
     @Override
@@ -377,9 +520,30 @@ public class MainAthos extends NarwhalRobot {
         Log.info("MainAthos", "going into autonomousinit");
         //scheduler.resume();
         robotTracker.resetOdometry();
-        drive.setAutoTrajectory(trajectory, false);
-        drive.startTrajectory();
+        //drive.setAutoTrajectory(trajectory, false);
+        //drive.startTrajectory();
+        gyro.reset();
+        //scheduler.resume();
+        xList.add((double) 0);
+        yList.add((double) 0);
+        thetaList.add(Math.PI/2);
+        vlList.add((double) 0);
+        vrList.add((double) 0);
+
+        KxList.add((double) 0);
+        KyList.add((double) 0);
+        KthetaList.add(Math.PI/2);
+        KvlList.add((double) 0);
+        KvrList.add((double) 0);
+
+        
+        PathFinding pathfinder = new PathFinding();
+        new bounce(pathfinder, drive).schedule();
+        Log.info("MainAthos","1");
+        
         startTime = Timer.getFPGATimestamp();
+
+        initTime=RobotController.getFPGATime()/1000000.0;
     }
 
     @Override
