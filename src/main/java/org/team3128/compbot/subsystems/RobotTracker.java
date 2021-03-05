@@ -6,14 +6,15 @@ package org.team3128.compbot.subsystems;
 import com.ctre.phoenix.Logger;
 
 import org.team3128.common.utility.Log;
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.utility.RobotMath;
 import org.team3128.common.utility.math.InterpolablePair;
 import org.team3128.common.utility.math.Pose2D;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.math.Translation2D;
 
-public class RobotTracker extends Threaded {
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
+public class RobotTracker implements Subsystem {
 
 	private static final RobotTracker trackingInstance = new RobotTracker();
 
@@ -56,7 +57,7 @@ public class RobotTracker extends Threaded {
 	 * the right and left sides of the drivetrain)
 	 */
 	@Override
-	public void update() {
+	public void periodic() {
 		currentDistance = drive.getDistance();
 		currentTheta = drive.getAngle();
 

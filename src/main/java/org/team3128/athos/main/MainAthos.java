@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -53,8 +53,6 @@ import java.util.concurrent.*;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
-import org.team3128.common.generics.ThreadScheduler;
-
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -67,14 +65,14 @@ public class MainAthos extends NarwhalRobot {
     RobotTracker robotTracker = RobotTracker.getInstance();
 
     ExecutorService executor = Executors.newFixedThreadPool(4);
-    ThreadScheduler scheduler = new ThreadScheduler();
+    CommandScheduler scheduler = CommandScheduler.getInstance();
     Thread auto;
     
     Limelight limelight = new Limelight("limelight-c", 26.0, 0, 0, 30);
     Limelight[] limelights = new Limelight[1];
 
-    public Joystick joystick;
-    public ListenerManager lm;
+    public Joystick joystick1, joystick2;
+    public ListenerManager lmLeft, lmRight;
     public Gyro gyro;
 
     public PIDConstants visionPID, blindPID;
@@ -94,11 +92,13 @@ public class MainAthos extends NarwhalRobot {
     public Trajectory trajectory;
 
 
-    public Command ballCommand;
+    public CmdAutoBall ballCommand;
     public Limelight bottomLimelight;
     private DriveCommandRunning driveCmdRunning;
 
     public static DigitalInput limitSwitch;
+
+    public int reverse = 1;
 
     public ErrorCatcherUtility errorCatcher;
     public static CanDevices leftDriveLeader, rightDriveLeader, leftDriveFollower, rightDriveFollower, PDP;
@@ -121,9 +121,6 @@ public class MainAthos extends NarwhalRobot {
     @Override
     protected void constructHardware() {
 
-        scheduler.schedule(drive, executor);
-        scheduler.schedule(robotTracker, executor);
-
         // Instatiator if we're using the NavX
         gyro = new NavX();
 
@@ -131,9 +128,12 @@ public class MainAthos extends NarwhalRobot {
         // gyro = new AnalogDevicesGyro();
         // ((AnalogDevicesGyro) gyro).recalibrate();
 
-        joystick = new Joystick(1);
-        lm = new ListenerManager(joystick);
-        addListenerManager(lm);
+        joystick1 = new Joystick(1);
+        lmRight = new ListenerManager(joystick1);
+        joystick2 = new Joystick(0);
+        lmLeft = new ListenerManager(joystick2);
+        addListenerManager(lmLeft);
+        addListenerManager(lmRight);
 
         bottomLimelight = new Limelight("limelight-c", 20 * Angle.DEGREES,  6.15 * Length.in, 11 * Length.in, 14.5 * Length.in);
 
@@ -213,58 +213,64 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void setupListeners() {
-        lm.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
-        lm.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
-        lm.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
-        lm.nameControl(new Button(5), "ResetGyro");
-        lm.nameControl(new Button(6), "PrintCSV");
-        lm.nameControl(new Button(3), "ClearTracker");
-        lm.nameControl(new Button(4), "ClearCSV");
-        lm.nameControl(new Button(7), "PursueBall");
-        lm.nameControl(new Button(12), "LimitSwitch");
+        lmRight.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
+        lmRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
+        lmRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
+        lmRight.nameControl(new Button(5), "ResetGyro");
+        lmRight.nameControl(new Button(6), "PrintCSV");
+        lmRight.nameControl(new Button(3), "ClearTracker");
+        lmRight.nameControl(new Button(4), "ClearCSV");
+        lmRight.nameControl(new Button(7), "PursueBall");
+        lmRight.nameControl(new Button(12), "LimitSwitch");
 
-        lm.addMultiListener(() -> {
-            drive.arcadeDrive(-0.7 * RobotMath.thresh(lm.getAxis("MoveTurn"), 0.1),
-                    -1.0 * RobotMath.thresh(lm.getAxis("MoveForwards"), 0.1), -1.0 * lm.getAxis("Throttle"), true);
+        lmLeft.nameControl(ControllerExtreme3D.TRIGGER, "Reverse");
+
+        lmRight.addMultiListener(() -> {
+            drive.arcadeDrive(-0.4 * RobotMath.thresh(lmRight.getAxis("MoveTurn"), 0.1),
+                    -1.0 * reverse * RobotMath.thresh(lmRight.getAxis("MoveForwards"), 0.1), -1.0 * lmRight.getAxis("Throttle"), true);
 
         }, "MoveTurn", "MoveForwards", "Throttle");
 
-        lm.addButtonDownListener("PursueBall", () -> {
+        lmRight.addButtonDownListener("PursueBall", () -> {
             ballCommand = new CmdAutoBall(gyro, bottomLimelight, driveCmdRunning, visionPID, blindPID);
-			ballCommand.start();
+            scheduler.schedule(ballCommand);
         });
-        lm.addButtonUpListener("PursueBall", () -> {
+        lmRight.addButtonUpListener("PursueBall", () -> {
             ballCommand.cancel();
             ballCommand = null;
         });
 
-        lm.addButtonDownListener("LimitSwitch", () -> {
+        lmRight.addButtonDownListener("LimitSwitch", () -> {
             Log.info("MainAthos.java", "[Limit Switch]" + limitSwitch.get());
         });
 
-        lm.nameControl(ControllerExtreme3D.TRIGGER, "AlignToTarget");
-        lm.addButtonDownListener("AlignToTarget", () -> {
+        lmRight.nameControl(ControllerExtreme3D.TRIGGER, "AlignToTarget");
+        lmRight.addButtonDownListener("AlignToTarget", () -> {
             // TODO: Add current implementation of vision alignment
             Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've started");
         });
-        lm.addButtonUpListener("AlignToTarget", () -> {
+        lmRight.addButtonUpListener("AlignToTarget", () -> {
             Log.info("MainAthos.java", "[Vision Alignment] Not created yet, would've ended");
         });
 
-        lm.addButtonDownListener("ResetGyro", () -> {
+        lmRight.addButtonDownListener("ResetGyro", () -> {
             drive.resetGyro();
         });
-        lm.addButtonDownListener("PrintCSV", () -> {
+        lmRight.addButtonDownListener("PrintCSV", () -> {
             Log.info("MainAthos", trackerCSV);
         });
-        lm.addButtonDownListener("ClearCSV", () -> {
+        lmRight.addButtonDownListener("ClearCSV", () -> {
             trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
             Log.info("MainAthos", "CSV CLEARED");
             startTime = Timer.getFPGATimestamp();
         });
 
-        lm.addButtonDownListener("ClearTracker", () -> {
+        lmRight.addButtonDownListener("ClearTracker", () -> {
             robotTracker.resetOdometry();
+        });
+
+        lmLeft.addButtonDownListener("Reverse", () -> {
+            reverse *= -1;
         });
 
     }
@@ -362,14 +368,14 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
-        scheduler.resume();
+        //scheduler.resume();
     }
 
     @Override
     protected void autonomousInit() {
         trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
         Log.info("MainAthos", "going into autonomousinit");
-        scheduler.resume();
+        //scheduler.resume();
         robotTracker.resetOdometry();
         drive.setAutoTrajectory(trajectory, false);
         drive.startTrajectory();
@@ -378,7 +384,7 @@ public class MainAthos extends NarwhalRobot {
 
     @Override
     protected void disabledInit() {
-        scheduler.pause();
+        //scheduler.pause();
     }
 
     public static void main(String... args) {

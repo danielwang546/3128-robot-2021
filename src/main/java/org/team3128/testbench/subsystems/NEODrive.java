@@ -4,13 +4,13 @@
 package org.team3128.testbench.subsystems;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
-import org.team3128.common.generics.Threaded;
 import org.team3128.common.control.RateLimiter;
 import org.team3128.common.control.AsynchronousPid;
 import org.team3128.common.control.motion.RamseteController;
 import org.team3128.common.control.trajectory.Trajectory;
 import org.team3128.common.control.trajectory.Trajectory.State;
 import org.team3128.common.drive.AutoDriveSignal;
+import org.team3128.common.drive.Drive;
 import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.NarwhalUtility;
@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import org.team3128.common.utility.Log;
 
-public class NEODrive extends Threaded {
+public class NEODrive extends Drive {
 
 	public enum DriveState {
 		TELEOP, RAMSETECONTROL, TURN, DONE
@@ -124,7 +124,8 @@ public class NEODrive extends Threaded {
 		setWheelVelocity(new DriveSignal(40, 0));
 	}
 
-	private void configAuto() {
+	@Override
+	public void configAuto() {
 		rightSparkPID.setP(Constants.K_AUTO_RIGHT_P, 0);
 		rightSparkPID.setD(Constants.K_AUTO_RIGHT_D, 0);
 		rightSparkPID.setFF(Constants.K_AUTO_RIGHT_F, 0);
@@ -137,7 +138,8 @@ public class NEODrive extends Threaded {
 
 	}
 
-	private void configHigh() {
+	@Override
+	public void configHigh() {
 		driveMultiplier = Constants.DRIVE_HIGH_SPEED;
 	}
 
@@ -155,7 +157,8 @@ public class NEODrive extends Threaded {
 		System.out.println(leftSpark);
 	}
 
-	private void configMotors() {
+	@Override
+	public void configMotors() {
 		// leftSparkSlave.follow(leftSpark);
 		// leftSparkSlave2.follow(leftSpark);
 		// rightSparkSlave.follow(rightSpark);
@@ -244,7 +247,8 @@ public class NEODrive extends Threaded {
 		rightSpark.set(setVelocity.rightVelocity);
 	}
 
-	private void setWheelVelocity(DriveSignal setVelocity) {
+	@Override
+	public void setWheelVelocity(DriveSignal setVelocity) {
 		if (Math.abs(setVelocity.rightVelocity) > (Constants.DRIVE_HIGH_SPEED)
 				|| Math.abs(setVelocity.leftVelocity) > (Constants.DRIVE_HIGH_SPEED)) {
 			DriverStation.getInstance();
@@ -308,7 +312,7 @@ public class NEODrive extends Threaded {
 	}
 
 	@Override
-	public void update() {
+	public void periodic() {
 		// System.out.println("L speed " + getLeftSpeed() + " position x " +
 		// RobotTracker.getInstance().getOdometry().translationMat.getX());
 		// System.out.println("R speed " + getRightSpeed() + " position y " +
@@ -353,7 +357,8 @@ public class NEODrive extends Threaded {
 				+ kD + ", kF = " + kF);
 	}
 
-	private void updateTurn() {
+	@Override
+	public void updateTurn() {
 		double error = wantedHeading.rotateBy(RobotTracker.getInstance().getOdometry().rotationMat.inverse())
 				.getDegrees();
 		double deltaSpeed;
@@ -377,7 +382,8 @@ public class NEODrive extends Threaded {
 		configHigh();
 	}
 
-	private void updateRamseteController(boolean isStart) {
+	@Override
+	public void updateRamseteController(boolean isStart) {
 		currentTime = Timer.getFPGATimestamp();
 		if (isStart) {
 			startTime = currentTime;
@@ -423,5 +429,29 @@ public class NEODrive extends Threaded {
 	}
 
 	public void clearStickyFaults() {
+	}
+
+	@Override
+	public void calibrateGyro() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public double getAngle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Rotation2D getGyroAngle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetGyro() {
+		// TODO Auto-generated method stub
+
 	}
 }
