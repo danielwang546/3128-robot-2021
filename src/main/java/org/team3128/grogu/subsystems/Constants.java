@@ -11,8 +11,27 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.team3128.common.generics.RobotConstants;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 // the superclass is purely for semantic purposes
 public class Constants extends RobotConstants {
+
+        public static class RamseteConstants {
+                public static final double ksVolts = 0.1;
+                public static final double kvVoltSecondsPerMeter = 0.5;
+                public static final double kaVoltSecondsSquaredPerMeter = 0.1;
+                public static final double kRamseteB = 5; //5
+                public static final double kRamseteZeta = 0.7; //0.7
+                public static final double kPDriveVel = 1;
+
+                public static final double maxVelocity = 1;
+                public static final double maxAcceleration = 1;
+                
+                public static final double kTrackwidthMeters = 0.66;
+                public static final DifferentialDriveKinematics kDriveKinematics =
+                new DifferentialDriveKinematics(kTrackwidthMeters);
+        }
+
 
         public static class GameConstants {
                 public static final double SHOOTER_TARGET_HEIGHT = 98.25; // height of target in INCHES

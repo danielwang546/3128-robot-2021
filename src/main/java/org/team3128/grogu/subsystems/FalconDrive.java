@@ -12,6 +12,7 @@ import org.team3128.common.control.trajectory.Trajectory.State;
 import org.team3128.common.drive.AutoDriveSignal;
 import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.math.Rotation2D;
+import org.team3128.grogu.main.MainGrogu;
 import org.team3128.common.utility.NarwhalUtility;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -31,6 +32,11 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
+
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 
 public class FalconDrive extends Drive {
 
@@ -179,6 +185,67 @@ public class FalconDrive extends Drive {
 	public void resetMotionProfile() {
 		moveProfiler.reset();
 	}
+
+
+	public Pose2d getPose() {
+		
+		return MainGrogu.ekfPosition;
+
+	}
+
+
+
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(
+				getLeftSpeed() * Constants.DriveConstants.kDriveInchesPerSecPerNUp100ms * Constants.MechanismConstants.inchesToMeters,
+				getRightSpeed() * Constants.DriveConstants.kDriveInchesPerSecPerNUp100ms * Constants.MechanismConstants.inchesToMeters);
+	}
+
+	public void tankDriveVolts(double leftVolts, double rightVolts) {
+
+		//NOTE: THIS METHOD IS NEW AND KIND OF SKETCHY
+		//MAY NEED A CLAMP FOR VOLTAGE SO IT DOESNT TRY TO SEND TOO MANY
+		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
+		//Log.info("Volts", "Left "+ RobotMath.clamp(leftVolts, -12, 12)+" Right "+RobotMath.clamp(rightVolts, -12, 12));
+
+		double leftBus = leftTalon.getBusVoltage();
+		
+		double leftPercent = RobotMath.clamp(leftVolts, -leftBus, leftBus)/leftBus; 
+
+		double rightBus = rightTalon.getBusVoltage();
+		
+		double rightPercent = RobotMath.clamp(rightVolts, -rightBus, rightBus)/rightBus; 
+		
+		leftTalon.set(ControlMode.PercentOutput, leftPercent);
+		rightTalon.set(ControlMode.PercentOutput, rightPercent);
+
+		//leftTalon.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
+		
+		
+		//rightTalon.setVoltage(RobotMath.clamp(rightVolts, -12, 12));
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	@Override
 	public double getAngle() {
