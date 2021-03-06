@@ -1,5 +1,8 @@
 package org.team3128.grogu.subsystems;
 
+/**
+ * @author Tyler Costello
+ */
 
 import java.util.ArrayList;
 import org.ejml.simple.SimpleMatrix;
