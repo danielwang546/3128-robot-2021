@@ -134,8 +134,8 @@ public class Constants extends RobotConstants {
 
         public static class HopperConstants {
                 public static final int HOPPER_MOTOR_ID = 6;
-                public static final int BOTTOM_SENSOR_ID = 8;
-                public static final int TOP_SENSOR_ID = 9;
+                public static final int BOTTOM_SENSOR_ID = 9;
+                public static final int TOP_SENSOR_ID = 8;
 
                 public static final double HOPPER_MOTOR_POWER = 0.6;
         }
