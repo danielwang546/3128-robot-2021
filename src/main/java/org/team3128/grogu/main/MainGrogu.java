@@ -97,7 +97,7 @@ public class MainGrogu extends NarwhalRobot {
 
     public Hopper hopper = Hopper.getInstance();
 
-    private boolean teleopKinematics = false;
+    private boolean teleopKinematics = true;
 
 
     static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
@@ -161,7 +161,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
-                double horiz = -0.5 * listenerRight.getAxis("MoveTurn"); //0.7
+                double horiz = 0.5 * listenerRight.getAxis("MoveTurn"); //0.7
                 double vert = -1.0 * listenerRight.getAxis("MoveForwards");
                 double throttle = -1.0 * listenerRight.getAxis("Throttle");
 
