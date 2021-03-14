@@ -95,7 +95,7 @@ public class MainGrogu extends NarwhalRobot {
     public boolean inPlace = false;
     public boolean inPlace2 = false;
 
-    public Hopper hopper;
+    public Hopper hopper = Hopper.getInstance();
 
     private boolean teleopKinematics = false;
 
@@ -124,7 +124,7 @@ public class MainGrogu extends NarwhalRobot {
 
         ahrs = drive.ahrs;
 
-        hopper = Hopper.getInstance();
+        //hopper.enable();
 
         joystickRight = new Joystick(1);
         listenerRight = new ListenerManager(joystickRight);
@@ -142,6 +142,8 @@ public class MainGrogu extends NarwhalRobot {
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
         limelights = new Limelight[2];
         drive.resetGyro();
+
+        hopper.register();
     }
 
     @Override

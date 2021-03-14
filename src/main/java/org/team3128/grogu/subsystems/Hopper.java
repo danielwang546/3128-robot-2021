@@ -88,7 +88,7 @@ public class Hopper implements Subsystem {
                 stopIntake();
                 stopArm();
                 stopHopper();
-                if (BOTTOM_SENSOR.get()) {
+                if (getBottom()) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 } else if (isShooterReady) {
@@ -103,21 +103,22 @@ public class Hopper implements Subsystem {
                 shoot();
                 break;
         }
-        wasTriggeredBottom = BOTTOM_SENSOR.get();
-        wasTriggeredTop = TOP_SENSOR.get();
+        wasTriggeredBottom = getBottom();
+        wasTriggeredTop = getTop();
+        Log.info("hopper", "Ball in bottom = " + getBottom());
         //TODO: update this variable
         isShooterReady = (Sidekick.getInstance().atSetpoint() && Sidekick.getInstance().atSetpoint());
     }
 
     private void intake() {
-       if (ballCount >= 3 || TOP_SENSOR.get()) {
+       if (ballCount >= 3 ||getTop()) {
             if (ballCount>3)
                 Log.info("Hopper","oopsie, should not be greater than 3");
             Log.info("Hopper Stomach","FULL!!!!");
             setState(HopperState.IDLE);
        } else {
             runHopper();
-            if (!BOTTOM_SENSOR.get() && wasTriggeredBottom) {
+            if (!getBottom() && wasTriggeredBottom) {
                 setState(HopperState.IDLE);
                 ballCount++;
                 Log.info("Hopper Stomach", "Has eaten 1 ball");
@@ -128,10 +129,18 @@ public class Hopper implements Subsystem {
 
     private void shoot() {
         runHopper();
-        if (wasTriggeredTop && TOP_SENSOR.get()) {
+        if (wasTriggeredTop && getTop()) {
             setState(HopperState.IDLE);
             Log.info("Hopper Stomach","Discarded one ball at a high velocity");
         }
+    }
+
+    private boolean getBottom() {
+        return !BOTTOM_SENSOR.get();
+    }
+
+    private boolean getTop() {
+        return !TOP_SENSOR.get();
     }
 
     public void setState(HopperState state) {
