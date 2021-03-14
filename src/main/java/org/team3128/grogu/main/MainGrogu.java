@@ -95,7 +95,7 @@ public class MainGrogu extends NarwhalRobot {
     public boolean inPlace = false;
     public boolean inPlace2 = false;
 
-    public Intake intake;
+    public Hopper hopper;
 
     private boolean teleopKinematics = false;
 
@@ -124,7 +124,7 @@ public class MainGrogu extends NarwhalRobot {
 
         ahrs = drive.ahrs;
 
-        intake = Intake.getInstance();
+        hopper = Hopper.getInstance();
 
         joystickRight = new Joystick(1);
         listenerRight = new ListenerManager(joystickRight);
@@ -168,27 +168,27 @@ public class MainGrogu extends NarwhalRobot {
         }, "MoveTurn", "MoveForwards", "Throttle");
 
         listenerRight.addButtonDownListener("Intake", () -> {
-            intake.intake();
+            hopper.runIntake();
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
-            intake.stopIntake();
+            hopper.stopIntake();
         });
 
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
-            intake.moveArmDown();
+            hopper.moveArmDown();
         });
 
         listenerRight.addButtonUpListener("MoveArmDown", () -> {
-            intake.stopArm();
+            hopper.stopArm();
         });
 
         listenerRight.addButtonDownListener("MoveArmUp", () -> {
-            intake.moveArmUp();
+            hopper.moveArmUp();
         });
 
         listenerRight.addButtonUpListener("MoveArmUp", () -> {
-            intake.stopArm();
+            hopper.stopArm();
         });
 
     }

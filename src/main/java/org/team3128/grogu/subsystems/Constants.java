@@ -140,60 +140,35 @@ public class Constants extends RobotConstants {
 
         public static class ShooterConstants {
                 public static final int SHOOTER_MOTOR_LEFT_ID = 8;
-                public static final int SHOOTER_MOTOR_RIGHT_ID = 7;
-
-                public static final double SHOOTER_GEARING = 1.5; // for every 1 rotation of the motor, the shooter does {SHOOTER_GEARING} rotations
-                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 0.000007, 0, 0);
-
+                public static final int SHOOTER_MOTOR_RIGHT_ID = 13;
+                public static final int SHOOTER_SIDEKICK_ID = 42;
+                
+                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 0.000045, 0, 2.25e-4);//0,0.000007,0,0
+                public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0.000065, 0, 0);
+                
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
                 public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and the setpoint for a data point to be considered as a plataeu
                 public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
         }
 
         public static class HopperConstants {
+                public static final int HOPPER_MOTOR_ID = 6;
+                public static final int BOTTOM_SENSOR_ID = 0;
+                public static final int TOP_SENSOR_ID = 1;
 
+                public static final double HOPPER_MOTOR_POWER = 0.6;
         }
 
         public static class IntakeConstants {
-                public static final int SERIALIZER_ARM_MOTOR_ID = 7;
+                public static final int ARM_MOTOR_ID = 7;
                 public static final int BRUSH_MOTOR_ID = 5;
                 public static final int INTAKE_MOTOR_ID = 4;
 
                 public static final NeutralMode ARM_NEUTRAL_MODE = NeutralMode.Brake;
-        }
-        
-        public static class ClimberConstants {
-                public static final int LEFT_MOTOR_ID = 12;
-                public static final int RIGHT_MOTOR_ID = 11;
-                public static final double CLIMB_POWER = 0.5;
-        }
 
-        public static class ArmConstants {
-                public static final int ARM_MOTOR_LEADER_ID = 13;
-                public static final int ARM_MOTOR_FOLLOWER_ID = 4;
-                public static final int ARM_LIMIT_SWITCH_ID = 0;
-
-                public static final NeutralMode ARM_NEUTRAL_MODE = NeutralMode.Brake;
-                public static final NeutralMode ARM_NEUTRAL_MODE_DEBUG = NeutralMode.Coast;
-                public static final double MAX_ARM_ANGLE = 80;
-                public static final double ANGLE_THRESHOLD = 4;
-                public static final double PLATEAU_THRESHOLD = 50;
-
-                public static final double ARM_GEARING = 60 / 12 * 80 / 18 * 64 / 8; // for every (ARM_GEARING)
-                                                                                     // rotations of the
-                // motor, we get 1 rotation of the arm (ask
-                // mech for this)
-                public static final double ARM_LENGTH = 30; 
-                public static final double LIMELIGHT_ARM_LENGTH = 19;
-                public static final double LIMELIGHT_ARM_ANGLE = 40.26;
-
-                public static final PIDConstants ARM_PID = new PIDConstants(0, 0.15, 0.01, 0);
-
-                public static final double ARM_SATURATION_LIMIT = 2 / ARM_PID.kI; // set limit on integral accumulation
-                public static final double ZEROING_POWER = -0.35;
-
-                public static final double STARTING_ANGLE = 48.87; //the angle that the arm is at when it is within frame perimeter
-                public static final int STARTING_POSITION = (int) ((STARTING_ANGLE / 360) * MechanismConstants.ENCODER_RESOLUTION_PER_ROTATION * ARM_GEARING);
+                public static final double INTAKE_MOTOR_POWER = -0.8;
+                public static final double BRUSH_MOTOR_POWER = 0.4;
+                public static final double ARM_MOTOR_POWER = 0.2;
         }
 
 }
