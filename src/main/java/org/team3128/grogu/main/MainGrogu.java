@@ -137,7 +137,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
-                double horiz = -0.5 * listenerRight.getAxis("MoveTurn"); //0.7
+                double horiz = 0.5 * listenerRight.getAxis("MoveTurn"); //-0.5
                 double vert = -1.0 * listenerRight.getAxis("MoveForwards");
                 double throttle = -1.0 * listenerRight.getAxis("Throttle");
 

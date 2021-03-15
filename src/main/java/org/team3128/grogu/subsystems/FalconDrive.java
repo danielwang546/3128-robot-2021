@@ -85,12 +85,14 @@ public class FalconDrive extends Drive {
 		leftTalonSlave = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_MIDDLE_ID);
 		// rightTalonSlave2 = new LazyTalonFX(Constants.RIGHT_DRIVE_BACK_ID);
 
-		leftTalon.setInverted(true);
-		rightTalon.setInverted(false);
-		leftTalonSlave.setInverted(true);
-		rightTalonSlave.setInverted(false);
+		leftTalon.setInverted(false);
+		rightTalon.setInverted(true);
+		leftTalonSlave.setInverted(false);
+		rightTalonSlave.setInverted(true);
 		// leftTalonSlave2.setInverted(false);
 		// rightTalonSlave2.setInverted(false);
+		leftTalon.setSensorPhase(false);
+		rightTalon.setSensorPhase(false);
 
 		configMotors();
 
