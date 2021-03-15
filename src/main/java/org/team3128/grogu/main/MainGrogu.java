@@ -202,12 +202,12 @@ public class MainGrogu extends NarwhalRobot {
             currentTime=RobotController.getFPGATime()/1000000.0;
             //currentTime = currentTime*1e-06;
             //I'm not sure how to check if new readings are available so right now we are running predict and update every time
-            inputArray[0] = drive.getAngle() * Math.PI / 180.0;
-            inputArray[1] = drive.getLeftSpeed() * 0.0254;
-            inputArray[2] = drive.getRightSpeed() * 0.0254;
-            inputArray[3] = currentTime-previousTime;
-        // where EKF is run
-            outputArray = ekf.runFilter(inputArray);
+        //     inputArray[0] = drive.getAngle() * Math.PI / 180.0;
+        //     inputArray[1] = drive.getLeftSpeed() * 0.0254;
+        //     inputArray[2] = drive.getRightSpeed() * 0.0254;
+        //     inputArray[3] = currentTime-previousTime;
+        //     where EKF is run
+        //     outputArray = ekf.runFilter(inputArray);
 
             
             kinematicArray[0] = KxList.get(KxList.size()-1);
