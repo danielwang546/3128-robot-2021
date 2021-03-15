@@ -198,6 +198,7 @@ public class MainGrogu extends NarwhalRobot {
     @Override
     protected void teleopPeriodic() {
         if (teleopKinematics){
+            Log.info("gyro", ""+drive.getAngle());
             currentTime=RobotController.getFPGATime()/1000000.0;
             //currentTime = currentTime*1e-06;
             //I'm not sure how to check if new readings are available so right now we are running predict and update every time
