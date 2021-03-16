@@ -105,7 +105,7 @@ public class Hopper implements Subsystem {
         }
         wasTriggeredBottom = getBottom();
         wasTriggeredTop = getTop();
-        Log.info("hopper", "Ball in bottom = " + getBottom());
+        //Log.info("hopper", "Ball in bottom = " + getBottom());
         //TODO: update this variable
         isShooterReady = (Sidekick.getInstance().atSetpoint() && Sidekick.getInstance().atSetpoint());
     }

@@ -509,10 +509,10 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(36*0.0254, 0*0.0254),
-                                new Translation2d(36*0.0254, -36*0.0254)                                                          
+                                new Translation2d(30*0.0254, 0*0.0254),
+                                new Translation2d(80*0.0254, 0*0.0254)                                                           
                                 ),
-                                new Pose2d(0*0.0254, -36*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(120*0.0254, -80*0.0254, new Rotation2d(0)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,

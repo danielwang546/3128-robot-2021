@@ -91,10 +91,27 @@ public class FalconDrive extends Drive {
 		leftTalonSlave = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_MIDDLE_ID);
 		// rightTalonSlave2 = new LazyTalonFX(Constants.RIGHT_DRIVE_BACK_ID);
 
+
+	
+
+
 		leftTalon.setInverted(false);
-		rightTalon.setInverted(false);
+		rightTalon.setInverted(true);
 		leftTalonSlave.setInverted(false);
 		rightTalonSlave.setInverted(true);
+
+
+
+
+		// leftTalonSlave2.setInverted(false);
+		// rightTalonSlave2.setInverted(false);
+		leftTalon.setSensorPhase(false);
+		rightTalon.setSensorPhase(false);
+
+		// leftTalon.setInverted(false);
+		// rightTalon.setInverted(false);
+		// leftTalonSlave.setInverted(false);
+		// rightTalonSlave.setInverted(true);
 		// leftTalonSlave2.setInverted(false);
 		// rightTalonSlave2.setInverted(false);
 
@@ -209,16 +226,24 @@ public class FalconDrive extends Drive {
 		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
 		//Log.info("Volts", "Left "+ RobotMath.clamp(leftVolts, -12, 12)+" Right "+RobotMath.clamp(rightVolts, -12, 12));
 
-		double leftBus = leftTalon.getBusVoltage();
+		//double leftBus = leftTalon.getBusVoltage();
 		
+		double leftBus = 12;
+
 		double leftPercent = RobotMath.clamp(leftVolts, -leftBus, leftBus)/leftBus; 
 
-		double rightBus = rightTalon.getBusVoltage();
+		double rightBus = 12;
+
+		//double rightBus = rightTalon.getBusVoltage();
 		
 		double rightPercent = RobotMath.clamp(rightVolts, -rightBus, rightBus)/rightBus; 
 		
-		leftTalon.set(ControlMode.PercentOutput, leftPercent);
-		rightTalon.set(ControlMode.PercentOutput, rightPercent);
+		// leftTalon.set(ControlMode.PercentOutput, leftPercent);
+		// rightTalon.set(ControlMode.PercentOutput, rightPercent);
+		leftTalon.set(ControlMode.PercentOutput, rightPercent);
+		rightTalon.set(ControlMode.PercentOutput, leftPercent);
+
+		Log.info("Voltage Stats", "LB: "+leftBus+" RB: "+rightBus+" LP: "+leftPercent+" RP: "+rightPercent);
 
 		//leftTalon.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
 		
