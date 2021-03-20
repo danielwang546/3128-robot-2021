@@ -180,6 +180,6 @@ public class Shooter extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        return (atSetpoint() && getSetpoint() != 0);
+        return (atSetpoint() && ( getSetpoint() != 0 ));
     }
 }
