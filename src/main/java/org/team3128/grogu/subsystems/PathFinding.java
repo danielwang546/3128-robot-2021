@@ -91,6 +91,87 @@ public class PathFinding {
     }
 
 
+    public Command getAutonomousCommandCompSlalom(FalconDrive m_robotDrive) {
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.RamseteConstants.ksVolts,
+                        Constants.RamseteConstants.kvVoltSecondsPerMeter,
+                        Constants.RamseteConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.RamseteConstants.kDriveKinematics, 7);
+        //String trajectoryJSON = trajPath;
+        TrajectoryConfig config = new TrajectoryConfig(Constants.RamseteConstants.maxVelocity,
+        Constants.RamseteConstants.maxAcceleration)
+                        // Add kinematics to ensure max speed is actually obeyed
+                        .setKinematics(Constants.RamseteConstants.kDriveKinematics)
+                        // Apply the voltage constraint
+                        .addConstraint(autoVoltageConstraint).setReversed(false);
+        
+                        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
+                                List.of(
+                                new Translation2d(30*0.0254, 0*0.0254),
+                                new Translation2d(80*0.0254, 0*0.0254)                                                           
+                                ),
+                                new Pose2d(120*0.0254, -80*0.0254, new Rotation2d(0)),
+                                config);
+
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.RamseteConstants.kRamseteB, Constants.RamseteConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.RamseteConstants.ksVolts,
+                        Constants.RamseteConstants.kvVoltSecondsPerMeter,
+                        Constants.RamseteConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.RamseteConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.RamseteConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.RamseteConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, (Subsystem) m_robotDrive);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public Command getAutonomousCommandSlalom(FalconDrive m_robotDrive) {
         Log.info("MainAthos","3");
         // Create a voltage constraint to ensure we don't accelerate too fast
