@@ -92,15 +92,15 @@ public class Hopper implements Subsystem {
     public void periodic() {
         switch(actionState) {
             case IDLE:
-                stopIntake();
-                stopArm();
+                //stopIntake();
+                //stopArm();
                 stopHopper();
                 if (getBottom()) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 } else if (isShooterReady) {
                     setState(HopperState.SHOOTING);
-                    Log.info("Hopper","I don't feel so good");
+                    Log.info("Hopper","I don't feel so good (SHOOTER)");
                 }   
                 break;
             case INTAKING:
@@ -112,9 +112,9 @@ public class Hopper implements Subsystem {
         }
         wasTriggeredBottom = getBottom();
         wasTriggeredTop = getTop();
-        Log.info("hopper", "Ball in bottom = " + getBottom());
+        //Log.info("hopper", "Ball in bottom = " + getBottom());
         //TODO: update this variable
-        isShooterReady = (Sidekick.getInstance().atSetpoint() && Shooter.getInstance().atSetpoint());
+        isShooterReady = (Sidekick.getInstance().isReady() && Shooter.getInstance().isReady());
     }
 
     private void intake() {
@@ -140,7 +140,8 @@ public class Hopper implements Subsystem {
         Log.info("hopper", "Shooting");
         if (wasTriggeredTop && getTop()) {
             setState(HopperState.IDLE);
-            Log.info("Hopper Stomach","Discarded one ball at a high velocity");
+            ballCount--;
+            Log.info("Hopper Stomach","Ejected one ball at a high velocity");
         }
     }
 
@@ -162,7 +163,7 @@ public class Hopper implements Subsystem {
 
     public void runHopper() {
         HOPPER_MOTOR_1.set(ControlMode.PercentOutput, Constants.HopperConstants.HOPPER_MOTOR_POWER);
-        HOPPER_MOTOR_2.set(Constants.HopperConstants.HOPPER_MOTOR_POWER);
+        HOPPER_MOTOR_2.set(Constants.HopperConstants.HOPPER_MOTOR_2_POWER);
     }
 
     public void stopHopper() {
@@ -190,5 +191,10 @@ public class Hopper implements Subsystem {
 
     public void stopArm() {
         ARM_MOTOR.set(ControlMode.PercentOutput, 0);
+    }
+
+    public void resetBallCount() {
+        ballCount = 0;
+        Log.info("Hopper", "Resetting ball count to " + ballCount);
     }
 }

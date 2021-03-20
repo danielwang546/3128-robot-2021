@@ -134,12 +134,13 @@ public class Constants extends RobotConstants {
 
         public static class HopperConstants {
                 public static final int HOPPER_MOTOR_1_ID = 6;
-                public static final int HOPPER_MOTOR_2_ID = 9;
+                public static final int HOPPER_MOTOR_2_ID = 19;
                 
                 public static final int BOTTOM_SENSOR_ID = 9;
                 public static final int TOP_SENSOR_ID = 8;
 
-                public static final double HOPPER_MOTOR_POWER = 0.6;
+                public static final double HOPPER_MOTOR_POWER = -0.5;
+                public static final double HOPPER_MOTOR_2_POWER = 0.15;
         }
 
         public static class IntakeConstants {
@@ -149,8 +150,8 @@ public class Constants extends RobotConstants {
 
                 public static final NeutralMode ARM_NEUTRAL_MODE = NeutralMode.Brake;
 
-                public static final double INTAKE_MOTOR_POWER = -0.8;
-                public static final double BRUSH_MOTOR_POWER = 0.4;
+                public static final double INTAKE_MOTOR_POWER = -0.6;
+                public static final double BRUSH_MOTOR_POWER = 0.3;
                 public static final double ARM_MOTOR_POWER = 0.2;
         }
 
