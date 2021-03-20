@@ -140,11 +140,11 @@ public class Shooter extends PIDSubsystem {
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
     }
 
-    public void setSetpoint(double passedSetpoint) {
+    /*public void setSetpoint(double passedSetpoint) {
         plateauCount = 0;
         super.setSetpoint(passedSetpoint);
         //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
-    }
+    }*/
 
     public void setState(ShooterState shooterState) {
         SHOOTER_STATE = shooterState;
@@ -171,11 +171,15 @@ public class Shooter extends PIDSubsystem {
     //     return stateTracker.getState().targetShooterState.shooterRPM;
     // }
 
-    public boolean isReady() {
-        return (plateauCount > Constants.PLATEAU_COUNT);
-    }
+    // public boolean isReady() {
+    //     return (plateauCount > Constants.PLATEAU_COUNT);
+    // }
 
     // public void queue(){
     //     setState(stateTracker.getState().targetShooterState);
     // }
+
+    public boolean isReady() {
+        return (atSetpoint() && ( getSetpoint() != 0 ));
+    }
 }

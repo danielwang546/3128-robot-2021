@@ -114,6 +114,8 @@ public class FalconDrive extends Drive {
 		// rightTalonSlave.setInverted(true);
 		// leftTalonSlave2.setInverted(false);
 		// rightTalonSlave2.setInverted(false);
+		leftTalon.setSensorPhase(false);
+		rightTalon.setSensorPhase(false);
 
 		configMotors();
 

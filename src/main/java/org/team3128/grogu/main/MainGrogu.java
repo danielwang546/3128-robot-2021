@@ -66,7 +66,6 @@ public class MainGrogu extends NarwhalRobot {
     private DriveCommandRunning driveCmdRunning;
 
     // public StateTracker stateTracker = StateTracker.getInstance();
-    static FalconDrive drive = FalconDrive.getInstance();
 
  
     // RobotTracker robotTracker = RobotTracker.getInstance();
@@ -95,7 +94,10 @@ public class MainGrogu extends NarwhalRobot {
     public boolean inPlace = false;
     public boolean inPlace2 = false;
 
+    public FalconDrive drive = FalconDrive.getInstance();
     public Hopper hopper = Hopper.getInstance();
+    public Shooter shooter = Shooter.getInstance();
+    public Sidekick sidekick = Sidekick.getInstance();
 
     private boolean teleopKinematics = true;
 
@@ -156,8 +158,10 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         listenerRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
         listenerRight.nameControl(new Button(3), "Intake");
+        listenerRight.nameControl(new Button(4), "Shoot");
         listenerRight.nameControl(new Button(7), "MoveArmDown");
         listenerRight.nameControl(new Button(8), "MoveArmUp");
+        listenerRight.nameControl(new Button(12), "ResetBallCount");
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
@@ -171,10 +175,24 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("Intake", () -> {
             hopper.runIntake();
+            Log.info("Joystick","Button 3 pressed");
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
             hopper.stopIntake();
+            Log.info("Joystick","Button 3 unpressed");
+        });
+
+        listenerRight.addButtonDownListener("Shoot", () -> {
+            sidekick.setState(Sidekick.ShooterState.MID_RANGE);
+            shooter.setState(Shooter.ShooterState.MID_RANGE);
+            Log.info("Joystick","Button 4 pressed");
+        });
+
+        listenerRight.addButtonUpListener("Shoot", () -> {
+            sidekick.setState(Sidekick.ShooterState.OFF);
+            shooter.setState(Shooter.ShooterState.OFF);
+            Log.info("Joystick","Button 4 unpressed");
         });
 
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
@@ -191,6 +209,10 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonUpListener("MoveArmUp", () -> {
             hopper.stopArm();
+        });
+
+        listenerRight.addButtonDownListener("ResetBallCount", () -> {
+            hopper.resetBallCount();
         });
 
     }

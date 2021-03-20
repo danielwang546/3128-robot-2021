@@ -30,6 +30,7 @@ import org.team3128.common.utility.RobotMath;
 import edu.wpi.first.wpilibj.Timer;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
@@ -41,14 +42,16 @@ public class Hopper implements Subsystem {
     }
 
     public static final Hopper instance = new Hopper();
-    private LazyTalonSRX ARM_MOTOR, HOPPER_MOTOR;
+    private LazyTalonSRX ARM_MOTOR, HOPPER_MOTOR_1;
     private LazyVictorSPX BRUSH_MOTOR, INTAKE_MOTOR;
+
+    private LazyCANSparkMax HOPPER_MOTOR_2;
 
     private DigitalInput BOTTOM_SENSOR, TOP_SENSOR;
 
     private HopperState actionState = HopperState.IDLE;
     
-    private int ballCount = 0;
+    private int ballCount;
 
     private boolean wasTriggeredTop = false;
     private boolean wasTriggeredBottom = false;
@@ -64,13 +67,17 @@ public class Hopper implements Subsystem {
     public Hopper() {
         configMotors();
         configSensors();
+        
+        ballCount = 0;
     }
 
     private void configMotors() {
         ARM_MOTOR = new LazyTalonSRX(Constants.IntakeConstants.ARM_MOTOR_ID);
         BRUSH_MOTOR = new LazyVictorSPX(Constants.IntakeConstants.BRUSH_MOTOR_ID);
         INTAKE_MOTOR = new LazyVictorSPX(Constants.IntakeConstants.INTAKE_MOTOR_ID);
-        HOPPER_MOTOR = new LazyTalonSRX(Constants.HopperConstants.HOPPER_MOTOR_ID);
+        HOPPER_MOTOR_1 = new LazyTalonSRX(Constants.HopperConstants.HOPPER_MOTOR_1_ID);
+        HOPPER_MOTOR_2 = new LazyCANSparkMax(Constants.HopperConstants.HOPPER_MOTOR_2_ID, MotorType.kBrushless);
+
 
         ARM_MOTOR.setNeutralMode(Constants.IntakeConstants.ARM_NEUTRAL_MODE);
 
@@ -85,15 +92,15 @@ public class Hopper implements Subsystem {
     public void periodic() {
         switch(actionState) {
             case IDLE:
-                stopIntake();
-                stopArm();
+                //stopIntake();
+                //stopArm();
                 stopHopper();
                 if (getBottom()) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 } else if (isShooterReady) {
                     setState(HopperState.SHOOTING);
-                    Log.info("Hopper","I don't feel so good");
+                    Log.info("Hopper","I don't feel so good (SHOOTER)");
                 }   
                 break;
             case INTAKING:
@@ -107,11 +114,12 @@ public class Hopper implements Subsystem {
         wasTriggeredTop = getTop();
         //Log.info("hopper", "Ball in bottom = " + getBottom());
         //TODO: update this variable
-        isShooterReady = (Sidekick.getInstance().atSetpoint() && Sidekick.getInstance().atSetpoint());
+        isShooterReady = (Sidekick.getInstance().isReady() && Shooter.getInstance().isReady());
     }
 
     private void intake() {
-       if (ballCount >= 3 ||getTop()) {
+        Log.info("hopper","intaking");
+        if (ballCount >= 3 || getTop()) {
             if (ballCount>3)
                 Log.info("Hopper","oopsie, should not be greater than 3");
             Log.info("Hopper Stomach","FULL!!!!");
@@ -121,7 +129,7 @@ public class Hopper implements Subsystem {
             if (!getBottom() && wasTriggeredBottom) {
                 setState(HopperState.IDLE);
                 ballCount++;
-                Log.info("Hopper Stomach", "Has eaten 1 ball");
+                Log.info("Hopper Stomach", "Has eaten 1 ball. Ball count = " + ballCount);
             }
        }
 
@@ -129,9 +137,11 @@ public class Hopper implements Subsystem {
 
     private void shoot() {
         runHopper();
+        Log.info("hopper", "Shooting");
         if (wasTriggeredTop && getTop()) {
             setState(HopperState.IDLE);
-            Log.info("Hopper Stomach","Discarded one ball at a high velocity");
+            ballCount--;
+            Log.info("Hopper Stomach","Ejected one ball at a high velocity");
         }
     }
 
@@ -152,11 +162,13 @@ public class Hopper implements Subsystem {
     }
 
     public void runHopper() {
-        HOPPER_MOTOR.set(ControlMode.PercentOutput, Constants.HopperConstants.HOPPER_MOTOR_POWER);
+        HOPPER_MOTOR_1.set(ControlMode.PercentOutput, Constants.HopperConstants.HOPPER_MOTOR_POWER);
+        HOPPER_MOTOR_2.set(Constants.HopperConstants.HOPPER_MOTOR_2_POWER);
     }
 
     public void stopHopper() {
-        HOPPER_MOTOR.set(ControlMode.PercentOutput, 0);
+        HOPPER_MOTOR_1.set(ControlMode.PercentOutput, 0);
+        HOPPER_MOTOR_2.set(0);
     }
 
     public void runIntake() {
@@ -179,5 +191,10 @@ public class Hopper implements Subsystem {
 
     public void stopArm() {
         ARM_MOTOR.set(ControlMode.PercentOutput, 0);
+    }
+
+    public void resetBallCount() {
+        ballCount = 0;
+        Log.info("Hopper", "Resetting ball count to " + ballCount);
     }
 }
