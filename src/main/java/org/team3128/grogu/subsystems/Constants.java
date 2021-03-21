@@ -130,6 +130,8 @@ public class Constants extends RobotConstants {
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
                 public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and the setpoint for a data point to be considered as a plataeu
                 public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
+
+                public static final int CAN_TIMEOUT = 10;
         }
 
         public static class HopperConstants {
