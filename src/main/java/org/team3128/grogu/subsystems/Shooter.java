@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.testbench.subsystems.Constants;
+//import org.team3128.testbench.subsystems.Constants;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
@@ -55,8 +55,8 @@ public class Shooter extends PIDSubsystem {
 
     private Shooter() {
 
-        super(new PIDController(Constants.SHOOTER_PID.kP, Constants.SHOOTER_PID.kI, Constants.SHOOTER_PID.kD));
-        getController().setTolerance(Constants.RPM_THRESHOLD);
+        super(new PIDController(Constants.ShooterConstants.SHOOTER_PID.kP, Constants.ShooterConstants.SHOOTER_PID.kI, Constants.ShooterConstants.SHOOTER_PID.kD));
+        getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD);
         //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
 
 
@@ -70,8 +70,8 @@ public class Shooter extends PIDSubsystem {
     }
 
     private void configMotors() {
-        LEFT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_LEFT_ID);
-        RIGHT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_RIGHT_ID);
+        LEFT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_LEFT_ID);
+        RIGHT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_RIGHT_ID);
         if (DEBUG) {
             Log.info("Shooter", "Config motors");
         }
@@ -111,7 +111,7 @@ public class Shooter extends PIDSubsystem {
         preValue = value;
         preTime = time;
 
-        if ((Math.abs(error) <= Constants.RPM_THRESHOLD) && (setpoint != 0)) {
+        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
@@ -135,6 +135,10 @@ public class Shooter extends PIDSubsystem {
 
         // if (accel > Constants.SHOOTER_MAX_ACCELERATION)
         //     output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
+
+        if (setpoint != 0) {
+            Log.info("Shooter", "shooter setpoint = " + setpoint);
+        }
 
         LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);

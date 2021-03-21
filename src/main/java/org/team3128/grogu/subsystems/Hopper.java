@@ -56,6 +56,9 @@ public class Hopper implements Subsystem {
     private boolean wasTriggeredTop = false;
     private boolean wasTriggeredBottom = false;
 
+    public boolean unshoot = false;
+    public boolean intakeShooting = false;
+
     //TODO: set this boolean to boolean in shooter class 
     private boolean isShooterReady = false;
 
@@ -95,19 +98,23 @@ public class Hopper implements Subsystem {
                 //stopIntake();
                 //stopArm();
                 stopHopper();
-                if (getBottom()) {
-                    setState(HopperState.INTAKING);
-                    Log.info("Hopper","Ball is close enough to eat");
-                } else if (isShooterReady) {
+                if (isShooterReady) {
                     setState(HopperState.SHOOTING);
                     Log.info("Hopper","I don't feel so good (SHOOTER)");
-                }   
+                    if (getBottom())
+                        intakeShooting = true;
+                } else if (getBottom()) {
+                    setState(HopperState.INTAKING);
+                    Log.info("Hopper","Ball is close enough to eat");
+                }
                 break;
             case INTAKING:
                 intake();
                 break;
             case SHOOTING:
                 shoot();
+                if(intakeShooting)
+                    intakeShoot();
                 break;
         }
         wasTriggeredBottom = getBottom();
@@ -135,6 +142,24 @@ public class Hopper implements Subsystem {
 
     }
 
+    private void intakeShoot() {
+        Log.info("hopper","intaking");
+        if (ballCount >= 3 || getTop()) {
+            if (ballCount>3)
+                Log.info("Hopper","oopsie, should not be greater than 3");
+            Log.info("Hopper Stomach","FULL!!!!");
+            intakeShooting = false;
+       } else {
+            runHopper();
+            if (!getBottom() && wasTriggeredBottom) {
+                intakeShooting = false;
+                ballCount++;
+                Log.info("Hopper Stomach", "Has eaten 1 ball. Ball count = " + ballCount);
+            }
+       }
+
+    }
+
     private void shoot() {
         runHopper();
         Log.info("hopper", "Shooting");
@@ -142,6 +167,11 @@ public class Hopper implements Subsystem {
             setState(HopperState.IDLE);
             ballCount--;
             Log.info("Hopper Stomach","Ejected one ball at a high velocity");
+        }
+        if (unshoot) {
+            setState(HopperState.IDLE);
+            unshoot = false;
+            Log.info("Hopper Stomach", "Took some tums and I feel better");
         }
     }
 
