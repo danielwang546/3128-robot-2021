@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.testbench.subsystems.Constants;
+import org.team3128.grogu.subsystems.Constants;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
@@ -51,8 +51,8 @@ public class Sidekick extends PIDSubsystem {
 
     private Sidekick() {
 
-        super(new PIDController(Constants.SIDEKICK_PID.kP, Constants.SIDEKICK_PID.kI, Constants.SIDEKICK_PID.kD));
-        getController().setTolerance(Constants.RPM_THRESHOLD);
+        super(new PIDController(Constants.ShooterConstants.SIDEKICK_PID.kP, Constants.ShooterConstants.SIDEKICK_PID.kI, Constants.ShooterConstants.SIDEKICK_PID.kD));
+        getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD);
         //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
 
 
@@ -66,9 +66,9 @@ public class Sidekick extends PIDSubsystem {
     }
 
     private void configMotors() {
-        SIDEKICK = new LazyTalonSRX(Constants.SHOOTER_SIDEKICK_ID);
+        SIDEKICK = new LazyTalonSRX(Constants.ShooterConstants.SHOOTER_SIDEKICK_ID);
         SIDEKICK.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-                Constants.CAN_TIMEOUT);
+                Constants.ShooterConstants.CAN_TIMEOUT);
         SIDEKICK.setInverted(true);
         SIDEKICK.setSensorPhase(true);
         if (DEBUG) {
@@ -109,7 +109,7 @@ public class Sidekick extends PIDSubsystem {
 
         prevError = error;
 
-        if ((Math.abs(error) <= Constants.RPM_THRESHOLD) && (setpoint != 0)) {
+        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
@@ -174,6 +174,11 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        return (atSetpoint() && ( getSetpoint() != 0 ));
+        //return (atSetpoint() && ( getSetpoint() != 0 ));
+        return true;
+    }
+
+    public void setPower(double power) {
+        SIDEKICK.set(ControlMode.PercentOutput, power);
     }
 }

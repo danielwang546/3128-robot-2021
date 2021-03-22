@@ -72,7 +72,7 @@ public class FalconDrive extends Drive {
 	double startTimeControl;
 	double endTime = 0;
 
-	public LazyTalonFX leftTalon, rightTalon, leftTalonSlave, rightTalonSlave, leftTalonSlave2, rightTalonSlave2;
+	public LazyTalonFX leftTalon, rightTalon, leftTalonFollower, rightTalonFollower;
 
 	public double left_setpoint, right_setpoint;
 
@@ -84,11 +84,11 @@ public class FalconDrive extends Drive {
 		//left and right are flipped because the driver wanted to flip the direction of driving.
 
 		rightTalon = new LazyTalonFX(Constants.DriveConstants.RIGHT_DRIVE_FRONT_ID);
-		rightTalonSlave = new LazyTalonFX(Constants.DriveConstants.RIGHT_DRIVE_MIDDLE_ID);
+		rightTalonFollower = new LazyTalonFX(Constants.DriveConstants.RIGHT_DRIVE_MIDDLE_ID);
 		// leftTalonSlave2 = new LazyTalonFX(Constants.LEFT_DRIVE_BACK_ID);
 
 		leftTalon = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_FRONT_ID);
-		leftTalonSlave = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_MIDDLE_ID);
+		leftTalonFollower = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_MIDDLE_ID);
 		// rightTalonSlave2 = new LazyTalonFX(Constants.RIGHT_DRIVE_BACK_ID);
 
 
@@ -97,21 +97,8 @@ public class FalconDrive extends Drive {
 
 		leftTalon.setInverted(false);
 		rightTalon.setInverted(true);
-		leftTalonSlave.setInverted(false);
-		rightTalonSlave.setInverted(true);
-
-
-
-
-		// leftTalonSlave2.setInverted(false);
-		// rightTalonSlave2.setInverted(false);
-		leftTalon.setSensorPhase(false);
-		rightTalon.setSensorPhase(false);
-
-		// leftTalon.setInverted(false);
-		// rightTalon.setInverted(false);
-		// leftTalonSlave.setInverted(false);
-		// rightTalonSlave.setInverted(true);
+		leftTalonFollower.setInverted(false);
+		rightTalonFollower.setInverted(true);
 		// leftTalonSlave2.setInverted(false);
 		// rightTalonSlave2.setInverted(false);
 		leftTalon.setSensorPhase(false);
@@ -186,15 +173,15 @@ public class FalconDrive extends Drive {
 
 	@Override
 	public void configMotors() {
-		leftTalonSlave.follow(leftTalon);
+		leftTalonFollower.follow(leftTalon);
 		// leftTalonSlave2.follow(leftTalon);
-		rightTalonSlave.follow(rightTalon);
+		rightTalonFollower.follow(rightTalon);
 		// rightTalonSlave2.follow(rightTalon);
 
 		leftTalon.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
 		rightTalon.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
-		leftTalonSlave.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
-		rightTalonSlave.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
+		leftTalonFollower.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
+		rightTalonFollower.setNeutralMode(Constants.DriveConstants.DRIVE_IDLE_MODE);
 		// leftTalonSlave2.setIdleMode(IdleMode.kCoast);
 		// rightTalonSlave2.setIdleMode(IdleMode.kCoast);
 		configAuto();
