@@ -123,7 +123,7 @@ public class PathFinding {
                                 new Translation2d(90*0.0254, 30*0.0254),
                                 new Translation2d(60*0.0254, 60*0.0254)                                                           
                                 ),
-                                new Pose2d(0*0.0254, 60*0.0254, new Rotation2d(0)),
+                                new Pose2d(0*0.0254, 60*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,

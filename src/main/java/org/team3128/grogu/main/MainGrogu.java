@@ -99,7 +99,7 @@ public class MainGrogu extends NarwhalRobot {
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
 
-    private boolean teleopKinematics = true;
+    private boolean teleopKinematics = false;
 
 
     static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
@@ -146,6 +146,7 @@ public class MainGrogu extends NarwhalRobot {
         drive.resetGyro();
 
         hopper.register();
+        
     }
 
     @Override
@@ -293,6 +294,7 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
+        hopper.stopHopper();
         shooterLimelight.setLEDMode(LEDMode.OFF);
         Log.info("MainCompbot", "TeleopInit has started. Setting arm state to ArmState.STARTING");
         driveCmdRunning.isRunning = true;
@@ -316,6 +318,7 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void autonomousInit() {
+        hopper.stopHopper();
         drive.resetGyro();
         trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
         Log.info("MainAthos", "going into autonomousinit");
