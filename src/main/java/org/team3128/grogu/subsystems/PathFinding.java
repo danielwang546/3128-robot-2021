@@ -109,21 +109,21 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(60*0.0254, 30*0.0254),
+                                //new Translation2d(60*0.0254, 30*0.0254),
                                 new Translation2d(90*0.0254, 60*0.0254),
-                                new Translation2d(150*0.0254, 60*0.0254),
-                                new Translation2d(210*0.0254, 60*0.0254),
-                                new Translation2d(240*0.0254, 30*0.0254),
-                                new Translation2d(270*0.0254, 0*0.0254),
-                                new Translation2d(300*0.0254, 30*0.0254),
-                                new Translation2d(270*0.0254, 60*0.0254),
-                                new Translation2d(240*0.0254, 30*0.0254),
-                                new Translation2d(210*0.0254, 0*0.0254),
-                                new Translation2d(150*0.0254, 0*0.0254),
+                                //new Translation2d(150*0.0254, 60*0.0254),
+                                //new Translation2d(240*0.0254, 40*0.0254),
+                                new Translation2d(260*0.0254, 10*0.0254),
+                                new Translation2d(310*0.0254, -40*0.0254),
+                                new Translation2d(360*0.0254, 10*0.0254),
+                                new Translation2d(300*0.0254, 80*0.0254),
+                                new Translation2d(240*0.0254, 10*0.0254),
+                                //new Translation2d(210*0.0254, -20*0.0254),
+                                //new Translation2d(150*0.0254, 0*0.0254),
                                 new Translation2d(90*0.0254, 30*0.0254),
                                 new Translation2d(60*0.0254, 60*0.0254)                                                           
                                 ),
-                                new Pose2d(0*0.0254, 60*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(-30*0.0254, 120*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,

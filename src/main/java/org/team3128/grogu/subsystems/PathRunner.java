@@ -20,7 +20,7 @@ public class PathRunner extends SequentialCommandGroup {
            
            
            
-            //m_robotContainer.getAutonomousCommandCompSlalom(mRobotDrive) 
+            m_robotContainer.getAutonomousCommandCompSlalom(mRobotDrive) 
 
             //m_robotContainer.getAutonomousCommandCompBarrel(mRobotDrive) 
 
@@ -35,7 +35,7 @@ public class PathRunner extends SequentialCommandGroup {
 
 
 
-             m_robotContainer.getAutonomousCommandSlalom(mRobotDrive) 
+             //m_robotContainer.getAutonomousCommandSlalom(mRobotDrive) 
          //   m_robotContainer.getAutonomousCommandBarrel(mRobotDrive) 
            
             // m_robotContainer.getAutonomousCommandBounce1(mRobotDrive), 

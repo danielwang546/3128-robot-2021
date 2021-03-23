@@ -503,7 +503,7 @@ public class FalconDrive extends Drive {
 	@Override
 	public void resetGyro() {
 		ahrs.reset();
-		Log.info("Reset Gyro", " ");
+		//Log.info("Reset Gyro", " ");
 	}
 
 	@Override
