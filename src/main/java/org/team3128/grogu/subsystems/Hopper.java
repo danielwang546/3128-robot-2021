@@ -62,8 +62,7 @@ public class Hopper implements Subsystem {
     //TODO: set this boolean to boolean in shooter class 
     private boolean isShooterReady = false;
 
-    public static Hopper getInstance() {
-        
+    public static Hopper getInstance() { 
         return instance;
     }
 
@@ -101,8 +100,6 @@ public class Hopper implements Subsystem {
                 if (isShooterReady) {
                     setState(HopperState.SHOOTING);
                     Log.info("Hopper","I don't feel so good (SHOOTER)");
-                    if (getBottom())
-                        intakeShooting = true;
                 } else if (getBottom()) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
@@ -113,8 +110,14 @@ public class Hopper implements Subsystem {
                 break;
             case SHOOTING:
                 shoot();
-                if(intakeShooting)
-                    intakeShoot();
+                // if (getBottom())
+                //     intakeShooting = true;
+                // if(intakeShooting)
+                //     intakeShoot();
+                if (!getBottom() && wasTriggeredBottom) {
+                    ballCount++;
+                    Log.info("Hopper", "Sucked up another ball hwilst also shooting");
+                }
                 break;
         }
         wasTriggeredBottom = getBottom();
@@ -163,7 +166,7 @@ public class Hopper implements Subsystem {
     private void shoot() {
         runHopper();
         Log.info("hopper", "Shooting");
-        if (wasTriggeredTop && getTop()) {
+        if (wasTriggeredTop && !getTop()) {
             setState(HopperState.IDLE);
             ballCount--;
             Log.info("Hopper Stomach","Ejected one ball at a high velocity");
@@ -226,5 +229,9 @@ public class Hopper implements Subsystem {
     public void resetBallCount() {
         ballCount = 0;
         Log.info("Hopper", "Resetting ball count to " + ballCount);
+    }
+
+    public int getBallCount() {
+        return ballCount;
     }
 }
