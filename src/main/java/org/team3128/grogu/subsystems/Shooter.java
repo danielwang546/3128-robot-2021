@@ -45,6 +45,7 @@ public class Shooter extends PIDSubsystem {
     public double output = 0;
     double accumulator = 0;
     double prevError = 0;
+    public boolean isAligned = false;
 
     double value = 0, preValue = 0, time = 0, preTime = 0;
 
@@ -152,7 +153,15 @@ public class Shooter extends PIDSubsystem {
 
     public void setState(ShooterState shooterState) {
         SHOOTER_STATE = shooterState;
-        setSetpoint(shooterState.shooterRPM);
+        //setSetpoint(shooterState.shooterRPM);
+    }
+
+    public void shoot() {
+        setSetpoint(SHOOTER_STATE.shooterRPM);
+    }
+
+    public void counterShoot() {
+        setSetpoint(0);
     }
 
     //@Override
@@ -184,6 +193,6 @@ public class Shooter extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        return (atSetpoint() && ( getSetpoint() != 0 ));
+        return (isAligned && atSetpoint() && ( getSetpoint() != 0 ));
     }
 }

@@ -34,6 +34,7 @@ import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.test_suite.CanDevices;
 import org.team3128.common.utility.test_suite.ErrorCatcherUtility;
 import org.team3128.grogu.subsystems.*;
+import org.team3128.grogu.commands.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -88,7 +89,6 @@ public class MainGrogu extends NarwhalRobot {
     public Trajectory trajectory;
 
     public Limelight shooterLimelight, ballLimelight;
-    public Limelight[] limelights;
     public boolean inPlace = false;
     public boolean inPlace2 = false;
 
@@ -120,7 +120,6 @@ public class MainGrogu extends NarwhalRobot {
         ballLimelight = new Limelight("limelight-c", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
-        limelights = new Limelight[2];
         drive.resetGyro();
 
         hopper.register();
@@ -140,10 +139,17 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
         listenerRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         listenerRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
-        listenerRight.nameControl(new Button(3), "Intake");
-        listenerRight.nameControl(new Button(4), "Shoot");
-        listenerRight.nameControl(new Button(7), "MoveArmDown");
+        listenerRight.nameControl( ControllerExtreme3D.TRIGGER, "Intake");
+
+        listenerRight.nameControl(new Button(10), "MoveArmDown");
         listenerRight.nameControl(new Button(8), "MoveArmUp");
+
+        listenerRight.nameControl(new Button(2), "Shoot");
+
+        listenerRight.nameControl(new Button(7), "SetOverYonder");
+        listenerRight.nameControl(new Button(9), "SetMiddling");
+        listenerRight.nameControl(new Button(11), "SetIntimate");
+
         listenerRight.nameControl(new Button(12), "ResetBallCount");
         listenerLeft.nameControl(ControllerExtreme3D.TRIGGER, "REVERSE");
 
@@ -170,14 +176,15 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.addButtonDownListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
             sidekick.setPower(-0.7);
-            shooter.setState(Shooter.ShooterState.MID_RANGE);
+            shooter.shoot();
+            scheduler.schedule( new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26));
             Log.info("Joystick","Button 4 pressed");
         });
 
         listenerRight.addButtonUpListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.OFF);
             sidekick.setPower(0);
-            shooter.setState(Shooter.ShooterState.OFF);
+            shooter.counterShoot();
             hopper.unshoot = true;
             Log.info("Joystick","Button 4 unpressed");
         });
@@ -204,6 +211,16 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerLeft.addButtonDownListener("REVERSE", () -> {
             reverse *= -1;
+        });
+
+        listenerRight.addButtonDownListener("SetOverYonder", () -> {
+            shooter.setState(Shooter.ShooterState.LONG_RANGE);
+        });
+        listenerRight.addButtonDownListener("SetMiddling", () -> {
+            shooter.setState(Shooter.ShooterState.MID_RANGE);
+        });
+        listenerRight.addButtonDownListener("SetIntimate", () -> {
+            shooter.setState(Shooter.ShooterState.SHORT_RANGE);
         });
 
     }
