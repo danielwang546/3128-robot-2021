@@ -109,9 +109,11 @@ public class CmdAlignShoot implements Command {
 
     @Override
     public void execute() {
+        //Log.info("CmdAlignShoot", "Running one loop of execute");
         switch (aimState) {
             case SEARCHING:
                 NarwhalDashboard.put("align_status", "searching");
+                Log.info("CmdAlignShoot", "Searching...");
                 if (limelight.hasValidTarget()) {
                     targetFoundCount += 1;
                 } else {
@@ -125,7 +127,7 @@ public class CmdAlignShoot implements Command {
 
                     SmartDashboard.putNumber("ty", initData.ty());
 
-                    currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, 5);
+                    currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);//5);
 
                     previousTime = RobotController.getFPGATime();
                     previousError = goalHorizontalOffset - currentHorizontalOffset;
@@ -159,7 +161,7 @@ public class CmdAlignShoot implements Command {
                         gotDistance = true;
                     }
 
-                    currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, 5);
+                    currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);
 
                     currentTime = RobotController.getFPGATime();
                     currentError = goalHorizontalOffset - currentHorizontalOffset;
@@ -189,8 +191,9 @@ public class CmdAlignShoot implements Command {
 
                 break;
         }
-        if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD) && shooter.isReady()) {
+        if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
             shooter.isAligned = true;
+            Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
         } else {
             shooter.isAligned = false;
         }
@@ -198,11 +201,12 @@ public class CmdAlignShoot implements Command {
 
     @Override
     public boolean isFinished() {
-        if (hopper.getBallCount() == 0|| numBallsShot >= numBallsToShoot) {
-        return true;
-        } else {
+        // if (hopper.getBallCount() == 0|| numBallsShot >= numBallsToShoot) {
+        // return true;
+        // } else {
+        // return false;
+        // }
         return false;
-        }
     }
 
     @Override
@@ -213,6 +217,8 @@ public class CmdAlignShoot implements Command {
         cmdRunning.isRunning = true;
 
         Log.info("CmdAlignShoot", "Command Finished.");
+        if (interrupted)
+            Log.info("CmdAlignShoot", "Command interru-");
         //hopper.setAction(Hopper.ActionState.ORGANIZING);
     }
 }

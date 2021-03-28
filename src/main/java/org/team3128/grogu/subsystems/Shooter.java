@@ -70,6 +70,10 @@ public class Shooter extends PIDSubsystem {
         return m_controller.atSetpoint();
     }
 
+    public boolean isPlateaued() {
+        return (plateauCount >= Constants.ShooterConstants.PLATEAU_COUNT);
+    }
+
     private void configMotors() {
         LEFT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_LEFT_ID);
         RIGHT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_RIGHT_ID);
@@ -137,9 +141,9 @@ public class Shooter extends PIDSubsystem {
         // if (accel > Constants.SHOOTER_MAX_ACCELERATION)
         //     output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
 
-        if (setpoint != 0) {
-            Log.info("Shooter", "shooter setpoint = " + setpoint);
-        }
+        // if (setpoint != 0) {
+        //     Log.info("Shooter", "shooter setpoint = " + setpoint);
+        // }
 
         LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
@@ -193,6 +197,8 @@ public class Shooter extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        return (isAligned && atSetpoint() && ( getSetpoint() != 0 ));
+        if (atSetpoint())
+            Log.info("Shooter","at Setpoint");
+        return (isAligned && isPlateaued());
     }
 }

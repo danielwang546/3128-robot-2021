@@ -65,6 +65,10 @@ public class Sidekick extends PIDSubsystem {
         return m_controller.atSetpoint();
     }
 
+    public boolean isPlateaued() {
+        return (plateauCount >= Constants.ShooterConstants.PLATEAU_COUNT);
+    }
+
     private void configMotors() {
         SIDEKICK = new LazyTalonSRX(Constants.ShooterConstants.SHOOTER_SIDEKICK_ID);
         SIDEKICK.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
@@ -174,7 +178,7 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        //return (atSetpoint() && ( getSetpoint() != 0 ));
+        //return (isPlateaued());
         return true;
     }
 
