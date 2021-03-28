@@ -97,9 +97,14 @@ public class MainGrogu extends NarwhalRobot {
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
 
+    public CmdAlignShoot alignCmd;
+
     @Override
     protected void constructHardware() {
 
+        //shooterLimelight.setLEDMode(LEDMode.OFF);
+        //ballLimelight.setLEDMode(LEDMode.OFF);
+        
         driveCmdRunning = new DriveCommandRunning();
 
         ahrs = drive.ahrs;
@@ -128,6 +133,8 @@ public class MainGrogu extends NarwhalRobot {
         shooter.setSetpoint(0);
         //sidekick.enable();
         //sidekick.setSetpoint(0);
+        shooter.setState(Shooter.ShooterState.MID_RANGE);
+        alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
     }
 
     @Override
@@ -177,7 +184,7 @@ public class MainGrogu extends NarwhalRobot {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
             sidekick.setPower(-0.7);
             shooter.shoot();
-            scheduler.schedule( new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26));
+            scheduler.schedule(alignCmd);
             Log.info("Joystick","Button 4 pressed");
         });
 
@@ -186,6 +193,7 @@ public class MainGrogu extends NarwhalRobot {
             sidekick.setPower(0);
             shooter.counterShoot();
             hopper.unshoot = true;
+            alignCmd.cancel();
             Log.info("Joystick","Button 4 unpressed");
         });
 
@@ -262,7 +270,7 @@ public class MainGrogu extends NarwhalRobot {
     @Override
     protected void teleopInit() {
         shooterLimelight.setLEDMode(LEDMode.OFF);
-        Log.info("MainCompbot", "TeleopInit has started. Setting arm state to ArmState.STARTING");
+        Log.info("MainGrogu", "TeleopInit has started. Setting arm state to ArmState.STARTING");
         driveCmdRunning.isRunning = true;
     }
 
