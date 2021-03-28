@@ -18,9 +18,10 @@ public class bounce extends SequentialCommandGroup {
             new InstantCommand(() -> {
             mRobotDrive.resetOdometry(new Pose2d(1.4, 2.2, new Rotation2d(0)));
             }),
-            m_robotContainer.getAutonomousCommandSlalom2()
+           // m_robotContainer.getAutonomousCommandSlalom2()
+           // m_robotContainer.getAutonomousCommandBarrel2()
            //m_robotContainer.getAutonomousCommandSlalom()
-           //m_robotContainer.getAutonomousCommandBarrel()
+           m_robotContainer.getAutonomousCommandBarrel()
         //    m_robotContainer.getAutonomousCommandBounce1(),
         //    m_robotContainer.getAutonomousCommandBounce2(),
         //    m_robotContainer.getAutonomousCommandBounce3(),
