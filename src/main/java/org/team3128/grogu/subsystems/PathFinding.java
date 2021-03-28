@@ -90,7 +90,7 @@ public class PathFinding {
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
     }
 
-
+    /*
     public Command getAutonomousCommandCompSlalom(FalconDrive m_robotDrive) {
         // Create a voltage constraint to ensure we don't accelerate too fast
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -137,7 +137,7 @@ public class PathFinding {
                 // RamseteCommand passes volts to the callback
                 m_robotDrive::tankDriveVolts, (Subsystem) m_robotDrive);
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-    }
+    } */
 
 
 
@@ -161,7 +161,7 @@ public class PathFinding {
 
 
 
-    /*
+    
     public Command getAutonomousCommandCompSlalom(FalconDrive m_robotDrive) {
         // Create a voltage constraint to ensure we don't accelerate too fast
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -210,7 +210,7 @@ public class PathFinding {
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
     }
 
-    */
+    
     public Command getAutonomousCommandCompBarrel(FalconDrive m_robotDrive) {
         // Create a voltage constraint to ensure we don't accelerate too fast
         var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -229,23 +229,26 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
-                               // new Translation2d(60*0.0254, 30*0.0254),
+                                new Translation2d(60*0.0254, 30*0.0254),
                                 new Translation2d(120*0.0254, 0*0.0254),
-                                new Translation2d(150*0.0254, -30*0.0254),
+                                new Translation2d(160*0.0254, -30*0.0254),
                                 new Translation2d(120*0.0254, -60*0.0254),
-                                new Translation2d(90*0.0254, -30*0.0254),
+                                new Translation2d(100*0.0254, -30*0.0254),
                                 new Translation2d(120*0.0254, 0*0.0254),
-                                new Translation2d(210*0.0254, 0*0.0254),
-                                new Translation2d(240*0.0254, 30*0.0254),
-                                new Translation2d(210*0.0254, 60*0.0254),
-                                new Translation2d(180*0.0254, 30*0.0254),
-                                new Translation2d(210*0.0254, -30*0.0254),
-                                new Translation2d(270*0.0254, -60*0.0254),
-                                new Translation2d(300*0.0254, -30*0.0254),
-                                new Translation2d(270*0.0254, 0*0.0254)
-                                //new Translation2d(120*0.0254, 60*0.0254)                                                           
+                                //end of first loop
+
+                                new Translation2d(280*0.0254, -20*0.0254),
+                                new Translation2d(320*0.0254, 40*0.0254),
+                                new Translation2d(260*0.0254, 80*0.0254),
+                                new Translation2d(210*0.0254, 10*0.0254),
+                                //end of second loop
+                                new Translation2d(260*0.0254, -90*0.0254),
+                                new Translation2d(320*0.0254, -140*0.0254),
+                                new Translation2d(370*0.0254, -90*0.0254),
+                                new Translation2d(320*0.0254, 0*0.0254),
+                                new Translation2d(170*0.0254, 0*0.0254)                                                           
                                 ),
-                                new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(0*0.0254, 20*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,

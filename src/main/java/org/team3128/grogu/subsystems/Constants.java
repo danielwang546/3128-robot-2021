@@ -17,15 +17,15 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public class Constants extends RobotConstants {
 
         public static class RamseteConstants {
-                public static final double ksVolts = 0.5;//0.1
-                public static final double kvVoltSecondsPerMeter = 0.5;//0.5
-                public static final double kaVoltSecondsSquaredPerMeter = 0.05;//0.1
-                public static final double kRamseteB = 1.5; //5
-                public static final double kRamseteZeta = 0.1     ; //0.7
+                public static final double ksVolts = 0.7;//0.1 0.5
+                public static final double kvVoltSecondsPerMeter = 0.5;//0.5 0.5
+                public static final double kaVoltSecondsSquaredPerMeter = 0.05;//0.1  0.05
+                public static final double kRamseteB = 5; //5  1.5
+                public static final double kRamseteZeta = 0.7     ; //0.7  0.1
                 public static final double kPDriveVel = 0.5;
 
-                public static final double maxVelocity = 1; //2.5
-                public static final double maxAcceleration = 1; //2
+                public static final double maxVelocity = 1.5; //2.5
+                public static final double maxAcceleration = 1.5; //2
                 
                 public static final double kTrackwidthMeters = 0.66;
                 public static final DifferentialDriveKinematics kDriveKinematics =
