@@ -101,7 +101,7 @@ public class MainGrogu extends NarwhalRobot {
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
 
-    private boolean teleopKinematics = false;
+    private boolean teleopKinematics = true;
 
 
     static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
