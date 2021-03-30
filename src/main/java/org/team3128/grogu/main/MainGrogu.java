@@ -371,7 +371,9 @@ public class MainGrogu extends NarwhalRobot {
         KvlList.add((double) 0);
         KvrList.add((double) 0);
 
-        
+
+        //use this for galactic search
+        //hopper.runIntake();
         PathFinding pathfinder = new PathFinding();
         new PathRunner(pathfinder, drive).schedule();
         Log.info("MainAthos","1");
