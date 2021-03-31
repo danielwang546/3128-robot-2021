@@ -101,7 +101,7 @@ public class MainGrogu extends NarwhalRobot {
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
 
-    private boolean teleopKinematics = true;
+    private boolean teleopKinematics = false;
 
 
     static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
@@ -373,7 +373,7 @@ public class MainGrogu extends NarwhalRobot {
 
 
         //use this for galactic search
-        //hopper.runIntake();
+        hopper.runIntake();
         PathFinding pathfinder = new PathFinding();
         new PathRunner(pathfinder, drive).schedule();
         Log.info("MainAthos","1");
