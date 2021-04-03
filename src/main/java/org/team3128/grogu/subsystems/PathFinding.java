@@ -249,14 +249,14 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(75*0.0254, -30*0.0254),
-                                new Translation2d(75*0.0254, -60*0.0254),
+                                new Translation2d(55*0.0254, -30*0.0254),
+                                new Translation2d(55*0.0254, -60*0.0254),
                                 
-                                new Translation2d(135*0.0254, -90*0.0254),
+                                new Translation2d(135*0.0254, -75*0.0254),
                                 //new Translation2d(135*0.0254, -10*0.0254),
-                                new Translation2d(165*0.0254, 0*0.0254)
+                                new Translation2d(165*0.0254, 0*0.0254),
                                
-                               // new Translation2d(195*0.0254, -30*0.0254)                                                           
+                                new Translation2d(175*0.0254, -30*0.0254)                                                           
                                 ),
                                 new Pose2d(330*0.0254, -60*0.0254, new Rotation2d(3.14)),
                                 config);
@@ -1053,7 +1053,7 @@ public class PathFinding {
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
                                 new Translation2d(160*0.0254, 0*0.0254),
-                                new Translation2d(210*0.0254, 60*0.0254),
+                                new Translation2d(220*0.0254, 60*0.0254),
                                 new Translation2d(270*0.0254, 0*0.0254)                                                            
                                 ),
                                 new Pose2d(330*0.0254, 30*0.0254, new Rotation2d(0)),
