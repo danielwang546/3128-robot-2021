@@ -62,7 +62,7 @@ public class CmdAlignShoot implements Command {
     private Command hopperShoot, organize;
 
     int targetFoundCount;
-    int ReaplateauchedCount;
+    int plateauCount;
 
     int numBallsShot;
     int numBallsToShoot;
@@ -188,14 +188,16 @@ public class CmdAlignShoot implements Command {
                     previousTime = currentTime;
                     previousError = currentError;
                 }
-
+                if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
+                    plateauCount++;
+                    if (plateauCount > 5) {
+                        shooter.isAligned = true;
+                        Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
+                    }
+                } else {
+                    shooter.isAligned = false;
+                }
                 break;
-        }
-        if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
-            shooter.isAligned = true;
-            Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
-        } else {
-            shooter.isAligned = false;
         }
     }
 
@@ -206,15 +208,13 @@ public class CmdAlignShoot implements Command {
         // } else {
         // return false;
         // }
-        return false;
+        return shooter.isAligned;
     }
 
     @Override
     public void end(boolean interrupted) {
         limelight.setLEDMode(LEDMode.OFF);
         drive.stopMovement();
-        shooter.setSetpoint(0);
-        cmdRunning.isRunning = true;
 
         Log.info("CmdAlignShoot", "Command Finished.");
         if (interrupted)

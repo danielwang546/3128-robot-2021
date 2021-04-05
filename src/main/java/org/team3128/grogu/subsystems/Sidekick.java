@@ -26,6 +26,7 @@ public class Sidekick extends PIDSubsystem {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
         MID_RANGE(4080), // mid range shooting
+        DEFAULT(-5000),
         SHORT_RANGE(2000); // short range shooting 3700
 
         public double shooterRPM;
@@ -146,7 +147,7 @@ public class Sidekick extends PIDSubsystem {
 
     public void setState(ShooterState shooterState) {
         SHOOTER_STATE = shooterState;
-        setSetpoint(shooterState.shooterRPM);
+        //setSetpoint(shooterState.shooterRPM);
     }
 
     //@Override
@@ -178,11 +179,19 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        //return (isPlateaued());
-        return true;
+        return (isPlateaued());
+        //return true;
     }
 
     public void setPower(double power) {
         SIDEKICK.set(ControlMode.PercentOutput, power);
+    }
+
+    public void shoot() {
+        setSetpoint(SHOOTER_STATE.shooterRPM);
+    }
+
+    public void counterShoot() {
+        setSetpoint(0);
     }
 }

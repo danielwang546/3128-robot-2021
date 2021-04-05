@@ -129,8 +129,8 @@ public class Hopper implements Subsystem {
 
     private void intake() {
         Log.info("hopper","intaking");
-        if (ballCount >= 3 || getTop()) {
-            if (ballCount>3)
+        if (ballCount >= 2 || getTop()) {
+            if (ballCount > 2)
                 Log.info("Hopper","oopsie, should not be greater than 3");
             Log.info("Hopper Stomach","FULL!!!!");
             setState(HopperState.IDLE);
@@ -148,7 +148,7 @@ public class Hopper implements Subsystem {
     private void intakeShoot() {
         Log.info("hopper","intaking");
         if (ballCount >= 3 || getTop()) {
-            if (ballCount>3)
+            if (ballCount > 3)
                 Log.info("Hopper","oopsie, should not be greater than 3");
             Log.info("Hopper Stomach","FULL!!!!");
             intakeShooting = false;

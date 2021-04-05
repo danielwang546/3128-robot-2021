@@ -131,8 +131,9 @@ public class MainGrogu extends NarwhalRobot {
 
         shooter.enable();
         shooter.setSetpoint(0);
-        //sidekick.enable();
-        //sidekick.setSetpoint(0);
+        sidekick.enable();
+        sidekick.setState(Sidekick.ShooterState.DEFAULT);
+
         shooter.setState(Shooter.ShooterState.MID_RANGE);
         alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
     }
@@ -182,7 +183,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
-            sidekick.setPower(-0.7);
+            sidekick.shoot();
             shooter.shoot();
             scheduler.schedule(alignCmd);
             Log.info("Joystick","Button 4 pressed");
@@ -190,10 +191,13 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonUpListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.OFF);
-            sidekick.setPower(0);
+            sidekick.counterShoot();
             shooter.counterShoot();
             hopper.unshoot = true;
             alignCmd.cancel();
+            shooter.setSetpoint(0);
+            driveCmdRunning.isRunning = true;
+            shooter.isAligned = false;
             Log.info("Joystick","Button 4 unpressed");
         });
 
