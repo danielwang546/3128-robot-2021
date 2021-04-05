@@ -25,8 +25,13 @@ public class Shooter extends PIDSubsystem {
     public static enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
-        MID_RANGE(4080), // mid range shooting
-        SHORT_RANGE(2000); // short range shooting 3700
+        MID_RANGE(4500), // mid range shooting
+        SHORT_RANGE(2000),
+        GREEN(2750),
+        YELLOW(4200),
+        BLUE(4750),
+        RED(0),
+        ; // short range shooting 3700
 
         public double shooterRPM;
 
@@ -112,15 +117,17 @@ public class Shooter extends PIDSubsystem {
         time = RobotController.getFPGATime() / 1e6;
         
         double accel = (value - preValue) / (time - preTime);
-        
-        preValue = value;
-        preTime = time;
 
-        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
+        Log.info("Shooter",getMeasurement()+" RPM");
+
+        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) && (Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
         }
+
+        preValue = value;
+        preTime = time;
 
         if (output > 1) {
             // Log.info("SHOOTER",
@@ -176,7 +183,7 @@ public class Shooter extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00188 * desiredSetpoint); //0.00147x - 0.2; // 0
+        double ff = (0.00168 * desiredSetpoint);//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {
