@@ -22,15 +22,15 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 
 
 public class Shooter extends PIDSubsystem {
-    public static enum ShooterState {
+    public enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
-        MID_RANGE(4500), // mid range shooting
+        MID_RANGE(0), // mid range shooting
         SHORT_RANGE(2000),
-        GREEN(2750),
-        YELLOW(4200),
+        GREEN(4000),
+        YELLOW(3800),
         BLUE(4750),
-        RED(0),
+        RED(4800),
         ; // short range shooting 3700
 
         public double shooterRPM;
@@ -109,7 +109,7 @@ public class Shooter extends PIDSubsystem {
         double voltageOutput = shooterFeedForward(setpoint) + output;
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
-        output = voltageOutput / voltage;
+        output = voltageOutput / 12;//voltage
 
         //Log.info("Shooter", "using output");
 
@@ -120,7 +120,7 @@ public class Shooter extends PIDSubsystem {
 
         Log.info("Shooter",getMeasurement()+" RPM");
 
-        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) && (Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
+        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) &&(Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
@@ -183,7 +183,7 @@ public class Shooter extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00168 * desiredSetpoint);//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
+        double ff = (0.0019 * desiredSetpoint);//0.00168//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

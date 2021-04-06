@@ -26,7 +26,7 @@ public class Sidekick extends PIDSubsystem {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
         MID_RANGE(4080), // mid range shooting
-        DEFAULT(-5000),
+        DEFAULT(-4600),
         SHORT_RANGE(2000); // short range shooting 3700
 
         public double shooterRPM;
@@ -44,6 +44,8 @@ public class Sidekick extends PIDSubsystem {
     double error = 0;
     public double output = 0;
     double prevError = 0;
+    double value = 0;
+    double preValue = 0;
 
     int plateauCount = 0;
 
@@ -108,17 +110,21 @@ public class Sidekick extends PIDSubsystem {
         double voltageOutput = shooterFeedForward(setpoint) + output;
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
-        output = voltageOutput / voltage;
+        value = getMeasurement();
+        output = voltageOutput / 12;
 
         //Log.info("Shooter", "using output");
 
+        Log.info("Sidekick",getMeasurement()+" RPM");
+
         prevError = error;
 
-        if ((Math.abs(error) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
+        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
         }
+        preValue = value;
 
         if (output > 1) {
             // Log.info("SHOOTER",
@@ -137,6 +143,7 @@ public class Sidekick extends PIDSubsystem {
         }
 
         SIDEKICK.set(ControlMode.PercentOutput, output);
+        //SIDEKICK.set(ControlMode.Velocity,output+shooterFeedForward(getSetpoint()));
     }
 
     public void setSetpoint(double passedSetpoint) {
@@ -158,7 +165,7 @@ public class Sidekick extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00245 * desiredSetpoint); //0.00147x - 0.2; // 0
+        double ff = (0.0005 * desiredSetpoint); //0.3//0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

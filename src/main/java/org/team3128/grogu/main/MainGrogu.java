@@ -154,12 +154,20 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.nameControl(new Button(2), "Shoot");
 
+        listenerRight.nameControl(new Button(3), "EmptyHopper");
+
         listenerRight.nameControl(new Button(7), "SetOverYonder");
         listenerRight.nameControl(new Button(9), "SetMiddling");
         listenerRight.nameControl(new Button(11), "SetIntimate");
 
         listenerRight.nameControl(new Button(12), "ResetBallCount");
+
         listenerLeft.nameControl(ControllerExtreme3D.TRIGGER, "REVERSE");
+
+        listenerLeft.nameControl(new Button(12), "SetGreen");
+        listenerLeft.nameControl(new Button(11), "SetYellow");
+        listenerLeft.nameControl(new Button(9), "SetBlue");
+        listenerLeft.nameControl(new Button(7), "SetRed");
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
@@ -201,6 +209,16 @@ public class MainGrogu extends NarwhalRobot {
             Log.info("Joystick","Button 4 unpressed");
         });
 
+        listenerRight.addButtonDownListener("EmptyHopper", () -> {
+            hopper.runHopperOpp();
+            hopper.runIntakeOpp();
+        });
+
+        listenerRight.addButtonUpListener("EmptyHopper", () -> {
+            hopper.stopHopper();
+            hopper.stopIntake();
+        });
+
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
             hopper.moveArmDown();
         });
@@ -233,6 +251,19 @@ public class MainGrogu extends NarwhalRobot {
         });
         listenerRight.addButtonDownListener("SetIntimate", () -> {
             shooter.setState(Shooter.ShooterState.SHORT_RANGE);
+        });
+
+        listenerLeft.addButtonDownListener("SetGreen", () -> {
+            shooter.setState(Shooter.ShooterState.GREEN);
+        });
+        listenerLeft.addButtonDownListener("SetYellow", () -> {
+            shooter.setState(Shooter.ShooterState.YELLOW);
+        });
+        listenerLeft.addButtonDownListener("SetBlue", () -> {
+            shooter.setState(Shooter.ShooterState.BLUE);
+        });
+        listenerLeft.addButtonDownListener("SetRed", () -> {
+            shooter.setState(Shooter.ShooterState.RED);
         });
 
     }
