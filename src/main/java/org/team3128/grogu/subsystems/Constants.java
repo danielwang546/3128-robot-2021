@@ -124,11 +124,11 @@ public class Constants extends RobotConstants {
                 public static final int SHOOTER_MOTOR_RIGHT_ID = 13;
                 public static final int SHOOTER_SIDEKICK_ID = 42;
                 
-                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 2e-4, 0, 3e-6);//0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
-                public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0.000065, 0, 0);
+                public static final PIDConstants SHOOTER_PID = new PIDConstants(0,5e-3,0,4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
+                public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 6.5e-3, 0, 0);
 
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
-                public static final double RPM_THRESHOLD = 200; // the maximum difference between an RPM and  the setpoint for a data point to be considered as a plataeu
+                public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and  the setpoint for a data point to be considered as a plataeu
                 public static final double RPM_PLATEAU_THRESHOLD = 100; // the maximum difference between an RPM and  the setpoint for a data point to be considered as a plataeu
                 public static final int PLATEAU_COUNT = 25; // 50 * 0.005s = 0.25 seconds of plateau required
 

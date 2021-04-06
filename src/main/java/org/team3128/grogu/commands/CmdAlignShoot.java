@@ -190,7 +190,7 @@ public class CmdAlignShoot implements Command {
                 }
                 if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
                     plateauCount++;
-                    if (plateauCount > 5) {
+                    if (plateauCount > 25) {
                         shooter.isAligned = true;
                         Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
                     }
