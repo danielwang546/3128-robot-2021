@@ -24,8 +24,8 @@ public class Constants extends RobotConstants {
                 public static final double kRamseteZeta = 0.7     ; //0.7  0.1
                 public static final double kPDriveVel = 0.5;
 
-                public static final double maxVelocity = 1; //1.5
-                public static final double maxAcceleration = 1; //1.5
+                public static final double maxVelocity = 1.75; //1.5
+                public static final double maxAcceleration = 1.5; //1.5
                 
                 public static final double kTrackwidthMeters = 0.66;
                 public static final DifferentialDriveKinematics kDriveKinematics =

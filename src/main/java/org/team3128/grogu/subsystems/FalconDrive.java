@@ -392,6 +392,7 @@ public class FalconDrive extends Drive {
 		String tempStr = "pwrL=" + String.valueOf(pwrL) + ", pwrR=" + String.valueOf(pwrR) + ", spdL="
 				+ String.valueOf(spdL) + ", spdR=" + String.valueOf(spdR);
 		Log.info("FalconDrive", tempStr);
+		//pwrL
 		setWheelPower(new DriveSignal(pwrL, pwrR));
 		// setWheelVelocity(new DriveSignal(spdL, spdR));
 	}

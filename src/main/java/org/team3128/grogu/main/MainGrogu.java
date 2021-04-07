@@ -182,7 +182,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.nameControl(new Button(12), "ResetBallCount");
         listenerLeft.nameControl(ControllerExtreme3D.TRIGGER, "REVERSE");
-
+        listenerLeft.nameControl(new Button(11), "REVERSEHOPPER");
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
                 double horiz = 0.4  * listenerRight.getAxis("MoveTurn"); //-0.5
@@ -244,6 +244,15 @@ public class MainGrogu extends NarwhalRobot {
             reverse *= -1;
         });
 
+        /*
+        listenerLeft.addButtonDownListener("REVERSEHOPPER", () -> {
+           hopper.reverseIntake();
+        });
+
+        listenerLeft.addButtonUpListener("REVERSEHOPPER", () -> {
+            hopper.stopHopper();
+         });
+         */
         listenerRight.addButtonDownListener("SetOverYonder", () -> {
             shooter.setState(Shooter.ShooterState.LONG_RANGE);
         });
@@ -387,6 +396,7 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void autonomousPeriodic() {
+        hopper.resetBallCount();
         currentTime=RobotController.getFPGATime()/1000000.0;
         //currentTime = currentTime*1e-06;
         //I'm not sure how to check if new readings are available so right now we are running predict and update every time

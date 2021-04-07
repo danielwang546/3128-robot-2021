@@ -209,6 +209,13 @@ public class Hopper implements Subsystem {
         BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
     }
 
+    public void reverseIntake() {
+        HOPPER_MOTOR_1.set(ControlMode.PercentOutput, -Constants.HopperConstants.HOPPER_MOTOR_POWER);
+        HOPPER_MOTOR_2.set(-Constants.HopperConstants.HOPPER_MOTOR_2_POWER);
+        INTAKE_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.INTAKE_MOTOR_POWER);
+        BRUSH_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.BRUSH_MOTOR_POWER);
+    }
+
     public void stopIntake() {
         INTAKE_MOTOR.set(ControlMode.PercentOutput, 0);
         BRUSH_MOTOR.set(ControlMode.PercentOutput, 0);

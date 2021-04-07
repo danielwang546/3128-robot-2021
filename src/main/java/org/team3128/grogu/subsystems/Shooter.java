@@ -197,8 +197,9 @@ public class Shooter extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        if (atSetpoint())
-            Log.info("Shooter","at Setpoint");
+        if (atSetpoint()) {}
+
+         //   Log.info("Shooter","at Setpoint");
         return (isAligned && isPlateaued());
     }
 }

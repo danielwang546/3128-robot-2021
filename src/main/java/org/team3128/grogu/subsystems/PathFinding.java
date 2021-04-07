@@ -190,12 +190,14 @@ public class PathFinding {
                                 //new Translation2d(150*0.0254, 60*0.0254),
                                 
                                 new Translation2d(210*0.0254, 60*0.0254),
+
+
                                 //the point
-                                new Translation2d(220*0.0254, 30*0.0254),
-                                new Translation2d(250*0.0254, 0*0.0254),
+                                new Translation2d(220*0.0254, 10*0.0254),
+                                new Translation2d(250*0.0254, -20*0.0254),
                                 new Translation2d(280*0.0254, 30*0.0254),
                                 new Translation2d(250*0.0254, 60*0.0254),
-                                new Translation2d(220*0.0254, 30*0.0254),
+                                new Translation2d(220*0.0254, 10*0.0254),
                                 /*
                                 new Translation2d(260*0.0254, -30*0.0254),
                                 new Translation2d(290*0.0254, -40*0.0254),
@@ -204,13 +206,13 @@ public class PathFinding {
                                 new Translation2d(260*0.0254, -10*0.0254),*/
                                 //point end
 
-                                new Translation2d(210*0.0254, 0*0.0254),
+                                new Translation2d(210*0.0254, -20*0.0254),
                                // new Translation2d(150*0.0254, 0*0.0254),
-                                new Translation2d(60*0.0254, 20*0.0254),
-                                new Translation2d(30*0.0254, 60*0.0254) 
+                                new Translation2d(60*0.0254, 0*0.0254),
+                                new Translation2d(30*0.0254, 40*0.0254) 
                                                                                           
                                 ),
-                                new Pose2d(-30*0.0254, 80*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(-30*0.0254, 60*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -250,15 +252,24 @@ public class PathFinding {
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
                                 new Translation2d(55*0.0254, -30*0.0254),
-                                new Translation2d(55*0.0254, -60*0.0254),
-                                
-                                new Translation2d(135*0.0254, -75*0.0254),
-                                //new Translation2d(135*0.0254, -10*0.0254),
-                                new Translation2d(165*0.0254, 0*0.0254),
-                               
-                                new Translation2d(175*0.0254, -30*0.0254)                                                           
+                                new Translation2d(55*0.0254, -80*0.0254),
+                                //first two balls
+
+
+
+                                new Translation2d(135*0.0254, -90*0.0254),
+                                //third ball
+
+                                new Translation2d(125*0.0254, -50*0.0254),
+
+
+                                new Translation2d(165*0.0254, 10*0.0254),
+                               //fourth ball
+                                new Translation2d(175*0.0254, -20*0.0254)     
+                                //fifth ball                                                      
                                 ),
-                                new Pose2d(330*0.0254, -60*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(310*0.0254, -80*0.0254, new Rotation2d(0)),
+                                //end
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -378,26 +389,28 @@ public class PathFinding {
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                 new Pose2d(0*0.0254, 0*0.0254, new Rotation2d(0)),
                                 List.of(
-                                new Translation2d(60*0.0254, 30*0.0254),
-                                new Translation2d(120*0.0254, 0*0.0254),
-                                new Translation2d(160*0.0254, -30*0.0254),
+                               // new Translation2d(60*0.0254, 10*0.0254),
+                                new Translation2d(100*0.0254, 0*0.0254),
+                                new Translation2d(140*0.0254, -30*0.0254),
                                 new Translation2d(120*0.0254, -60*0.0254),
-                                new Translation2d(80*0.0254, -30*0.0254),
-                                new Translation2d(120*0.0254, 0*0.0254),
+                                new Translation2d(60*0.0254, -40*0.0254),
+                                new Translation2d(90*0.0254, 0*0.0254),
                                 //end of first loop
 
-                                new Translation2d(210*0.0254, 0*0.0254),
-                                new Translation2d(240*0.0254, 30*0.0254),
-                                new Translation2d(210*0.0254, 60*0.0254),
-                                new Translation2d(180*0.0254, 30*0.0254),
+                                new Translation2d(190*0.0254, -10*0.0254),
+                                new Translation2d(220*0.0254, 30*0.0254),
+                                new Translation2d(160*0.0254, 60*0.0254),
+                                new Translation2d(110*0.0254, 30*0.0254),
+                                new Translation2d(160*0.0254, -20*0.0254),
                                 //end of second loop
-                                new Translation2d(260*0.0254, -90*0.0254),
-                                new Translation2d(320*0.0254, -140*0.0254),
-                                new Translation2d(370*0.0254, -90*0.0254),
-                                new Translation2d(320*0.0254, 0*0.0254),
-                                new Translation2d(170*0.0254, 0*0.0254)                                                           
+
+                                new Translation2d(200*0.0254, -30*0.0254),
+                                new Translation2d(230*0.0254, -70*0.0254),
+                                new Translation2d(280*0.0254, -50*0.0254),
+                                new Translation2d(230*0.0254, 0*0.0254),
+                                new Translation2d(140*0.0254, 0*0.0254)                                                           
                                 ),
-                                new Pose2d(0*0.0254, 20*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(-20*0.0254, 10*0.0254, new Rotation2d(3.14)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -490,7 +503,7 @@ public class PathFinding {
                                 List.of(
                                 new Translation2d(45*0.0254, 0*0.0254)                                                           
                                 ),
-                                new Pose2d(60*0.0254, 50*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(60*0.0254, 60*0.0254, new Rotation2d(1.57)),
                                 config);
 
         RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
@@ -524,11 +537,11 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(true);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(60*0.0254, 50*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(60*0.0254, 60*0.0254, new Rotation2d(1.57)),
                                 List.of(
                                 new Translation2d(90*0.0254, -30*0.0254),
                                 new Translation2d(140*0.0254, -55*0.0254)),
-                                new Pose2d(150*0.0254, 55*0.0254, new Rotation2d(4.71)),
+                                new Pose2d(150*0.0254, 70*0.0254, new Rotation2d(4.71)),
                                 config);
 
                         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -571,11 +584,11 @@ public class PathFinding {
                         .addConstraint(autoVoltageConstraint).setReversed(false);
         
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(150*0.0254, 55*0.0254, new Rotation2d(4.71)),
+                                new Pose2d(150*0.0254, 70*0.0254, new Rotation2d(4.71)),
                                 List.of(
                                 new Translation2d(150*0.0254, -45*0.0254),
                                 new Translation2d(220*0.0254, -45*0.0254)),
-                                new Pose2d(230*0.0254, 65*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(230*0.0254, 80*0.0254, new Rotation2d(1.57)),
                                 config);
 
                         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -617,10 +630,10 @@ public class PathFinding {
         
 
                         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(230*0.0254, 65*0.0254, new Rotation2d(1.57)),
+                                new Pose2d(230*0.0254, 80*0.0254, new Rotation2d(1.57)),
                                 List.of(
                                 new Translation2d(240*0.0254, 10*0.0254)),
-                                new Pose2d(280*0.0254, 10*0.0254, new Rotation2d(3.14)),
+                                new Pose2d(280*0.0254, 20*0.0254, new Rotation2d(3.14)),
                                 config);
 
                         // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
