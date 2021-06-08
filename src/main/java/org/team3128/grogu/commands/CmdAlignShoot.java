@@ -102,6 +102,7 @@ public class CmdAlignShoot implements Command {
     public void initialize() {
         limelight.setLEDMode(LEDMode.ON);
         cmdRunning.isRunning = false;
+        plateauCount = 0;
         // TODO: prob not helpful but sets hopper to shooting
         //hopper.setAction(Hopper.ActionState.SHOOTING);
         Log.info("CmdAlignShoot", "initialized limelight, aren't I cool!");
@@ -184,18 +185,18 @@ public class CmdAlignShoot implements Command {
                     double rightSpeed = rightPower * Constants.DriveConstants.DRIVE_HIGH_SPEED;
                     
                     drive.setWheelPower(new DriveSignal(leftPower, rightPower));
-
                     previousTime = currentTime;
                     previousError = currentError;
                 }
                 if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
                     plateauCount++;
-                    if (plateauCount > 25) {
+                    if (plateauCount > 10) {
                         shooter.isAligned = true;
                         Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
                     }
                 } else {
                     shooter.isAligned = false;
+                    plateauCount = 0;
                 }
                 break;
         }
