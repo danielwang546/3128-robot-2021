@@ -203,7 +203,7 @@ public class MainGrogu extends NarwhalRobot {
             shooter.counterShoot();
             hopper.unshoot = true;
             alignCmd.cancel();
-            shooter.setSetpoint(0);
+            //shooter.setSetpoint(0);
             driveCmdRunning.isRunning = true;
             shooter.isAligned = false;
             Log.info("Joystick","Button 4 unpressed");
@@ -258,6 +258,7 @@ public class MainGrogu extends NarwhalRobot {
         });
         listenerLeft.addButtonDownListener("SetYellow", () -> {
             shooter.setState(Shooter.ShooterState.YELLOW);
+            //shooter.setSetpoint(Shooter.ShooterState.YELLOW.shooterRPM);
         });
         listenerLeft.addButtonDownListener("SetBlue", () -> {
             shooter.setState(Shooter.ShooterState.BLUE);

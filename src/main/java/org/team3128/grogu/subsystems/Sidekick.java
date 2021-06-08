@@ -26,7 +26,7 @@ public class Sidekick extends PIDSubsystem {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
         MID_RANGE(4080), // mid range shooting
-        DEFAULT(-4600),
+        DEFAULT(-5100),
         SHORT_RANGE(2000); // short range shooting 3700
 
         public double shooterRPM;
@@ -111,7 +111,7 @@ public class Sidekick extends PIDSubsystem {
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
         value = getMeasurement();
-        output = voltageOutput / 12;
+        output = voltageOutput / voltage;
 
         //Log.info("Shooter", "using output");
 
@@ -165,7 +165,7 @@ public class Sidekick extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.0005 * desiredSetpoint); //0.3//0.00147x - 0.2; // 0
+        double ff = (0.001 * desiredSetpoint); //0.3//0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {

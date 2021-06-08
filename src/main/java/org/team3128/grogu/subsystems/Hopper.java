@@ -135,7 +135,7 @@ public class Hopper implements Subsystem {
             Log.info("Hopper Stomach","FULL!!!!");
             setState(HopperState.IDLE);
        } else {
-            runHopper();
+            runHopper(1);
             if (!getBottom() && wasTriggeredBottom) {
                 setState(HopperState.IDLE);
                 ballCount++;
@@ -153,7 +153,7 @@ public class Hopper implements Subsystem {
             Log.info("Hopper Stomach","FULL!!!!");
             intakeShooting = false;
        } else {
-            runHopper();
+            runHopper(1);
             if (!getBottom() && wasTriggeredBottom) {
                 intakeShooting = false;
                 ballCount++;
@@ -164,7 +164,7 @@ public class Hopper implements Subsystem {
     }
 
     private void shoot() {
-        runHopper();
+        runHopper(1);
         Log.info("hopper", "Shooting");
         if (wasTriggeredTop && !getTop()) {
             setState(HopperState.IDLE);
@@ -194,9 +194,9 @@ public class Hopper implements Subsystem {
         return actionState;
     }
 
-    public void runHopper() {
-        HOPPER_MOTOR_1.set(ControlMode.PercentOutput, Constants.HopperConstants.HOPPER_MOTOR_POWER);
-        HOPPER_MOTOR_2.set(Constants.HopperConstants.HOPPER_MOTOR_2_POWER);
+    public void runHopper(double multiplier) {
+        HOPPER_MOTOR_1.set(ControlMode.PercentOutput, Constants.HopperConstants.HOPPER_MOTOR_POWER*multiplier);
+        HOPPER_MOTOR_2.set(Constants.HopperConstants.HOPPER_MOTOR_2_POWER*multiplier);
     }
 
     public void runHopperOpp() {

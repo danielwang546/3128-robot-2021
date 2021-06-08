@@ -125,7 +125,7 @@ public class Constants extends RobotConstants {
                 public static final int SHOOTER_SIDEKICK_ID = 42;
                 
                 public static final PIDConstants SHOOTER_PID = new PIDConstants(0,5e-3,0,4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
-                public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 6.5e-3, 0, 0);
+                public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0, 0, 0);
 
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
                 public static final double RPM_THRESHOLD = 100; // the maximum difference between an RPM and  the setpoint for a data point to be considered as a plataeu
@@ -142,8 +142,8 @@ public class Constants extends RobotConstants {
                 public static final int BOTTOM_SENSOR_ID = 9;
                 public static final int TOP_SENSOR_ID = 8;
 
-                public static final double HOPPER_MOTOR_POWER = -0.406;
-                public static final double HOPPER_MOTOR_2_POWER = 0.15;
+                public static final double HOPPER_MOTOR_POWER = -0.4;
+                public static final double HOPPER_MOTOR_2_POWER = 0.08;
         }
 
         public static class IntakeConstants {

@@ -27,10 +27,10 @@ public class Shooter extends PIDSubsystem {
         LONG_RANGE(4800), // long range shooting
         MID_RANGE(0), // mid range shooting
         SHORT_RANGE(2000),
-        GREEN(4000),
-        YELLOW(3800),
-        BLUE(4750),
-        RED(4800),
+        GREEN(1200),
+        YELLOW(5000),
+        BLUE(3330),
+        RED(3333),
         ; // short range shooting 3700
 
         public double shooterRPM;
@@ -203,9 +203,13 @@ public class Shooter extends PIDSubsystem {
     //     setState(stateTracker.getState().targetShooterState);
     // }
 
+    public ShooterState getState() {
+        return SHOOTER_STATE;
+    }
+
     public boolean isReady() {
         if (atSetpoint())
             Log.info("Shooter","at Setpoint");
-        return (isAligned && isPlateaued());
+        return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
     }
 }
