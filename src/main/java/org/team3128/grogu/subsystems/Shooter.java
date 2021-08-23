@@ -1,4 +1,4 @@
-package org.team3128.testbench.subsystems;
+package org.team3128.grogu.subsystems;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.utility.test_suite.CanDevices;
@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.testbench.subsystems.Constants;
+//import org.team3128.testbench.subsystems.Constants;
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
@@ -22,11 +22,16 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 
 
 public class Shooter extends PIDSubsystem {
-    public static enum ShooterState {
+    public enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
-        MID_RANGE(4080), // mid range shooting
-        SHORT_RANGE(2000); // short range shooting 3700
+        MID_RANGE(0), // mid range shooting
+        SHORT_RANGE(2000),
+        GREEN(1200),
+        YELLOW(5000),
+        BLUE(3330),
+        RED(3333),
+        ; // short range shooting 3700
 
         public double shooterRPM;
 
@@ -45,6 +50,7 @@ public class Shooter extends PIDSubsystem {
     public double output = 0;
     double accumulator = 0;
     double prevError = 0;
+    public boolean isAligned = false;
 
     double value = 0, preValue = 0, time = 0, preTime = 0;
 
@@ -55,8 +61,8 @@ public class Shooter extends PIDSubsystem {
 
     private Shooter() {
 
-        super(new PIDController(Constants.SHOOTER_PID.kP, Constants.SHOOTER_PID.kI, Constants.SHOOTER_PID.kD));
-        getController().setTolerance(Constants.RPM_THRESHOLD);
+        super(new PIDController(Constants.ShooterConstants.SHOOTER_PID.kP, Constants.ShooterConstants.SHOOTER_PID.kI, Constants.ShooterConstants.SHOOTER_PID.kD));
+        getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD);
         //.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
 
 
@@ -69,9 +75,13 @@ public class Shooter extends PIDSubsystem {
         return m_controller.atSetpoint();
     }
 
+    public boolean isPlateaued() {
+        return (plateauCount >= Constants.ShooterConstants.PLATEAU_COUNT);
+    }
+
     private void configMotors() {
-        LEFT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_LEFT_ID);
-        RIGHT_SHOOTER = new LazyTalonFX(Constants.SHOOTER_MOTOR_RIGHT_ID);
+        LEFT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_LEFT_ID);
+        RIGHT_SHOOTER = new LazyTalonFX(Constants.ShooterConstants.SHOOTER_MOTOR_RIGHT_ID);
         if (DEBUG) {
             Log.info("Shooter", "Config motors");
         }
@@ -99,7 +109,7 @@ public class Shooter extends PIDSubsystem {
         double voltageOutput = shooterFeedForward(setpoint) + output;
         double voltage = RobotController.getBatteryVoltage(); // TODO: investigate bus voltage
 
-        output = voltageOutput / voltage;
+        output = voltageOutput / 12;//voltage
 
         //Log.info("Shooter", "using output");
 
@@ -107,15 +117,17 @@ public class Shooter extends PIDSubsystem {
         time = RobotController.getFPGATime() / 1e6;
         
         double accel = (value - preValue) / (time - preTime);
-        
-        preValue = value;
-        preTime = time;
 
-        if ((Math.abs(error) <= Constants.RPM_THRESHOLD) && (setpoint != 0)) {
+        Log.info("Shooter",getMeasurement()+" RPM");
+
+        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) &&(Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;
         }
+
+        preValue = value;
+        preTime = time;
 
         if (output > 1) {
             // Log.info("SHOOTER",
@@ -136,19 +148,31 @@ public class Shooter extends PIDSubsystem {
         // if (accel > Constants.SHOOTER_MAX_ACCELERATION)
         //     output = output / (accel / Constants.SHOOTER_MAX_ACCELERATION);
 
+        // if (setpoint != 0) {
+        //     Log.info("Shooter", "shooter setpoint = " + setpoint);
+        // }
+
         LEFT_SHOOTER.set(ControlMode.PercentOutput, output);
         RIGHT_SHOOTER.set(ControlMode.PercentOutput, -output);
     }
 
-    public void setSetpoint(double passedSetpoint) {
+    /*public void setSetpoint(double passedSetpoint) {
         plateauCount = 0;
         super.setSetpoint(passedSetpoint);
         //Log.info("Shooter", "Set setpoint to" + String.valueOf(setpoint));
-    }
+    }*/
 
     public void setState(ShooterState shooterState) {
         SHOOTER_STATE = shooterState;
-        setSetpoint(shooterState.shooterRPM);
+        //setSetpoint(shooterState.shooterRPM);
+    }
+
+    public void shoot() {
+        setSetpoint(SHOOTER_STATE.shooterRPM);
+    }
+
+    public void counterShoot() {
+        setSetpoint(0);
     }
 
     //@Override
@@ -159,7 +183,7 @@ public class Shooter extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.00188 * desiredSetpoint); //0.00147x - 0.2; // 0
+        double ff = (0.0019 * desiredSetpoint);//0.00168//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {
@@ -171,11 +195,21 @@ public class Shooter extends PIDSubsystem {
     //     return stateTracker.getState().targetShooterState.shooterRPM;
     // }
 
-    public boolean isReady() {
-        return (plateauCount > Constants.PLATEAU_COUNT);
-    }
+    // public boolean isReady() {
+    //     return (plateauCount > Constants.PLATEAU_COUNT);
+    // }
 
     // public void queue(){
     //     setState(stateTracker.getState().targetShooterState);
     // }
+
+    public ShooterState getState() {
+        return SHOOTER_STATE;
+    }
+
+    public boolean isReady() {
+        if (atSetpoint())
+            Log.info("Shooter","at Setpoint");
+        return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
+    }
 }
