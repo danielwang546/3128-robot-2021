@@ -126,7 +126,7 @@ public class MainGrogu extends NarwhalRobot {
         // initialization of limelights
 
         //REVERSED
-        ballLimelight = new Limelight("limelight-shooter", 26.0, 0, 0, 30);
+        ballLimelight = new Limelight("limelight-sog", 26.0, 0, 0, 30);
         shooterLimelight = new Limelight("limelight-c", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
@@ -142,8 +142,8 @@ public class MainGrogu extends NarwhalRobot {
         shooter.setState(Shooter.ShooterState.MID_RANGE);
         alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
 
-        errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
-
+        //errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
+        /*
         NarwhalDashboard.addButton("ErrorCatcher", (boolean down) -> {
             if(down) {
                 errorCatcher.testEverything();
@@ -155,11 +155,12 @@ public class MainGrogu extends NarwhalRobot {
                 errorCatcher.velocityTester();
             }
         });
+        */
     }
 
     @Override
     protected void constructAutoPrograms() {
-        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
         //scheduler.schedule(cmdBallPursuit);
 
         NarwhalDashboard.addAuto("Spin in circles", cmdBallPursuit);
@@ -337,6 +338,8 @@ public class MainGrogu extends NarwhalRobot {
     protected void autonomousInit() {
         drive.resetGyro();
         
+        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        scheduler.schedule(cmdBallPursuit);
     }
 
     @Override
