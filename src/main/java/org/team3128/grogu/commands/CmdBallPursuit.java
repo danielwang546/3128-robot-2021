@@ -1,6 +1,6 @@
 package org.team3128.grogu.commands;
 
-import org.team3128.athos.subsystems.NEODrive;
+import org.team3128.grogu.subsystems.FalconDrive;
 import org.team3128.common.drive.DriveCommandRunning;
 import org.team3128.common.drive.SRXTankDrive;
 import org.team3128.common.drive.calibrationutility.DriveCalibrationUtility;
@@ -10,6 +10,7 @@ import org.team3128.common.hardware.limelight.Limelight;
 import org.team3128.common.hardware.limelight.LimelightKey;
 import org.team3128.common.hardware.limelight.StreamMode;
 import org.team3128.common.hardware.gyroscope.Gyro;
+import com.kauailabs.navx.frc.AHRS;
 import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.utility.Log;
 import org.team3128.common.utility.RobotMath;
@@ -28,7 +29,7 @@ import java.util.HashSet;
 
 public class CmdBallPursuit implements Command {
     FalconDrive drive;
-    Gyro gyro;
+    AHRS gyro;
 
     DriveCalibrationUtility dcu;
 
@@ -78,7 +79,7 @@ public class CmdBallPursuit implements Command {
 
     private HorizontalOffsetFeedbackDriveState aimState = HorizontalOffsetFeedbackDriveState.SEARCHING;
 
-    public CmdBallPursuit(Gyro gyro, Limelight ballLimelight,
+    public CmdBallPursuit(AHRS gyro, Limelight ballLimelight,
             DriveCommandRunning cmdRunning, double targetHeight, PIDConstants visionPID, double goalHorizontalOffset,
             double decelerationStartDistance, double decelerationEndDistance, PIDConstants blindPID,
             double blindThreshold) {
@@ -110,7 +111,7 @@ public class CmdBallPursuit implements Command {
     @Override
     public void initialize() {
         drive = FalconDrive.getInstance();
-        dcu = DriveCalibrationUtility.getInstance();
+        //dcu = DriveCalibrationUtility.getInstance();
 
         ballLimelight.setLEDMode(LEDMode.OFF);
         ballLimelight.setPipeline(Pipeline.GRIP);
@@ -154,7 +155,7 @@ public class CmdBallPursuit implements Command {
                 if ((ballLimelight.cameraAngle > 0 ? 1 : -1) * previousVerticalAngle > blindThreshold) {
                     Log.info("CmdAutoAim", "Switching to BLIND...");
 
-                    gyro.setAngle(0);
+                    gyro.reset();
                     aimState = HorizontalOffsetFeedbackDriveState.BLIND;
                 } else {
                     Log.info("CmdAutoAim", "Returning to SEARCHING...");
