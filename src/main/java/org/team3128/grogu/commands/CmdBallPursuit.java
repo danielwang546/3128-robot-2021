@@ -150,6 +150,7 @@ public class CmdBallPursuit implements Command {
 
         case FEEDBACK:
             NarwhalDashboard.put("align_status", "feedback");
+            Log.info("CmdBallPursuit","prevVertAngle: "+ previousVerticalAngle +"\nballLimelight.hasValidTarget(): "+ ballLimelight.hasValidTarget());
             if (!ballLimelight.hasValidTarget()) {
                 Log.info("CmdAutoAim", "No valid target.");
                 if ((ballLimelight.cameraAngle > 0 ? 1 : -1) * previousVerticalAngle > blindThreshold) {
@@ -238,6 +239,7 @@ public class CmdBallPursuit implements Command {
             } else {
                 plateauReachedCount = 0;
             }
+            Log.info("CmdBallPursuit","plateau: "+plateauReachedCount);
 
             if (plateauReachedCount >= VELOCITY_PLATEAU_COUNT) {
                 return true;
@@ -254,6 +256,6 @@ public class CmdBallPursuit implements Command {
 
         cmdRunning.isRunning = false;
 
-        Log.info("CmdAutoAim", "Command Finished.");
+        Log.info("CmdBallPursuit", "Command Finished.");
     }
 }
