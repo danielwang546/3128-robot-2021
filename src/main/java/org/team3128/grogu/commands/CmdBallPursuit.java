@@ -39,7 +39,7 @@ public class CmdBallPursuit implements Command {
     // private final double MINIMUM_POWER = 0.1;
 
     private final double VELOCITY_THRESHOLD = 100;
-    private final int VELOCITY_PLATEAU_COUNT = 10;
+    private final int VELOCITY_PLATEAU_COUNT = 3;
 
     double decelerationStartDistance, decelerationEndDistance;
     DriveCommandRunning cmdRunning;
@@ -153,7 +153,7 @@ public class CmdBallPursuit implements Command {
             Log.info("CmdBallPursuit","prevVertAngle: "+ previousVerticalAngle +"\nballLimelight.hasValidTarget(): "+ ballLimelight.hasValidTarget());
             if (!ballLimelight.hasValidTarget()) {
                 Log.info("CmdAutoAim", "No valid target.");
-                if ((ballLimelight.cameraAngle > 0 ? 1 : -1) * previousVerticalAngle > blindThreshold) {
+                if (/*(ballLimelight.cameraAngle > 0 ? 1 : -1) **/ previousVerticalAngle > blindThreshold) {
                     Log.info("CmdAutoAim", "Switching to BLIND...");
 
                     gyro.reset();
