@@ -128,7 +128,7 @@ public class MainGrogu extends NarwhalRobot {
 
         //REVERSED
         ballLimelight = new Limelight("limelight-pog", -26.0, 0, 0, 30);
-        shooterLimelight = new Limelight("limelight-c", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
+        shooterLimelight = new Limelight("limelight-sog", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
         drive.resetGyro();
@@ -142,6 +142,8 @@ public class MainGrogu extends NarwhalRobot {
 
         shooter.setState(Shooter.ShooterState.MID_RANGE);
         alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
+
+        
 
         //errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
         /*
@@ -212,11 +214,13 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("Intake", () -> {
             hopper.runIntake();
+            scheduler.schedule(cmdBallIntake);
             Log.info("Joystick","Button 3 pressed");
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
             hopper.stopIntake();
+            cmdBallIntake.cancel();
             Log.info("Joystick","Button 3 unpressed");
         });
 
