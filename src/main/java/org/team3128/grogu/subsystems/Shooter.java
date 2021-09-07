@@ -118,7 +118,7 @@ public class Shooter extends PIDSubsystem {
         
         double accel = (value - preValue) / (time - preTime);
 
-        Log.info("Shooter",getMeasurement()+" RPM");
+        //Log.info("Shooter",getMeasurement()+" RPM");
 
         if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) &&(Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;

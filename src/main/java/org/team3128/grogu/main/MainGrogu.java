@@ -62,6 +62,9 @@ public class MainGrogu extends NarwhalRobot {
 
     private DriveCommandRunning driveCmdRunning;
 
+    private CmdBallIntake cmdBallIntake;
+    private CmdBallPursuit cmdBallPursuit;
+
     // public StateTracker stateTracker = StateTracker.getInstance();
 
  
@@ -99,6 +102,8 @@ public class MainGrogu extends NarwhalRobot {
 
     public CmdAlignShoot alignCmd;
 
+    public ErrorCatcherUtility errorCatcher;
+
     @Override
     protected void constructHardware() {
 
@@ -121,8 +126,9 @@ public class MainGrogu extends NarwhalRobot {
 
         // initialization of limelights
 
-        shooterLimelight = new Limelight("limelight-shooter", 26.0, 0, 0, 30);
-        ballLimelight = new Limelight("limelight-c", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
+        //REVERSED
+        ballLimelight = new Limelight("limelight-pog", -26.0, 0, 0, 30);
+        shooterLimelight = new Limelight("limelight-c", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
         drive.resetGyro();
@@ -136,10 +142,35 @@ public class MainGrogu extends NarwhalRobot {
 
         shooter.setState(Shooter.ShooterState.MID_RANGE);
         alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
+
+        //errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
+        /*
+        NarwhalDashboard.addButton("ErrorCatcher", (boolean down) -> {
+            if(down) {
+                errorCatcher.testEverything();
+            }
+        });
+
+        NarwhalDashboard.addButton("VelocityTester", (boolean down) -> {
+            if(down) {
+                errorCatcher.velocityTester();
+            }
+        });
+        */
     }
 
     @Override
     protected void constructAutoPrograms() {
+        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        //scheduler.schedule(cmdBallPursuit);
+        
+        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
+
+        //cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
     }
 
     @Override
@@ -313,7 +344,11 @@ public class MainGrogu extends NarwhalRobot {
     @Override
     protected void autonomousInit() {
         drive.resetGyro();
+        
+        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
+        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        scheduler.schedule(cmdBallIntake);
     }
 
     @Override

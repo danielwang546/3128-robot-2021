@@ -18,7 +18,7 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.NotifierJNI;
 
 import edu.wpi.first.wpilibj.Watchdog;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -407,7 +407,7 @@ public abstract class NarwhalRobot extends RobotBase {
                     + "You either didn't provide any sequences, or didn't set a default and didn't select one on the dashboard.");
         } else {
             Log.info("NarwhalRobot", "Running auto sequence \"" + autoProgram.getName() + "\"");
-            autoProgram.start();
+            autoProgram.schedule();
         }
     }
 

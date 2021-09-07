@@ -40,7 +40,7 @@ import org.team3128.common.drive.Drive;
  */
 public class ErrorCatcherUtility {
 
-    public CanDevices[] CanChain = new CanDevices[42];
+    public CanDevices[] canChain = new CanDevices[42];
     public Limelight[] limelights = new Limelight[5];
     
     //CAN Check
@@ -61,8 +61,8 @@ public class ErrorCatcherUtility {
     DriveSignal backwardsDriveSignal = new DriveSignal(-40, -40);
     DriveSignal zeroDriveSignal = new DriveSignal(0, 0);
     
-    public ErrorCatcherUtility(CanDevices[] CanChain, Limelight[] limelights, Drive drive){
-      this.CanChain = CanChain;  
+    public ErrorCatcherUtility(CanDevices[] canChain, Limelight[] limelights, Drive drive){
+      this.canChain = canChain;  
       this.limelights = limelights;
       this.drive = drive;
     }
@@ -75,10 +75,10 @@ public class ErrorCatcherUtility {
 
         //Iterates over each CAN device in the chain, in order, and checks if it is good
         errorCode=ErrorCode.OK;
-        //for(int i=0;i<CanChain.length;i++){
+        //for(int i=0;i<canChain.length;i++){
         //for(int i=12; i>=0;i--){
-            //device=CanChain[i];
-        for(CanDevices device : CanChain){
+            //device=canChain[i];
+        for(CanDevices device : canChain){
             
             if (device == null){
                 break;
@@ -138,7 +138,7 @@ public class ErrorCatcherUtility {
                 Log.info("ErrorCatcher", "ErrorCode: "+errorCode);
 
                 if (errorCode == ErrorCode.CAN_MSG_NOT_FOUND || errorCode == ErrorCode.SigNotUpdated){
-                    if(device == CanChain[0]){
+                    if(device == canChain[0]){
                         Log.info("ErrorCatcher", "RoboRIO to " +device.name+ " " + device.id +" CAN wire is disconnected");
                         NarwhalDashboard.put("ErrorCatcherCAN", "RoboRIO to " +device.name+ " " + device.id +" CAN wire is disconnected");
                     }

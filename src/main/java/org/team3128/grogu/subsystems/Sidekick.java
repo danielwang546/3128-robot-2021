@@ -115,7 +115,7 @@ public class Sidekick extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        Log.info("Sidekick",getMeasurement()+" RPM");
+        //Log.info("Sidekick",getMeasurement()+" RPM");
 
         prevError = error;
 

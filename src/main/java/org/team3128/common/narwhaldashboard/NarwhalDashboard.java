@@ -11,7 +11,7 @@ import org.java_websocket.server.WebSocketServer;
 
 import org.team3128.common.utility.Log;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class NarwhalDashboard extends WebSocketServer {
     private static final int PORT = 5805;
