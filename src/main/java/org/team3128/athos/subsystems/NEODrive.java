@@ -14,6 +14,8 @@ import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.math.Rotation2D;
 import org.team3128.common.utility.NarwhalUtility;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -34,6 +36,34 @@ import edu.wpi.first.wpilibj.Timer;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
+import org.team3128.athos.main.MainAthos;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import org.team3128.sim.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.VecBuilder;
+
+import org.team3128.common.utility.Log;
+import org.team3128.common.utility.RobotMath;
+import org.team3128.common.utility.math.InterpolablePair;
+import org.team3128.common.utility.math.Pose2D;
+import org.team3128.common.utility.math.Rotation2D;
+import org.team3128.common.utility.math.Translation2D;
 
 public class NEODrive extends Drive {
 
@@ -63,7 +93,8 @@ public class NEODrive extends Drive {
 	double prevPositionL = 0;
 	double prevPositionR = 0;
 
-	public static LazyCANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2, rightSparkSlave2;
+	public static LazyCANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2,
+			rightSparkSlave2;
 	private CANPIDController leftSparkPID, rightSparkPID;
 	private CANEncoder leftSparkEncoder, rightSparkEncoder;
 
@@ -108,23 +139,47 @@ public class NEODrive extends Drive {
 		configAuto();
 	}
 
-	@Override public void debug() {
+	public Pose2d getPose() {
+		
+		return MainAthos.ekfPosition;
+		
+		//return RobotTracker.getInstance().getOdometry2d();
+	}
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(
+				getLeftSpeed() * Constants.kDriveInchesPerSecPerRPM * Constants.inchesToMeters,
+				getRightSpeed() * Constants.kDriveInchesPerSecPerRPM * Constants.inchesToMeters);
+	}
+
+
+
+
+
+
+
+
+	@Override
+	public void debug() {
 		System.out.println("L enc: " + getLeftDistance() + " velo " + getLeftSpeed());
 		System.out.println("R enc: " + getRightDistance() + " velo " + getRightSpeed());
 		System.out.println("Gyro: " + getAngle()/* getGyroAngle().getDegrees() */);
 	}
 
-	@Override public void debugSpeed() {
+	@Override
+	public void debugSpeed() {
 		System.out.println("L speed " + " actual " + getLeftSpeed());
 		System.out.println("R speed " + " actual " + getRightSpeed());
 
 	}
 
-	@Override public void setRight() {
+	@Override
+	public void setRight() {
 		setWheelVelocity(new DriveSignal(40, 0));
 	}
 
-	@Override public void configAuto() {
+	@Override
+	public void configAuto() {
 		rightSparkPID.setP(Constants.K_AUTO_RIGHT_P, 0);
 		rightSparkPID.setD(Constants.K_AUTO_RIGHT_D, 0);
 		rightSparkPID.setFF(Constants.K_AUTO_RIGHT_F, 0);
@@ -137,7 +192,8 @@ public class NEODrive extends Drive {
 
 	}
 
-	@Override public void configHigh() {
+	@Override
+	public void configHigh() {
 		driveMultiplier = Constants.DRIVE_HIGH_SPEED;
 	}
 
@@ -147,15 +203,18 @@ public class NEODrive extends Drive {
 		driveState = DriveState.TELEOP;
 	}
 
-	@Override public void calibrateGyro() {
+	@Override
+	public void calibrateGyro() {
 		gyroSensor.calibrate();
 	}
 
-	@Override public void printCurrent() {
+	@Override
+	public void printCurrent() {
 		System.out.println(leftSpark);
 	}
 
-	@Override public void configMotors() {
+	@Override
+	public void configMotors() {
 		leftSparkSlave.follow(leftSpark);
 		// leftSparkSlave2.follow(leftSpark);
 		rightSparkSlave.follow(rightSpark);
@@ -170,24 +229,29 @@ public class NEODrive extends Drive {
 		configAuto();
 	}
 
-	@Override public void resetMotionProfile() {
+	@Override
+	public void resetMotionProfile() {
 		moveProfiler.reset();
 	}
 
-	@Override public double getAngle() {
+	@Override
+	public double getAngle() {
 		return -gyroSensor.getAngle();
 	}
 
-	@Override public double getDistance() {
+	@Override
+	public double getDistance() {
 		return (getLeftDistance() + getRightDistance()) / 2;
 	}
 
-	@Override public Rotation2D getGyroAngle() {
+	@Override
+	public Rotation2D getGyroAngle() {
 		// -180 through 180
 		return Rotation2D.fromDegrees(gyroSensor.getAngle());
 	}
 
-	@Override public double getLeftDistance() {
+	@Override
+	public double getLeftDistance() {
 		/*
 		 * return leftTalon.getSelectedSensorPosition(0) /
 		 * Constants.EncoderTicksPerRotation * Constants.WheelDiameter Math.PI * 22d /
@@ -197,30 +261,36 @@ public class NEODrive extends Drive {
 				* Constants.WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION;
 	}
 
-	@Override public double getRightDistance() {
+	@Override
+	public double getRightDistance() {
 		return rightSparkEncoder.getPosition() * Constants.WHEEL_DIAMETER * Math.PI
 				* Constants.WHEEL_ROTATIONS_FOR_ONE_ENCODER_ROTATION;
 	}
 
-	@Override public double getSpeed() {
+	@Override
+	public double getSpeed() {
 		return (getLeftSpeed() + getRightSpeed()) / 2;
 	}
 
-	@Override public double getLeftSpeed() {
+	@Override
+	public double getLeftSpeed() {
 		return leftSparkEncoder.getVelocity() * Constants.kDriveInchesPerSecPerRPM;
 	}
 
-	@Override public double getRightSpeed() {
+	@Override
+	public double getRightSpeed() {
 		return rightSparkEncoder.getVelocity() * Constants.kDriveInchesPerSecPerRPM;
 	}
 
-	@Override public synchronized void setAutoTrajectory(Trajectory autoTraj, boolean isReversed) {
+	@Override
+	public synchronized void setAutoTrajectory(Trajectory autoTraj, boolean isReversed) {
 		this.trajectory = autoTraj;
 		totalTime = trajectory.getTotalTimeSeconds();
 		autonomousDriver = new RamseteController(1.8, 0.7, isReversed, Constants.TRACK_RADIUS); // 2,0.7
 	}
 
-	@Override public synchronized void startTrajectory() {
+	@Override
+	public synchronized void startTrajectory() {
 		if (trajectory == null) {
 			Log.info("NEODrive", "FATAL // FAILED TRAJECTORY - NULL TRAJECTORY INPUTTED");
 			Log.info("NEODrive", "Returned to teleop control");
@@ -232,11 +302,27 @@ public class NEODrive extends Drive {
 		}
 	}
 
-	@Override public void setBrakeState(NeutralMode mode) {
+	@Override
+	public void setBrakeState(NeutralMode mode) {
 	}
 
-	@Override public double getVoltage() {
+	@Override
+	public double getVoltage() {
 		return 0;
+	}
+	
+	public void tankDriveVolts(double leftVolts, double rightVolts) {
+
+		//NOTE: THIS METHOD IS NEW AND KIND OF SKETCHY
+		//MAY NEED A CLAMP FOR VOLTAGE SO IT DOESNT TRY TO SEND TOO MANY
+		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
+		//Log.info("Volts", "Left "+ RobotMath.clamp(leftVolts, -12, 12)+" Right "+RobotMath.clamp(rightVolts, -12, 12));
+		
+		
+
+		leftSpark.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
+		rightSpark.setVoltage(RobotMath.clamp(rightVolts, -12, 12));
+
 	}
 
 	public void setWheelPower(DriveSignal setVelocity) {
@@ -270,7 +356,8 @@ public class NEODrive extends Drive {
 	 * @param throttle throttle control input scaled between 1 and -1 (-.8 is 10 %,
 	 *                 0 is 50%, 1.0 is 100%)
 	 */
-	@Override public void arcadeDrive(double joyX, double joyY, double throttle, boolean fullSpeed) {
+	@Override
+	public void arcadeDrive(double joyX, double joyY, double throttle, boolean fullSpeed) {
 		synchronized (this) {
 			driveState = DriveState.TELEOP;
 		}
@@ -307,7 +394,6 @@ public class NEODrive extends Drive {
 		setWheelVelocity(new DriveSignal(spdL, spdR));
 	}
 
-
 	@Override
 	public void periodic() {
 		// System.out.println("L speed " + getLeftSpeed() + " position x " +
@@ -320,18 +406,19 @@ public class NEODrive extends Drive {
 			snapDriveState = driveState;
 		}
 		switch (snapDriveState) {
-		case TELEOP:
-			break;
-		case RAMSETECONTROL:
-			updateRamseteController(false);
-			break;
-		case TURN:
-			updateTurn();
-			break;
+			case TELEOP:
+				break;
+			case RAMSETECONTROL:
+				updateRamseteController(false);
+				break;
+			case TURN:
+				updateTurn();
+				break;
 		}
 	}
 
-	@Override public void setRotation(Rotation2D angle) {
+	@Override
+	public void setRotation(Rotation2D angle) {
 		synchronized (this) {
 			wantedHeading = angle;
 			driveState = DriveState.TURN;
@@ -342,7 +429,8 @@ public class NEODrive extends Drive {
 	/**
 	 * Set Velocity PID for both sides of the drivetrain (to the same constants)
 	 */
-	@Override public void setDualVelocityPID(double kP, double kD, double kF) {
+	@Override
+	public void setDualVelocityPID(double kP, double kD, double kF) {
 		leftSparkPID.setP(kP);
 		leftSparkPID.setD(kD);
 		leftSparkPID.setFF(kF);
@@ -354,7 +442,8 @@ public class NEODrive extends Drive {
 				+ kD + ", kF = " + kF);
 	}
 
-	@Override public void updateTurn() {
+	@Override
+	public void updateTurn() {
 		double error = wantedHeading.rotateBy(RobotTracker.getInstance().getOdometry().rotationMat.inverse())
 				.getDegrees();
 		double deltaSpeed;
@@ -374,11 +463,13 @@ public class NEODrive extends Drive {
 		}
 	}
 
-	@Override public void setShiftState(boolean state) {
+	@Override
+	public void setShiftState(boolean state) {
 		configHigh();
 	}
 
-	@Override public void updateRamseteController(boolean isStart) {
+	@Override
+	public void updateRamseteController(boolean isStart) {
 		currentTime = Timer.getFPGATimestamp();
 		if (isStart) {
 			startTime = currentTime;
@@ -399,16 +490,19 @@ public class NEODrive extends Drive {
 		setWheelVelocity(signal.command);
 	}
 
-	@Override public void resetGyro() {
+	@Override
+	public void resetGyro() {
 		gyroSensor.reset();
 	}
 
-	@Override public boolean checkSubsystem() {
+	@Override
+	public boolean checkSubsystem() {
 		configMotors();
 		return true;
 	}
 
-	@Override synchronized public void stopMovement() {
+	@Override
+	synchronized public void stopMovement() {
 		leftSpark.set(0);
 		rightSpark.set(0);
 		leftSparkPID.setReference(0, ControlType.kDutyCycle);
@@ -419,10 +513,12 @@ public class NEODrive extends Drive {
 		resetMotionProfile();
 	}
 
-	@Override synchronized public boolean isFinished() {
+	@Override
+	synchronized public boolean isFinished() {
 		return driveState == DriveState.DONE || driveState == DriveState.TELEOP;
 	}
 
-	@Override public void clearStickyFaults() {
+	@Override
+	public void clearStickyFaults() {
 	}
 }

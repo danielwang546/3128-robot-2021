@@ -12,6 +12,7 @@ import org.team3128.common.control.trajectory.Trajectory.State;
 import org.team3128.common.drive.AutoDriveSignal;
 import org.team3128.common.drive.DriveSignal;
 import org.team3128.common.utility.math.Rotation2D;
+import org.team3128.grogu.main.MainGrogu;
 import org.team3128.common.utility.NarwhalUtility;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -31,6 +32,11 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.team3128.common.utility.Log;
 import org.team3128.common.drive.Drive;
+
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 
 public class FalconDrive extends Drive {
 
@@ -84,6 +90,10 @@ public class FalconDrive extends Drive {
 		leftTalon = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_FRONT_ID);
 		leftTalonFollower = new LazyTalonFX(Constants.DriveConstants.LEFT_DRIVE_MIDDLE_ID);
 		// rightTalonSlave2 = new LazyTalonFX(Constants.RIGHT_DRIVE_BACK_ID);
+
+
+	
+
 
 		leftTalon.setInverted(false);
 		rightTalon.setInverted(true);
@@ -181,6 +191,75 @@ public class FalconDrive extends Drive {
 	public void resetMotionProfile() {
 		moveProfiler.reset();
 	}
+
+
+	public Pose2d getPose() {
+		
+		return MainGrogu.ekfPosition;
+
+	}
+
+
+
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(
+				getLeftSpeed() * Constants.DriveConstants.kDriveInchesPerSecPerNUp100ms * Constants.MechanismConstants.inchesToMeters,
+				getRightSpeed() * Constants.DriveConstants.kDriveInchesPerSecPerNUp100ms * Constants.MechanismConstants.inchesToMeters);
+	}
+
+	public void tankDriveVolts(double leftVolts, double rightVolts) {
+
+		//NOTE: THIS METHOD IS NEW AND KIND OF SKETCHY
+		//MAY NEED A CLAMP FOR VOLTAGE SO IT DOESNT TRY TO SEND TOO MANY
+		//ALSO MAY NEED TO MAKE RIGHT VOLTS NEGATIVE BECAUSE IT GOES IN THE OPPOSITE DIRECTION
+		//Log.info("Volts", "Left "+ RobotMath.clamp(leftVolts, -12, 12)+" Right "+RobotMath.clamp(rightVolts, -12, 12));
+
+		//double leftBus = leftTalon.getBusVoltage();
+		
+		double leftBus = 12;
+
+		double leftPercent = RobotMath.clamp(leftVolts, -leftBus, leftBus)/leftBus; 
+
+		double rightBus = 12;
+
+		//double rightBus = rightTalon.getBusVoltage();
+		
+		double rightPercent = RobotMath.clamp(rightVolts, -rightBus, rightBus)/rightBus; 
+		
+		// leftTalon.set(ControlMode.PercentOutput, leftPercent);
+		// rightTalon.set(ControlMode.PercentOutput, rightPercent);
+		leftTalon.set(ControlMode.PercentOutput, rightPercent);
+		rightTalon.set(ControlMode.PercentOutput, leftPercent);
+
+		Log.info("Voltage Stats", "LB: "+leftBus+" RB: "+rightBus+" LP: "+leftPercent+" RP: "+rightPercent);
+
+		//leftTalon.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
+		
+		
+		//rightTalon.setVoltage(RobotMath.clamp(rightVolts, -12, 12));
+
+
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	@Override
 	public double getAngle() {
@@ -310,9 +389,10 @@ public class FalconDrive extends Drive {
 
 		spdL = Constants.DriveConstants.DRIVE_HIGH_SPEED * pwrL;
 		spdR = Constants.DriveConstants.DRIVE_HIGH_SPEED * pwrR;
-		// String tempStr = "pwrL=" + String.valueOf(pwrL) + ", pwrR=" + String.valueOf(pwrR) + ", spdL="
-		// 		+ String.valueOf(spdL) + ", spdR=" + String.valueOf(spdR);
-		// Log.info("FalconDrive", tempStr);
+		String tempStr = "pwrL=" + String.valueOf(pwrL) + ", pwrR=" + String.valueOf(pwrR) + ", spdL="
+				+ String.valueOf(spdL) + ", spdR=" + String.valueOf(spdR);
+		Log.info("FalconDrive", tempStr);
+		//pwrL
 		setWheelPower(new DriveSignal(pwrL, pwrR));
 		// setWheelVelocity(new DriveSignal(spdL, spdR));
 	}
@@ -424,6 +504,7 @@ public class FalconDrive extends Drive {
 	@Override
 	public void resetGyro() {
 		ahrs.reset();
+		//Log.info("Reset Gyro", " ");
 	}
 
 	@Override
