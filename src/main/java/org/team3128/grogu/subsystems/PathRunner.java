@@ -15,7 +15,7 @@ import org.team3128.common.utility.Log;
 
 public class PathRunner extends SequentialCommandGroup {
     public PathRunner(PathFinding m_robotContainer, FalconDrive mRobotDrive){
-        Log.info("MainAthos","2");
+        // Log.info("MainAthos","2");
         addCommands(
            
            
