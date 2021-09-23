@@ -4,6 +4,7 @@ import edu.wpi.first.hal.HAL;
 
 import java.util.ArrayList;
 
+import org.team3128.common.hardware.limelight.Limelight;
 import org.team3128.common.listener.ListenerManager;
 import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.utility.Assert;
@@ -395,6 +396,13 @@ public abstract class NarwhalRobot extends RobotBase {
         constructAutoPrograms();
 
         NarwhalDashboard.pushAutos();
+    }
+
+    protected void setupLimelights(Limelight... limelightList) {
+        Log.info("NarwhalRobot", "Setting Up Limelight Chooser...");
+
+        for(Limelight lime : limelightList)
+            NarwhalDashboard.addLimelight(lime);
     }
 
     private void runAutoProgram() {

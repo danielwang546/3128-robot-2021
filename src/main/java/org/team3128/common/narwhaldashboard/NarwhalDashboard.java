@@ -10,6 +10,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import org.team3128.common.utility.Log;
+import org.team3128.common.hardware.limelight.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -27,8 +28,11 @@ public class NarwhalDashboard extends WebSocketServer {
     private static HashMap<String, DashButtonCallback> buttons = new HashMap<String, DashButtonCallback>();
     private static HashMap<String, NumericalDataCallback> numDataCallbacks = new HashMap<String, NumericalDataCallback>();
 
+    private static HashMap<String, Limelight> limelights = new HashMap<String, Limelight>();
+
     private static String selectedAuto = null;
-    private static boolean autosPushed = false;
+    private static String selectedLimelight = null;
+    private static boolean pushed = false;
 
     public NarwhalDashboard(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
@@ -88,7 +92,11 @@ public class NarwhalDashboard extends WebSocketServer {
      * Sends new set of autonomous programs to NarwhalDashboard.
      */
     public static void pushAutos() {
-        autosPushed = false;
+        pushed = false;
+    }
+
+    public static void addLimelight(Limelight light) {
+        limelights.put(light.hostname, light);
     }
 
     /**
@@ -128,7 +136,7 @@ public class NarwhalDashboard extends WebSocketServer {
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         Log.info("NarwhalDashboard", conn.getRemoteSocketAddress().getHostName() + " has opened a connection.");
 
-        autosPushed = false;
+        pushed = false;
 
         (new Thread(() -> {
             while (conn.isOpen()) {
@@ -138,7 +146,12 @@ public class NarwhalDashboard extends WebSocketServer {
                     jsonString += "\"" + key + "\":\"" + data.get(key) + "\",";
                 }
 
-                jsonString += "\"selected_auto\":\"" + selectedAuto + "\"";
+                jsonString += "\"selected_auto\":\"" + selectedAuto + "\",";
+
+                jsonString += "\"selected_limelight\":\""+selectedLimelight+"\"";
+
+                if(selectedLimelight != null)
+                    jsonString += ",\"selected_pipeline\":\""+limelights.get(selectedLimelight).getSelectedPipeline()+"\"";
 
                 // jsonString += "\"buttons\":[";
                 // for (String buttonName : buttons.keySet()) {
@@ -148,7 +161,7 @@ public class NarwhalDashboard extends WebSocketServer {
                 // jsonString = jsonString.substring(0, jsonString.length() - 1);
                 // jsonString += "],";
 
-                if (!autosPushed) {
+                if (!pushed) {
                     jsonString += ",\"auto_programs\":[";
                     for (String autoName : autoPrograms.keySet()) {
                         jsonString += "\"" + autoName + "\",";
@@ -157,19 +170,41 @@ public class NarwhalDashboard extends WebSocketServer {
                         jsonString = jsonString.substring(0, jsonString.length() - 1);
                     jsonString += "]";
 
-                    autosPushed = true;
+                    jsonString += ",\"limelights\": [";
+
+                    //Limelight[] limes = 
+
+                    for(Limelight lime : limelights.values()) {
+                        jsonString += "\""+lime.hostname+"\",";
+                    }
+                    jsonString = jsonString.substring(0, jsonString.length()-1);
+
+                    jsonString += "]";
+
+                    jsonString += ", \"limelightsOptions\": [";
+
+                    for(Pipeline pipeline : Pipeline.values()) {
+                        jsonString += "\""+pipeline.toString()+"\",";
+                    }
+
+                    jsonString = jsonString.substring(0, jsonString.length()-1);
+
+                    jsonString += "]";
+
+                    pushed = true;
                 }
 
                 jsonString += "}";
 
                 conn.send(jsonString);
-
+                
                 try {
                     Thread.sleep(UPDATE_WAVELENGTH);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
         })).start();
     }
 
@@ -221,9 +256,30 @@ public class NarwhalDashboard extends WebSocketServer {
             } else {
                 Log.recoverable("NarwhalDashboard", "Button \"" + parts[1] + "\" was never added.");
             }
+
+        } else if(parts[0].equals("selectLimelight")){
+                selectedLimelight = parts[1];
+
+                if(selectedLimelight.equals("null")){
+                    selectedLimelight = null;
+                } else {
+                    Log.info("NarwhalDashboard", "Unable to Parse Limelight Change Request from Dashboard");
+                }
+        } else if(parts[0].equals("selectPipeline")) {
+                String pipelineStr = parts[1];
+
+                if(pipelineStr.equals("null")){
+                    pipelineStr = null;
+                } else if(limelights.containsKey(selectedLimelight)) {
+                    limelights.get(selectedLimelight).setPipeline(Pipeline.valueOf(pipelineStr));
+                }
+                else {
+                    Log.info("NarwhalDashboard", "Unable to Parse Pipeline Change Request from Dashboard");
+                }
         } else {
             Log.info("NarwhalDashboard", "Message recieved: " + message);
         }
+        
     }
 
     @Override
