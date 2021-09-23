@@ -11,8 +11,27 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.team3128.common.generics.RobotConstants;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 // the superclass is purely for semantic purposes
 public class Constants extends RobotConstants {
+
+        public static class RamseteConstants {
+                public static final double ksVolts = 0.8;//0.1 0.5
+                public static final double kvVoltSecondsPerMeter = 0.5;//0.5 0.5
+                public static final double kaVoltSecondsSquaredPerMeter = 0.05;//0.1  0.05
+                public static final double kRamseteB = 5; //5  1.5
+                public static final double kRamseteZeta = 0.7     ; //0.7  0.1
+                public static final double kPDriveVel = 0.5;
+
+                public static final double maxVelocity = 1.75; //1.5
+                public static final double maxAcceleration = 1.5; //1.5
+                
+                public static final double kTrackwidthMeters = 0.66;
+                public static final DifferentialDriveKinematics kDriveKinematics =
+                new DifferentialDriveKinematics(kTrackwidthMeters);
+        }
+
 
         public static class GameConstants {
                 public static final double SHOOTER_TARGET_HEIGHT = 98.25; // height of target in INCHES
@@ -53,7 +72,7 @@ public class Constants extends RobotConstants {
 
                 public static final int DRIVE_HIGH_SPEED = 140; // Empirical Max Linear Speed: TBD in/s
 
-                public static final double WHEEL_DIAMETER = 3.55; // effective wheel diameter (measure first then tune this number until distances are accurate)
+                public static final double WHEEL_DIAMETER = 4; // 3.55 effective wheel diameter (measure first then tune this number until distances are accurate)
 
                 public static final double LEFT_SPEEDSCALAR = 1.0; // purely for TELEOP drive (to make sure that when the drive pushes the joystick forward, both sides of the drivetrain are going ROUGHLY the same speed)
                 public static final double RIGHT_SPEEDSCALAR = 1.0;// purely for TELEOP drive (to make sure that when the drive pushes the joystick forward, both sides of the drivetrain are going ROUGHLY the same speed)
