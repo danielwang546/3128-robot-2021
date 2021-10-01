@@ -389,9 +389,9 @@ public class FalconDrive extends Drive {
 
 		spdL = Constants.DriveConstants.DRIVE_HIGH_SPEED * pwrL;
 		spdR = Constants.DriveConstants.DRIVE_HIGH_SPEED * pwrR;
-		String tempStr = "pwrL=" + String.valueOf(pwrL) + ", pwrR=" + String.valueOf(pwrR) + ", spdL="
-				+ String.valueOf(spdL) + ", spdR=" + String.valueOf(spdR);
-		Log.info("FalconDrive", tempStr);
+		// String tempStr = "pwrL=" + String.valueOf(pwrL) + ", pwrR=" + String.valueOf(pwrR) + ", spdL="
+		//		+ String.valueOf(spdL) + ", spdR=" + String.valueOf(spdR);
+		// Log.info("FalconDrive", tempStr);
 		//pwrL
 		setWheelPower(new DriveSignal(pwrL, pwrR));
 		// setWheelVelocity(new DriveSignal(spdL, spdR));
