@@ -1,36 +1,20 @@
 package org.team3128.common.utility.test_suite;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANError;
 
+//import org.team3128.athos.subsystems.*;
+import org.team3128.common.drive.Drive;
+//import org.team3128.athos.main.MainAthos;
+import org.team3128.common.drive.DriveSignal;
+import org.team3128.common.hardware.limelight.Limelight;
+import org.team3128.common.hardware.limelight.LimelightKey;
 import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.utility.Log;
 
-import org.team3128.common.utility.test_suite.CanDevices;
-
-import com.revrobotics.CANError;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.platform.DeviceType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-
-import org.team3128.common.hardware.limelight.Limelight;
-import org.team3128.common.hardware.limelight.LimelightKey;
-import org.team3128.common.hardware.motor.LazyTalonFX;
 import edu.wpi.first.wpilibj.Timer;
-//import org.team3128.athos.main.MainAthos;
-import org.team3128.common.drive.DriveSignal;
-//import org.team3128.athos.subsystems.*;
-import org.team3128.common.drive.Drive;
 
 /**
  * Utility used to catch breaks in the CAN chain
@@ -46,7 +30,6 @@ public class ErrorCatcherUtility {
     //CAN Check
     public static ErrorCode errorCode;
     public CanDevices lastDevice;
-    private double pdpTemp;
     private double sparkTemp;
     public CANError canError;
 
@@ -110,9 +93,6 @@ public class ErrorCatcherUtility {
                 } 
                 else if (device.spark.getEncoder() == null){
                     errorCode = ErrorCode.SensorNotPresent;
-                } 
-                else {
-                    errorCode=ErrorCode.OK;
                 }
 
             }
@@ -123,14 +103,9 @@ public class ErrorCatcherUtility {
             }
 
             else if (device.type==CanDevices.DeviceType.PDP){
-
-                pdpTemp=device.pdp.getTemperature();
-                //Log.info("ErrorCatcher", "PDP temp "+pdpTemp);
-
-                if (pdpTemp < 5){
+                if (device.pdp.getTemperature() < 5){
                     errorCode = ErrorCode.CAN_MSG_NOT_FOUND;
                 }
-
             }
 
             //If the current CAN device is not good, log it

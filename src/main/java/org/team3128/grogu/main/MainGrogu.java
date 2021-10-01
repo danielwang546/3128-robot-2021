@@ -149,9 +149,8 @@ public class MainGrogu extends NarwhalRobot {
 
         // initialization of limelights
 
-        //REVERSED
-        ballLimelight = new Limelight("limelight-cog", -26.0, 0, 0, 30);
-        shooterLimelight = new Limelight("limelight-bog", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
+        shooterLimelight = new Limelight("limelight-sog", -26.0, 0, 0, 30);
+        ballLimelight = new Limelight("limelight-pog", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
         drive.resetGyro();
@@ -436,7 +435,7 @@ public class MainGrogu extends NarwhalRobot {
         hopper.stopHopper();
         drive.resetGyro();
         
-        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
         // trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
         // Log.info("MainAthos", "going into autonomousinit");
@@ -454,16 +453,15 @@ public class MainGrogu extends NarwhalRobot {
 
         // //use this for galactic search
         // hopper.runIntake();
-        // PathFinding pathfinder = new PathFinding();
-        // new PathRunner(pathfinder, drive).schedule();
-        // Log.info("MainAthos","1");
+        PathFinding pathfinder = new PathFinding();
+        new PathRunner(pathfinder, drive).schedule();
         
         // startTime = Timer.getFPGATimestamp();
 
         // initTime=RobotController.getFPGATime()/1000000.0;
 
-        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
-        scheduler.schedule(cmdBallIntake);
+        // cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        // scheduler.schedule(cmdBallIntake);
     }
 
 

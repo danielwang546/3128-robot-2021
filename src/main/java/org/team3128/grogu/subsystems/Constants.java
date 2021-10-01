@@ -143,7 +143,7 @@ public class Constants extends RobotConstants {
                 public static final int SHOOTER_MOTOR_RIGHT_ID = 13;
                 public static final int SHOOTER_SIDEKICK_ID = 42;
                 
-                public static final PIDConstants SHOOTER_PID = new PIDConstants(0,5e-3,0,4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
+                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 5e-4, 6e-6, 4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
                 public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0, 0, 0);
 
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)
