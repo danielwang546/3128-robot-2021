@@ -25,8 +25,8 @@ public class Shooter extends PIDSubsystem {
     public enum ShooterState {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
-        MID_RANGE(0), // mid range shooting
-        SHORT_RANGE(2000),
+        MID_RANGE(4000), // mid range shooting
+        SHORT_RANGE(5500),
         GREEN(1200),
         YELLOW(5000),
         BLUE(3330),
@@ -118,7 +118,7 @@ public class Shooter extends PIDSubsystem {
         
         double accel = (value - preValue) / (time - preTime);
 
-        //Log.info("Shooter",getMeasurement()+" RPM");
+        Log.info("Shooter",getMeasurement()+" RPM");
 
         if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) &&(Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;

@@ -232,7 +232,7 @@ public class FalconDrive extends Drive {
 		leftTalon.set(ControlMode.PercentOutput, rightPercent);
 		rightTalon.set(ControlMode.PercentOutput, leftPercent);
 
-		Log.info("Voltage Stats", "LB: "+leftBus+" RB: "+rightBus+" LP: "+leftPercent+" RP: "+rightPercent);
+		// Log.info("Voltage Stats", "LB: "+leftBus+" RB: "+rightBus+" LP: "+leftPercent+" RP: "+rightPercent);
 
 		//leftTalon.setVoltage(RobotMath.clamp(leftVolts, -12, 12));
 		

@@ -339,12 +339,12 @@ public class MainGrogu extends NarwhalRobot {
             currentTime=RobotController.getFPGATime()/1000000.0;
             //currentTime = currentTime*1e-06;
             //I'm not sure how to check if new readings are available so right now we are running predict and update every time
-        //     inputArray[0] = drive.getAngle() * Math.PI / 180.0;
-        //     inputArray[1] = drive.getLeftSpeed() * 0.0254;
-        //     inputArray[2] = drive.getRightSpeed() * 0.0254;
-        //     inputArray[3] = currentTime-previousTime;
-        //     where EKF is run
-        //     outputArray = ekf.runFilter(inputArray);
+            inputArray[0] = drive.getAngle() * Math.PI / 180.0;
+            inputArray[1] = drive.getLeftSpeed() * 0.0254;
+            inputArray[2] = drive.getRightSpeed() * 0.0254;
+            inputArray[3] = currentTime-previousTime;
+            // where EKF is run
+            outputArray = ekf.runFilter(inputArray);
 
             
             kinematicArray[0] = KxList.get(KxList.size()-1);
@@ -444,11 +444,11 @@ public class MainGrogu extends NarwhalRobot {
         // //drive.startTrajectory();
         // //scheduler.resume();
 
-        // KxList.add((double) 0);
-        // KyList.add((double) 0);
-        // KthetaList.add(Math.PI/2);
-        // KvlList.add((double) 0);
-        // KvrList.add((double) 0);
+        KxList.add((double) 0);
+        KyList.add((double) 0);
+        KthetaList.add(Math.PI/2);
+        KvlList.add((double) 0);
+        KvrList.add((double) 0);
 
 
         // //use this for galactic search
@@ -466,39 +466,39 @@ public class MainGrogu extends NarwhalRobot {
 
 
     // Prints EKF pos in autonomous
-    // @Override
-    // protected void autonomousPeriodic() {
-    //     //hopper.resetBallCount();
-    //     currentTime=RobotController.getFPGATime()/1000000.0;
-    //     //currentTime = currentTime*1e-06;
-    //     //I'm not sure how to check if new readings are available so right now we are running predict and update every time
-    //     inputArray[0] = drive.getAngle() * Math.PI / 180.0;
-    //     inputArray[1] = drive.getLeftSpeed() * 0.0254;
-    //     inputArray[2] = drive.getRightSpeed() * 0.0254;
-    //     inputArray[3] = currentTime-previousTime;
-    //    // where EKF is run
+    @Override
+    protected void autonomousPeriodic() {
+        //hopper.resetBallCount();
+        currentTime=RobotController.getFPGATime()/1000000.0;
+        //currentTime = currentTime*1e-06;
+        //I'm not sure how to check if new readings are available so right now we are running predict and update every time
+        inputArray[0] = drive.getAngle() * Math.PI / 180.0;
+        inputArray[1] = drive.getLeftSpeed() * 0.0254;
+        inputArray[2] = drive.getRightSpeed() * 0.0254;
+        inputArray[3] = currentTime-previousTime;
+       // where EKF is run
 
-    //     kinematicArray[0] = KxList.get(KxList.size()-1);
-    //     kinematicArray[1] = KyList.get(KyList.size()-1);
-    //     kinematicArray[2] = drive.getAngle() * Math.PI / 180.0;
-    //     kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
-    //     kinematicArray[4] = drive.getRightSpeed() * 0.0254;
-    //     kinematicArray[5] = currentTime-previousTime;
+        kinematicArray[0] = KxList.get(KxList.size()-1);
+        kinematicArray[1] = KyList.get(KyList.size()-1);
+        kinematicArray[2] = drive.getAngle() * Math.PI / 180.0;
+        kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
+        kinematicArray[4] = drive.getRightSpeed() * 0.0254;
+        kinematicArray[5] = currentTime-previousTime;
 
-    //     outputArray = ekf.testFunction(kinematicArray);
+        outputArray = ekf.testFunction(kinematicArray);
 
-    //     KxList.add(outputArray[0]);
-    //     KyList.add(outputArray[1]);
-    //     KthetaList.add(outputArray[2]);
-    //     KvlList.add(outputArray[3]);
-    //     KvrList.add(outputArray[4]);
+        KxList.add(outputArray[0]);
+        KyList.add(outputArray[1]);
+        KthetaList.add(outputArray[2]);
+        KvlList.add(outputArray[3]);
+        KvrList.add(outputArray[4]);
        
-    //     //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
-    //     ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
-    //     Log.info("EKF", ekfPosition.toString());
+        //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
+        ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
+        // Log.info("EKF", ekfPosition.toString());
 
-    //     previousTime=currentTime;
-    // }
+        previousTime=currentTime;
+    }
 
 
     @Override

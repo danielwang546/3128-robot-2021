@@ -1242,6 +1242,52 @@ public class PathFinding {
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
     }
 
+    public Command getAutonomousCommandShort(FalconDrive m_robotDrive) {
+        Log.info("MainAthos","3");
+        // Create a voltage constraint to ensure we don't accelerate too fast
+        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+                new SimpleMotorFeedforward(Constants.RamseteConstants.ksVolts,
+                        Constants.RamseteConstants.kvVoltSecondsPerMeter,
+                        Constants.RamseteConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.RamseteConstants.kDriveKinematics, 7);
+        //String trajectoryJSON = trajPath;
+        TrajectoryConfig config = new TrajectoryConfig(Constants.RamseteConstants.maxVelocity,
+        Constants.RamseteConstants.maxAcceleration)
+                        // Add kinematics to ensure max speed is actually obeyed
+                        .setKinematics(Constants.RamseteConstants.kDriveKinematics)
+                        // Apply the voltage constraint
+                        .addConstraint(autoVoltageConstraint).setReversed(false);
+        
+                        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0, 0, new Rotation2d(0)),
+                                List.of(
+                                new Translation2d(1.424, 1.62),
+                                new Translation2d(3.81, 1.286),
+                                new Translation2d(6.096, 0.762),
+                                new Translation2d(1.524, 0.762)),
+                                new Pose2d(-2, 1, new Rotation2d(3.14)),
+                                config);
+
+        // try {
+        //     Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+        //     exampleTrajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        // } catch (IOException ex) {
+        //     System.out.println(ex);
+        // }
+
+        RamseteCommand ramseteCommand = new RamseteCommand(exampleTrajectory, m_robotDrive::getPose,
+                new RamseteController(Constants.RamseteConstants.kRamseteB, Constants.RamseteConstants.kRamseteZeta),
+                new SimpleMotorFeedforward(Constants.RamseteConstants.ksVolts,
+                        Constants.RamseteConstants.kvVoltSecondsPerMeter,
+                        Constants.RamseteConstants.kaVoltSecondsSquaredPerMeter),
+                Constants.RamseteConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds,
+                new PIDController(Constants.RamseteConstants.kPDriveVel, 0, 0),
+                new PIDController(Constants.RamseteConstants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                m_robotDrive::tankDriveVolts, (Subsystem) m_robotDrive);
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    }
+
 
 
 }
