@@ -8,6 +8,8 @@ package org.team3128.grogu.subsystems;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 import org.team3128.common.utility.Log;
+import org.team3128.common.utility.units.Length;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -38,6 +40,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PathFinding {
     
+        final double inToM = 0.0254;
+
     public PathFinding(){
         
     }
@@ -1306,8 +1310,8 @@ public class PathFinding {
                                 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                         new Pose2d(0, 0, new Rotation2d(0)),
                                         List.of(
-                                        new Translation2d(1.424, 1.62),
-                                        new Pose2d(-2, 1, new Rotation2d(3.14)),
+                                        new Translation2d(6 * inToM, 0)),
+                                        new Pose2d(12 * inToM, 0, new Rotation2d(0)),
                                         config);
 
                 // try {
