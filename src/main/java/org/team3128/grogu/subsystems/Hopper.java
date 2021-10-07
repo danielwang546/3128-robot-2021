@@ -211,7 +211,7 @@ public class Hopper implements Subsystem {
 
     public void runIntake() {
         INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
+        BRUSH_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.BRUSH_MOTOR_POWER);
     }
 
     public void runIntakeOpp() {

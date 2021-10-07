@@ -114,7 +114,7 @@ public class Constants extends RobotConstants {
                 public static final int SAMPLE_RATE = 3;
                 public static final double TX_THRESHOLD = 2; // the maximum error in tx where the shooter will be allowed to shoot
                 public static final double TX_OFFSET = 0; // to offset alignment in either direction
-                public static final PIDConstants VISION_PID = new PIDConstants(0, 0.015, 0.02, 0.00006);
+                public static final PIDConstants VISION_PID = new PIDConstants(0, 0.01, 0.02, 0.00006);
                 public static final PIDConstants BALL_PID = new PIDConstants(0.57, 0.02, 0.0, 0.00003);
                 public static final PIDConstants BLIND_BALL_PID = new PIDConstants(0.23, 0, 0, 0);
         }
@@ -143,7 +143,7 @@ public class Constants extends RobotConstants {
                 public static final int SHOOTER_MOTOR_RIGHT_ID = 13;
                 public static final int SHOOTER_SIDEKICK_ID = 42;
                 
-                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 11e-4, 5e-5, 4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
+                public static final PIDConstants SHOOTER_PID = new PIDConstants(0, 16e-4, 5e-4, 4.20e-5);//0,0,0,4.20e-5//0, 2e-4, 0, 6e-6 //0.00040, 0, 5e-4//0, 0.0000457, 0, 2.25e-4
                 public static final PIDConstants SIDEKICK_PID = new PIDConstants(0, 0, 0, 0);
 
                 public static final double SHOOTER_SATURATION_LIMIT = 5; // set limit on integral accumulation (in this case, 1 volt)

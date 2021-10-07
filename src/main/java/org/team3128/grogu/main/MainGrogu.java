@@ -185,14 +185,14 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void constructAutoPrograms() {
-        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
         //scheduler.schedule(cmdBallPursuit);
         
-        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
         NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
 
-        //cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+        // cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
         //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
     }
@@ -208,6 +208,7 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
+        listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
 
@@ -236,12 +237,10 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("Intake", () -> {
             hopper.runIntake();
-            Log.info("Joystick","Button 3 pressed");
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
             hopper.stopIntake();
-            Log.info("Joystick","Button 3 unpressed");
         });
 
         listenerRight.addButtonDownListener("Shoot", () -> {
@@ -249,7 +248,6 @@ public class MainGrogu extends NarwhalRobot {
             sidekick.shoot();
             shooter.shoot();
             scheduler.schedule(alignCmd);
-            Log.info("Joystick","Button 4 pressed");
         });
 
         listenerRight.addButtonUpListener("Shoot", () -> {
@@ -261,7 +259,17 @@ public class MainGrogu extends NarwhalRobot {
             //shooter.setSetpoint(0);
             driveCmdRunning.isRunning = true;
             shooter.isAligned = false;
-            Log.info("Joystick","Button 4 unpressed");
+        });
+
+        listenerRight.addButtonDownListener("Auto Intake", () -> {
+            hopper.runIntake();
+            scheduler.schedule(cmdBallPursuit);
+        });
+
+        listenerRight.addButtonUpListener("Auto Intake", () -> {
+            hopper.stopIntake();
+            cmdBallPursuit.cancel();
+            driveCmdRunning.isRunning = true;
         });
 
         listenerRight.addButtonDownListener("EmptyHopper", () -> {
