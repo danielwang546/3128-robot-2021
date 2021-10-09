@@ -93,7 +93,7 @@ public class CmdAlignShoot implements Command {
         this.goalHorizontalOffset = goalHorizontalOffset;
 
         this.numBallsToShoot = numBallsToShoot;
-        hopper.ballCount = 2;
+        
     }
 
     @Override
@@ -112,6 +112,7 @@ public class CmdAlignShoot implements Command {
         shooter.shoot();
         //sidekick.shoot();
         Log.info("CmdAlignShoot", "initialized limelight, aren't I cool!");
+        hopper.ballCount = 3;
     }
 
     @Override
@@ -227,6 +228,8 @@ public class CmdAlignShoot implements Command {
         //sidekick.counterShoot();
         hopper.unshoot = true;
         shooter.isAligned = false;
+        hopper.stopArm();
+        //hopper.runIntake();
 
         Log.info("CmdAlignShoot", "Command Finished.");
         if (interrupted)

@@ -234,6 +234,12 @@ public class Hopper implements Subsystem {
         ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER);
     }
 
+    public void moveArmUpAuto() {
+        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER_AUTO);
+    }
+
+
+
     public void stopArm() {
         ARM_MOTOR.set(ControlMode.PercentOutput, 0);
     }
