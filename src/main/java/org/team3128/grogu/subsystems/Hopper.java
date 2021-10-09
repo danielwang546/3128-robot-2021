@@ -51,7 +51,7 @@ public class Hopper implements Subsystem {
 
     private HopperState actionState = HopperState.IDLE;
     
-    private int ballCount;
+    public int ballCount;
 
     private boolean wasTriggeredTop = false;
     private boolean wasTriggeredBottom = false;
@@ -92,6 +92,8 @@ public class Hopper implements Subsystem {
 
     @Override
     public void periodic() {
+        Log.info("Hopper","ball count: " + ballCount);
+        Log.info("Hopper","action state: " + actionState);
         switch(actionState) {
             case IDLE:
                 //stopIntake();
@@ -100,7 +102,7 @@ public class Hopper implements Subsystem {
                 if (isShooterReady) {
                     setState(HopperState.SHOOTING);
                     Log.info("Hopper","I don't feel so good (SHOOTER)");
-                } else if (getBottom()) {
+                } else if (getBottom() && ballCount < 3) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 }

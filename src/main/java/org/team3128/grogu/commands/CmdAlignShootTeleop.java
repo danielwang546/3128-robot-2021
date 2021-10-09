@@ -29,11 +29,10 @@ import java.util.HashSet;
 
 import org.team3128.grogu.commands.*;
 
-public class CmdAlignShoot implements Command {
+public class CmdAlignShootTeleop implements Command {
     FalconDrive drive;
     Shooter shooter;
     Hopper hopper;
-    Sidekick sidekick;
     boolean gotDistance = false;
 
 
@@ -74,11 +73,10 @@ public class CmdAlignShoot implements Command {
 
     private HorizontalOffsetFeedbackDriveState aimState = HorizontalOffsetFeedbackDriveState.SEARCHING;
 
-    public CmdAlignShoot(Limelight limelight, DriveCommandRunning cmdRunning, double goalHorizontalOffset, int numBallsToShoot) {
+    public CmdAlignShootTeleop(Limelight limelight, DriveCommandRunning cmdRunning, double goalHorizontalOffset, int numBallsToShoot) {
         this.shooter = Shooter.getInstance();
         this.hopper = Hopper.getInstance();
         this.drive = FalconDrive.getInstance();
-        this.sidekick = Sidekick.getInstance();
 
         this.requirements = new HashSet<Subsystem>();
         this.requirements.add(drive);
@@ -93,7 +91,6 @@ public class CmdAlignShoot implements Command {
         this.goalHorizontalOffset = goalHorizontalOffset;
 
         this.numBallsToShoot = numBallsToShoot;
-        hopper.ballCount = 2;
     }
 
     @Override
@@ -107,10 +104,7 @@ public class CmdAlignShoot implements Command {
         cmdRunning.isRunning = false;
         plateauCount = 0;
         // TODO: prob not helpful but sets hopper to shooting
-        // hopper.setAction(Hopper.ActionState.SHOOTING);
-        sidekick.shoot();
-        shooter.shoot();
-        //sidekick.shoot();
+        //hopper.setAction(Hopper.ActionState.SHOOTING);
         Log.info("CmdAlignShoot", "initialized limelight, aren't I cool!");
     }
 
@@ -126,7 +120,7 @@ public class CmdAlignShoot implements Command {
                 } else {
                     targetFoundCount = 0;
                 }
-                
+
                 if (targetFoundCount > 5) {
                     Log.info("CmdAlignShoot", "Target found.");
                     Log.info("CmdAlignShoot", "Switching to FEEDBACK...");
@@ -215,18 +209,13 @@ public class CmdAlignShoot implements Command {
         // } else {
         // return false;
         // }
-        return shooter.isAligned && hopper.getBallCount() == 0;
+        return shooter.isAligned;
     }
 
     @Override
     public void end(boolean interrupted) {
         limelight.setLEDMode(LEDMode.OFF);
         drive.stopMovement();
-        sidekick.counterShoot();
-        shooter.counterShoot();
-        //sidekick.counterShoot();
-        hopper.unshoot = true;
-        shooter.isAligned = false;
 
         Log.info("CmdAlignShoot", "Command Finished.");
         if (interrupted)

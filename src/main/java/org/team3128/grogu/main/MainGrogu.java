@@ -106,7 +106,6 @@ public class MainGrogu extends NarwhalRobot {
 
     private boolean teleopKinematics = false;
 
-
     static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
     0.01, 1e-3, 0.01, 0.01);
 
@@ -123,7 +122,8 @@ public class MainGrogu extends NarwhalRobot {
 
     public static Pose2d ekfPosition;
 
-    public CmdAlignShoot alignCmd;
+    public CmdAlignShootTeleop alignCmd;
+    public AutoSimple autoSimple;
 
     public ErrorCatcherUtility errorCatcher;
 
@@ -163,7 +163,7 @@ public class MainGrogu extends NarwhalRobot {
         sidekick.setState(Sidekick.ShooterState.DEFAULT);
 
         shooter.setState(Shooter.ShooterState.MID_RANGE);
-        alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
+        alignCmd = new CmdAlignShootTeleop(shooterLimelight, driveCmdRunning, 0, 26);
 
         //errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
         /*
@@ -184,31 +184,17 @@ public class MainGrogu extends NarwhalRobot {
     }
 
     @Override
-    protected void constructAutoPrograms() {
-        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
-        //scheduler.schedule(cmdBallPursuit);
-        
-        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
-
-        NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
-
-        // cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
-
-        //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
-    }
-
-    @Override
     protected void setupListeners() {
         listenerRight.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
         listenerRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         listenerRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
-        listenerRight.nameControl( ControllerExtreme3D.TRIGGER, "Intake");
+        listenerRight.nameControl(ControllerExtreme3D.TRIGGER, "Intake");
 
         listenerRight.nameControl(new Button(10), "MoveArmDown");
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
-        listenerRight.nameControl(new Button(4), "Auto Intake");
+        // listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
 
@@ -220,10 +206,13 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerLeft.nameControl(ControllerExtreme3D.TRIGGER, "REVERSE");
 
-        listenerLeft.nameControl(new Button(12), "SetGreen");
-        listenerLeft.nameControl(new Button(11), "SetYellow");
-        listenerLeft.nameControl(new Button(9), "SetBlue");
-        listenerLeft.nameControl(new Button(7), "SetRed");
+        // listenerLeft.nameControl(new Button(12), "SetGreen");
+        // listenerLeft.nameControl(new Button(11), "SetYellow");
+        // listenerLeft.nameControl(new Button(9), "SetBlue");
+        // listenerLeft.nameControl(new Button(7), "SetRed");
+
+        listenerLeft.nameControl(new Button(11), "Increment Ball Count");
+        listenerLeft.nameControl(new Button(12), "Decrement Ball Count");
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
@@ -261,16 +250,16 @@ public class MainGrogu extends NarwhalRobot {
             shooter.isAligned = false;
         });
 
-        listenerRight.addButtonDownListener("Auto Intake", () -> {
-            hopper.runIntake();
-            scheduler.schedule(cmdBallPursuit);
-        });
+        // listenerRight.addButtonDownListener("Auto Intake", () -> {
+        //     hopper.runIntake();
+        //     scheduler.schedule(cmdBallPursuit);
+        // });
 
-        listenerRight.addButtonUpListener("Auto Intake", () -> {
-            hopper.stopIntake();
-            cmdBallPursuit.cancel();
-            driveCmdRunning.isRunning = true;
-        });
+        // listenerRight.addButtonUpListener("Auto Intake", () -> {
+        //     hopper.stopIntake();
+        //     cmdBallPursuit.cancel();
+        //     driveCmdRunning.isRunning = true;
+        // });
 
         listenerRight.addButtonDownListener("EmptyHopper", () -> {
             hopper.runHopperOpp();
@@ -325,20 +314,44 @@ public class MainGrogu extends NarwhalRobot {
             shooter.setState(Shooter.ShooterState.SHORT_RANGE);
         });
 
-        listenerLeft.addButtonDownListener("SetGreen", () -> {
-            shooter.setState(Shooter.ShooterState.GREEN);
-        });
-        listenerLeft.addButtonDownListener("SetYellow", () -> {
-            shooter.setState(Shooter.ShooterState.YELLOW);
-            //shooter.setSetpoint(Shooter.ShooterState.YELLOW.shooterRPM);
-        });
-        listenerLeft.addButtonDownListener("SetBlue", () -> {
-            shooter.setState(Shooter.ShooterState.BLUE);
-        });
-        listenerLeft.addButtonDownListener("SetRed", () -> {
-            shooter.setState(Shooter.ShooterState.RED);
+        // listenerLeft.addButtonDownListener("SetGreen", () -> {
+        //     shooter.setState(Shooter.ShooterState.GREEN);
+        // });
+        // listenerLeft.addButtonDownListener("SetYellow", () -> {
+        //     shooter.setState(Shooter.ShooterState.YELLOW);
+        //     //shooter.setSetpoint(Shooter.ShooterState.YELLOW.shooterRPM);
+        // });
+        // listenerLeft.addButtonDownListener("SetBlue", () -> {
+        //     shooter.setState(Shooter.ShooterState.BLUE);
+        // });
+        // listenerLeft.addButtonDownListener("SetRed", () -> {
+        //     shooter.setState(Shooter.ShooterState.RED);
+        // });
+
+        listenerLeft.addButtonDownListener("Increment Ball Count", () -> {
+            hopper.ballCount++;
         });
 
+        listenerLeft.addButtonDownListener("Decrement Ball Count", () -> {
+            hopper.ballCount--;
+        });
+
+    }
+
+    @Override
+    protected void constructAutoPrograms() {
+        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        //scheduler.schedule(cmdBallPursuit);
+        
+        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive);
+
+        NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
+
+        // cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
     }
 
     @Override
@@ -440,7 +453,9 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void autonomousInit() {
-        hopper.stopHopper();
+        Log.info("MainGrogu", "moving arm down");
+        // hopper.moveArmDown();
+       // hopper.stopHopper();
         drive.resetGyro();
         
         // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
@@ -461,15 +476,17 @@ public class MainGrogu extends NarwhalRobot {
 
         // //use this for galactic search
         // hopper.runIntake();
-        PathFinding pathfinder = new PathFinding();
-        new PathRunner(pathfinder, drive).schedule();
+        // PathFinding pathfinder = new PathFinding();
+        // new PathRunner(pathfinder, drive).schedule();
         
         // startTime = Timer.getFPGATimestamp();
 
         // initTime=RobotController.getFPGATime()/1000000.0;
 
+
         // cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
         // scheduler.schedule(cmdBallIntake);
+        scheduler.schedule(autoSimple);
     }
 
 

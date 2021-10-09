@@ -11,7 +11,7 @@ public class AutoSimple extends SequentialCommandGroup {
 
     public AutoSimple(Limelight shooterLimelight, DriveCommandRunning cmdRunning, double goalHorizontalOffset, PathFinding m_robotContainer, FalconDrive mRobotDrive) {       
         addCommands(
-            new CmdAlignShoot(shooterLimelight, cmdRunning, goalHorizontalOffset, 26),
+            new CmdAlignShoot(shooterLimelight, cmdRunning, goalHorizontalOffset, 3),
             m_robotContainer.getAutonomousCommandSimple(mRobotDrive)
             );
     }
