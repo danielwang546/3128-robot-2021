@@ -1,24 +1,13 @@
 package org.team3128.grogu.subsystems;
 
-import org.team3128.common.utility.Log;
-import org.team3128.common.utility.test_suite.CanDevices;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-//import org.team3128.testbench.subsystems.Constants;
-import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.hardware.motor.LazyTalonFX;
-import org.team3128.common.hardware.motor.LazyTalonSRX;
-import org.team3128.common.hardware.motor.LazyVictorSPX;
+import org.team3128.common.utility.Log;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 
 public class Shooter extends PIDSubsystem {
@@ -118,7 +107,7 @@ public class Shooter extends PIDSubsystem {
         
         double accel = (value - preValue) / (time - preTime);
 
-        Log.info("Shooter",getMeasurement()+" RPM");
+        // Log.info("Shooter",getMeasurement()+" RPM");
 
         if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_THRESHOLD) &&(Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD) && (setpoint != 0)) {
             plateauCount++;

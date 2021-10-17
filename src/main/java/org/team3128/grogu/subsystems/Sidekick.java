@@ -1,24 +1,14 @@
 package org.team3128.grogu.subsystems;
 
-import org.team3128.common.utility.Log;
-import org.team3128.common.utility.test_suite.CanDevices;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.team3128.grogu.subsystems.Constants;
-import org.team3128.common.hardware.motor.LazyCANSparkMax;
-import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
-import org.team3128.common.hardware.motor.LazyVictorSPX;
+import org.team3128.common.utility.Log;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 
 public class Sidekick extends PIDSubsystem {
@@ -115,7 +105,7 @@ public class Sidekick extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        Log.info("Sidekick",getMeasurement()+" RPM");
+        // Log.info("Sidekick",getMeasurement()+" RPM");
 
         prevError = error;
 

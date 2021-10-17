@@ -1,39 +1,12 @@
 package org.team3128.grogu.subsystems;
 
-import org.team3128.common.hardware.motor.LazyCANSparkMax;
-import org.team3128.common.control.RateLimiter;
-import org.team3128.common.control.AsynchronousPid;
-import org.team3128.common.control.motion.RamseteController;
-import org.team3128.common.control.trajectory.Trajectory;
-import org.team3128.common.control.trajectory.Trajectory.State;
-import org.team3128.common.drive.AutoDriveSignal;
-import org.team3128.common.drive.DriveSignal;
-import org.team3128.common.utility.math.Rotation2D;
-import org.team3128.common.utility.NarwhalUtility;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
-import org.team3128.common.hardware.motor.LazyTalonFX;
 import org.team3128.common.hardware.motor.LazyTalonSRX;
 import org.team3128.common.hardware.motor.LazyVictorSPX;
-import org.team3128.common.utility.RobotMath;
 
-import edu.wpi.first.wpilibj.Timer;
-
-import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import org.team3128.common.utility.Log;
-import org.team3128.common.drive.Drive;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Intake implements Subsystem {
 
@@ -118,10 +91,10 @@ public class Intake implements Subsystem {
     }
 
     public boolean isTopTriggered() {
-        return LIMIT_SWITCH_TOP.get();
+        return !LIMIT_SWITCH_TOP.get();
     }
 
     public boolean isBottomTriggered() {
-        return LIMIT_SWITCH_BOTTOM.get();
+        return !LIMIT_SWITCH_BOTTOM.get();
     }
 }
