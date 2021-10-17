@@ -103,6 +103,7 @@ public class MainGrogu extends NarwhalRobot {
     public Hopper hopper = Hopper.getInstance();
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
+    public Intake intake = Intake.getInstance();
 
     private boolean teleopKinematics = false;
 
@@ -228,16 +229,16 @@ public class MainGrogu extends NarwhalRobot {
         }, "MoveTurn", "MoveForwards", "Throttle");
 
         listenerRight.addButtonDownListener("Intake", () -> {
-            hopper.runIntake();
+            intake.runIntake();
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
-            hopper.stopIntake();
+            intake.stopIntake();
         });
 
         listenerRight.addButtonDownListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
-            hopper.runIntake();
+            intake.runIntake();
             sidekick.shoot();
             shooter.shoot();
             scheduler.schedule(alignCmd);
@@ -246,7 +247,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonUpListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.OFF);
-            hopper.stopIntake();
+            intake.stopIntake();
             sidekick.counterShoot();
             shooter.counterShoot();
             hopper.unshoot = true;
@@ -270,16 +271,16 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("EmptyHopper", () -> {
             hopper.runHopperOpp();
-            hopper.runIntakeOpp();
+            intake.runIntakeOpp();
         });
 
         listenerRight.addButtonUpListener("EmptyHopper", () -> {
             hopper.stopHopper();
-            hopper.stopIntake();
+            intake.stopIntake();
         });
 
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
-            hopper.moveArmDown();
+            intake.moveArmDown();
         });
 
         listenerRight.addButtonUpListener("MoveArmDown", () -> {
@@ -287,7 +288,7 @@ public class MainGrogu extends NarwhalRobot {
         });
 
         listenerRight.addButtonDownListener("MoveArmUp", () -> {
-            hopper.moveArmUp();
+            intake.moveArmUp();
         });
 
         listenerRight.addButtonUpListener("MoveArmUp", () -> {
@@ -352,8 +353,8 @@ public class MainGrogu extends NarwhalRobot {
         
         // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
-        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, hopper);
-        autoLessSimple = new AutoLessSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, hopper);
+        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
+        autoLessSimple = new AutoLessSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
 
         NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
 
@@ -463,7 +464,7 @@ public class MainGrogu extends NarwhalRobot {
     protected void autonomousInit() {
         Log.info("MainGrogu", "moving arm down");
         // hopper.moveArmDown();
-        hopper.moveArmUpAuto();
+        //hopper.moveArmUpAuto();
 
        // hopper.stopHopper();
         drive.resetGyro();
