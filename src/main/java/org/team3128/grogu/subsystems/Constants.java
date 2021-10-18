@@ -178,6 +178,9 @@ public class Constants extends RobotConstants {
                 public static final int BRUSH_MOTOR_ID = 5;
                 public static final int INTAKE_MOTOR_ID = 4;
 
+                public static final int TOP_LIMIT_SWITCH_ID = 0;
+                public static final int BOTTOM_LIMIT_SWITCH_ID = 1;
+
                 public static final NeutralMode ARM_NEUTRAL_MODE = NeutralMode.Brake;
 
                 public static final double INTAKE_MOTOR_POWER = -0.6;

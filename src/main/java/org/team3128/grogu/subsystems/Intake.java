@@ -43,7 +43,9 @@ public class Intake implements Subsystem {
     }
     
     private void configSensors() {
-       
+        //TODO: Set constants to real DigitalInput channels
+        LIMIT_SWITCH_TOP = new DigitalInput(Constants.IntakeConstants.TOP_LIMIT_SWITCH_ID);
+        LIMIT_SWITCH_BOTTOM = new DigitalInput(Constants.IntakeConstants.BOTTOM_LIMIT_SWITCH_ID);
     }
 
     @Override
