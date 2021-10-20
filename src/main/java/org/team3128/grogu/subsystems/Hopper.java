@@ -51,7 +51,7 @@ public class Hopper implements Subsystem {
 
     private HopperState actionState = HopperState.IDLE;
     
-    private int ballCount;
+    public int ballCount;
 
     private boolean wasTriggeredTop = false;
     private boolean wasTriggeredBottom = false;
@@ -92,6 +92,8 @@ public class Hopper implements Subsystem {
 
     @Override
     public void periodic() {
+        Log.info("Hopper","ball count: " + ballCount);
+        Log.info("Hopper","action state: " + actionState);
         switch(actionState) {
             case IDLE:
                 //stopIntake();
@@ -100,7 +102,7 @@ public class Hopper implements Subsystem {
                 if (isShooterReady) {
                     setState(HopperState.SHOOTING);
                     Log.info("Hopper","I don't feel so good (SHOOTER)");
-                } else if (getBottom()) {
+                } else if (getBottom() && ballCount < 3) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 }
@@ -207,29 +209,6 @@ public class Hopper implements Subsystem {
     public void stopHopper() {
         HOPPER_MOTOR_1.set(ControlMode.PercentOutput, 0);
         HOPPER_MOTOR_2.set(0);
-    }
-
-    public void runIntake() {
-        INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
-    }
-
-    public void runIntakeOpp() {
-        //INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
-    }
-
-    public void stopIntake() {
-        INTAKE_MOTOR.set(ControlMode.PercentOutput, 0);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, 0);
-    }
-
-    public void moveArmDown() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.ARM_MOTOR_POWER);
-    }
-
-    public void moveArmUp() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER);
     }
 
     public void stopArm() {
