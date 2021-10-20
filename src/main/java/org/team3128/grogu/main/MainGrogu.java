@@ -167,6 +167,8 @@ public class MainGrogu extends NarwhalRobot {
         shooter.setState(Shooter.ShooterState.MID_RANGE);
         alignCmd = new CmdAlignShootTeleop(shooterLimelight, driveCmdRunning, 0, 26);
 
+        
+
         //errorCatcher = new ErrorCatcherUtility(CanChain, limelights, drive);
         /*
         NarwhalDashboard.addButton("ErrorCatcher", (boolean down) -> {
