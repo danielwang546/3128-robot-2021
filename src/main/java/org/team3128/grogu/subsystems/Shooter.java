@@ -226,9 +226,9 @@ public class Shooter extends PIDSubsystem {
     }
 
     public boolean isReady() {
-        if (atSetpoint())
+        // if (atSetpoint())
           // Log.info("Shooter","at Setpoint");
-        if (isAligned)
+        // if (isAligned)
           // Log.info("Shooter","is Aligned");
         return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
         //return true;

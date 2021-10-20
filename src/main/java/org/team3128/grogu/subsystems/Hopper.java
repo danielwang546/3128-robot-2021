@@ -37,7 +37,7 @@ import org.team3128.common.drive.Drive;
 
 public class Hopper implements Subsystem {
 
-    private enum HopperState {
+    public enum HopperState {
         IDLE,INTAKING,SHOOTING;
     }
 
