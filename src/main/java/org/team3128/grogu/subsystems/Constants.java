@@ -120,6 +120,7 @@ public class Constants extends RobotConstants {
                 public static final PIDConstants VISION_PID = new PIDConstants(0, 0.01, 0.02, 0.00006);
                 public static final PIDConstants BALL_PID = new PIDConstants(0.57, 0.02, 0.0, 0.00003);
                 public static final PIDConstants BLIND_BALL_PID = new PIDConstants(0.23, 0, 0, 0);
+                public static final double AUTO_ALIGN_TIMEOUT = 5; // seconds to wait before canceling 
         }
 
 

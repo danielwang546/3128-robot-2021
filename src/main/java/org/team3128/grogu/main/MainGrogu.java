@@ -197,6 +197,8 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
+        listenerLeft.nameControl(new Button(2), "ShootNotAligned");
+        
         // listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
