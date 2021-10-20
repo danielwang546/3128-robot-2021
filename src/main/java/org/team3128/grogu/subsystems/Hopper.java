@@ -92,8 +92,8 @@ public class Hopper implements Subsystem {
 
     @Override
     public void periodic() {
-        Log.info("Hopper","ball count: " + ballCount);
-        Log.info("Hopper","action state: " + actionState);
+      //  Log.info("Hopper","ball count: " + ballCount);
+      //  Log.info("Hopper","action state: " + actionState);
         switch(actionState) {
             case IDLE:
                 //stopIntake();
@@ -126,13 +126,13 @@ public class Hopper implements Subsystem {
         wasTriggeredTop = getTop();
         //Log.info("hopper", "Ball in bottom = " + getBottom());
         //TODO: update this variable
-        Log.info("Hopper", "Sidekick isReady " + Sidekick.getInstance().isReady());
-        Log.info("Hopper", "Shooter isReady " + Shooter.getInstance().isReady());
+        //Log.info("Hopper", "Sidekick isReady " + Sidekick.getInstance().isReady());
+        //Log.info("Hopper", "Shooter isReady " + Shooter.getInstance().isReady());
         isShooterReady = (Sidekick.getInstance().isReady() && Shooter.getInstance().isReady());
     }
 
     private void intake() {
-        Log.info("hopper","intaking");
+        //Log.info("hopper","intaking");
         if (ballCount >= 2 || getTop()) {
             if (ballCount > 2)
                 Log.info("Hopper","oopsie, should not be greater than 3");
@@ -169,7 +169,7 @@ public class Hopper implements Subsystem {
 
     private void shoot() {
         runHopper(1);
-        Log.info("hopper", "Shooting");
+        //Log.info("hopper", "Shooting");
         if (wasTriggeredTop && !getTop()) {
             setState(HopperState.IDLE);
             ballCount--;

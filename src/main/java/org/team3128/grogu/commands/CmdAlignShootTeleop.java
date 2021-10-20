@@ -109,7 +109,7 @@ public class CmdAlignShootTeleop implements Command {
         plateauCount = 0;
         // TODO: prob not helpful but sets hopper to shooting
         //hopper.setAction(Hopper.ActionState.SHOOTING);
-        Log.info("CmdAlignShoot", "initialized limelight, aren't I cool!");
+        Log.info("CmdAlignShootTeleop", "initialized limelight, aren't I cool!");
     }
 
     @Override
@@ -120,7 +120,7 @@ public class CmdAlignShootTeleop implements Command {
         switch (aimState) {
             case SEARCHING:
                 NarwhalDashboard.put("align_status", "searching");
-                Log.info("CmdAlignShoot", "Searching...");
+                Log.info("CmdAlignShootTeleop", "Searching...");
                 if (limelight.hasValidTarget()) {
                     targetFoundCount += 1;
                 } else {
@@ -128,8 +128,8 @@ public class CmdAlignShootTeleop implements Command {
                 }
 
                 if (targetFoundCount > 5) {
-                    Log.info("CmdAlignShoot", "Target found.");
-                    Log.info("CmdAlignShoot", "Switching to FEEDBACK...");
+                    Log.info("CmdAlignShootTeleop", "Target found.");
+                    Log.info("CmdAlignShootTeleop", "Switching to FEEDBACK...");
                     LimelightData initData = limelight.getValues(Constants.VisionConstants.SAMPLE_RATE);
 
                     SmartDashboard.putNumber("ty", initData.ty());
@@ -149,8 +149,8 @@ public class CmdAlignShootTeleop implements Command {
                 NarwhalDashboard.put("align_status", "feedback");
                 cmdRunning.isRunning = false;
                 if (!limelight.hasValidTarget()) {
-                    Log.info("CmdAlignShoot", "No valid target.");
-                    Log.info("CmdAlignShoot", "Returning to SEARCHING...");
+                    Log.info("CmdAlignShootTeleop", "No valid target.");
+                    Log.info("CmdAlignShootTeleop", "Returning to SEARCHING...");
 
                     aimState = HorizontalOffsetFeedbackDriveState.SEARCHING;
 
@@ -172,9 +172,9 @@ public class CmdAlignShootTeleop implements Command {
                     currentError = goalHorizontalOffset - currentHorizontalOffset;
 
                     if (txThreshold < Constants.VisionConstants.TX_THRESHOLD_MAX) {
-                        Log.info("CmdAlignShoot", String.valueOf(txThreshold));
-                        Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
-                        Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
+                        Log.info("CmdAlignShootTeleop", String.valueOf(txThreshold));
+                        //Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
+                        //Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
                         txThreshold += ((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD);
                     }
 
@@ -202,7 +202,7 @@ public class CmdAlignShootTeleop implements Command {
                     plateauCount++;
                     if (plateauCount > 10) {
                         shooter.isAligned = true;
-                        Log.info("Cmd Align Shoot","SHOOTY TIME!!!");
+                        Log.info("CmdAlignShootTeleop","SHOOTY TIME!!!");
                     }
                 } else {
                     shooter.isAligned = false;
@@ -229,9 +229,9 @@ public class CmdAlignShootTeleop implements Command {
         limelight.setLEDMode(LEDMode.OFF);
         drive.stopMovement();
 
-        Log.info("CmdAlignShoot", "Command Finished.");
+        Log.info("CmdAlignShootTeleop", "Command Finished.");
         if (interrupted)
-            Log.info("CmdAlignShoot", "Command interru-");
+            Log.info("CmdAlignShootTeleop", "Command interru-");
         //hopper.setAction(Hopper.ActionState.ORGANIZING);
     }
 }
