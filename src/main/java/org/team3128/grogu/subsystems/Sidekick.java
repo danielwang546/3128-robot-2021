@@ -186,7 +186,7 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        if (atSetpoint())
+        // if (atSetpoint())
             // Log.info("Sidekick","at Setpoint");
         return (isPlateaued());
         //return true;
