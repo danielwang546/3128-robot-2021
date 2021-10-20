@@ -26,11 +26,7 @@ public class Shooter extends PIDSubsystem {
     public enum ShooterState {
         OFF(0),
         LONG_RANGE(5500), // long range shooting
-<<<<<<< HEAD
         MID_RANGE(4800), //4800 actual setpoint  // mid range shooting
-=======
-        MID_RANGE(2000), //4800 actual setpoint  // mid range shooting
->>>>>>> dbce5214a90903a17bde1474fd84632fb6c85779
         SHORT_RANGE(3500),
         GREEN(1200),
         YELLOW(5000),
