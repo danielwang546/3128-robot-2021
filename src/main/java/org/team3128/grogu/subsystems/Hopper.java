@@ -213,6 +213,35 @@ public class Hopper implements Subsystem {
         HOPPER_MOTOR_2.set(0);
     }
 
+    public void runIntake() {
+        INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
+        BRUSH_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.BRUSH_MOTOR_POWER);
+    }
+
+    public void runIntakeOpp() {
+        //INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
+        BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
+    }
+
+    public void stopIntake() {
+        INTAKE_MOTOR.set(ControlMode.PercentOutput, 0);
+        BRUSH_MOTOR.set(ControlMode.PercentOutput, 0);
+    }
+
+    public void moveArmDown() {
+        ARM_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.ARM_MOTOR_POWER);
+    }
+
+    public void moveArmUp() {
+        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER);
+    }
+
+    public void moveArmUpAuto() {
+        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER_AUTO);
+    }
+
+
+
     public void stopArm() {
         ARM_MOTOR.set(ControlMode.PercentOutput, 0);
     }
