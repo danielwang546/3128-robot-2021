@@ -115,7 +115,7 @@ public class Sidekick extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        Log.info("Sidekick",getMeasurement()+" RPM");
+        // Log.info("Sidekick",getMeasurement()+" RPM");
 
         prevError = error;
 
@@ -186,8 +186,8 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
-        if (atSetpoint())
-            Log.info("Sidekick","at Setpoint");
+        // if (atSetpoint())
+            // Log.info("Sidekick","at Setpoint");
         return (isPlateaued());
         //return true;
     }

@@ -179,8 +179,8 @@ public class CmdAlignShoot implements Command {
 
                     if (txThreshold < Constants.VisionConstants.TX_THRESHOLD_MAX) {
                         Log.info("CmdAlignShoot", String.valueOf(txThreshold));
-                        Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
-                        Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
+                        //Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
+                        //Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
                         txThreshold += ((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD);
                     }
 
