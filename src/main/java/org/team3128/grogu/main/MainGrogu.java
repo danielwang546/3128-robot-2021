@@ -261,6 +261,22 @@ public class MainGrogu extends NarwhalRobot {
             shooter.isAligned = false;
         });
 
+        listenerLeft.addButtonDownListener("ShootNotAligned", () -> {
+            shooter.isAligned = true; // kind of weird but need it to shoot 
+            hopper.runIntake();
+            sidekick.shoot();
+            shooter.shoot();
+        });
+
+        listenerLeft.addButtonUpListener("ShootNotAligned", () -> {
+            hopper.stopIntake();
+            sidekick.counterShoot();
+            shooter.counterShoot();
+            hopper.unshoot = true;
+            driveCmdRunning.isRunning = true;
+            shooter.isAligned = false; // make sure we stop lying to the robot
+        });
+
         // listenerRight.addButtonDownListener("Auto Intake", () -> {
         //     hopper.runIntake();
         //     scheduler.schedule(cmdBallPursuit);
