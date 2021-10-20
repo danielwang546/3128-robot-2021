@@ -10,9 +10,52 @@ import org.team3128.common.generics.RobotConstants;
 
 import org.team3128.common.hardware.motor.LazyCANSparkMax;
 import org.team3128.common.utility.test_suite.*;
+
+
+
+
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
+import edu.wpi.first.wpiutil.math.numbers.N2;
+
+
+
 // the superclass is purely for semantic purposes
 public class Constants extends RobotConstants {
 
+        
+        //Ramsete Constants
+
+        // public static final double ksVolts = 0.22;
+        // public static final double kvVoltSecondsPerMeter = 1.98;
+        // public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+        // public static final double kRamseteB = 2;
+        // public static final double kRamseteZeta = 0.7;
+        // public static final double kPDriveVel = 8.5;
+        
+        // public static final double kTrackwidthMeters = 0.69;
+        // public static final DifferentialDriveKinematics kDriveKinematics =
+        // new DifferentialDriveKinematics(kTrackwidthMeters);
+        public static final double ksVolts = 0.1;
+        public static final double kvVoltSecondsPerMeter = 0.5;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.1;
+        public static final double kRamseteB = 5; //5
+        public static final double kRamseteZeta = 0.7; //0.7
+        public static final double kPDriveVel = 1;
+
+        public static final double maxVelocity = 1;
+        public static final double maxAcceleration = 1;
+        
+        public static final double kTrackwidthMeters = 0.66;
+        public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+        
+        
+        
+        
+        
         // MECHANISM CONSTANTS:
 
         public static final double inchesToMeters = 0.0254;
@@ -53,7 +96,7 @@ public class Constants extends RobotConstants {
         // using
         // wheel diameter, as that is significantly easier to
         // measure.
-        public static final double WHEEL_DIAMETER = 3.55; // effective wheel diameter (measure first then tune this
+        public static final double WHEEL_DIAMETER = 5.3; // effective wheel diameter (measure first then tune this
                                                           // number until distances are accurate)
 
         public static final double LEFT_SPEEDSCALAR = 1.0; // purely for TELEOP drive (to make sure that when the drive

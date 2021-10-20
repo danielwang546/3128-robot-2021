@@ -26,7 +26,11 @@ public class Shooter extends PIDSubsystem {
     public enum ShooterState {
         OFF(0),
         LONG_RANGE(5500), // long range shooting
+<<<<<<< HEAD
         MID_RANGE(4800), //4800 actual setpoint  // mid range shooting
+=======
+        MID_RANGE(2000), //4800 actual setpoint  // mid range shooting
+>>>>>>> dbce5214a90903a17bde1474fd84632fb6c85779
         SHORT_RANGE(3500),
         GREEN(1200),
         YELLOW(5000),
@@ -124,7 +128,7 @@ public class Shooter extends PIDSubsystem {
         
         double accel = (value - preValue) / (time - preTime);
 
-        //Log.info("Shooter",getMeasurement()+" RPM");
+        Log.info("Shooter",getMeasurement()+" RPM");
 
         if (atSetpoint() && (setpoint != 0)) {
             plateauCount++;
@@ -201,7 +205,8 @@ public class Shooter extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
-        double ff = (0.0019 * desiredSetpoint);//0.00168//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
+        // feed forward: 0.0019
+        double ff = ((0.0019) * desiredSetpoint);//0.00168//0.00170 // 0.00188*x //0.00147x - 0.2; // 0
         if (getSetpoint() != 0) {
             return ff;
         } else {
@@ -228,6 +233,9 @@ public class Shooter extends PIDSubsystem {
     public boolean isReady() {
         if (atSetpoint())
             Log.info("Shooter","at Setpoint");
+        if (isAligned)
+            Log.info("Shooter","is Aligned");
         return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
+        //return true;
     }
 }

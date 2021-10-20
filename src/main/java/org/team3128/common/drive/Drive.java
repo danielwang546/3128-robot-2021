@@ -88,7 +88,7 @@ import org.team3128.common.utility.RobotMath;
 import edu.wpi.first.wpilibj.Timer;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** 
  * @author Tyler Costello and Daniel Wang 
@@ -96,7 +96,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 
 import org.team3128.common.utility.Log;
-public abstract class Drive implements Subsystem {
+public abstract class Drive extends SubsystemBase {
 
     public abstract void debug();
 

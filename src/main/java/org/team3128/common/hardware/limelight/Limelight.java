@@ -148,5 +148,14 @@ public class Limelight {
 
     public void setPipeline(Pipeline pipeline) {
         limelightTable.getEntry("pipeline").setNumber(pipeline.getPipeline());
+        //NetworkTableInstance.getDefault().getTable(hostname).getEntry("pipeline").setNumber(pipeline.getPipeline());
+        //NetworkTableInstance.getDefault().getTable(hostname).getEntry("ledMode").setNumber(3);
+    }
+
+      /**
+     * Set the limelight on the dashboard
+     */
+    public double getSelectedPipeline() {
+        return limelightTable.getEntry("pipeline").getDouble(0);
     }
 }

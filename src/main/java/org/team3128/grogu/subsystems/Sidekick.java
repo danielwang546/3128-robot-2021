@@ -26,7 +26,11 @@ public class Sidekick extends PIDSubsystem {
         OFF(0),
         LONG_RANGE(4800), // long range shooting
         MID_RANGE(4080), // actual setpoint 4080 // mid range shooting
+<<<<<<< HEAD
         DEFAULT(-2000), // actual default -5100
+=======
+        DEFAULT(-5100), // actual default -5100
+>>>>>>> dbce5214a90903a17bde1474fd84632fb6c85779
         SHORT_RANGE(2000); // short range shooting 3700
 
         public double shooterRPM;
@@ -115,7 +119,7 @@ public class Sidekick extends PIDSubsystem {
 
         //Log.info("Shooter", "using output");
 
-        //Log.info("Sidekick",getMeasurement()+" RPM");
+        Log.info("Sidekick",getMeasurement()+" RPM");
 
         prevError = error;
 
@@ -165,7 +169,11 @@ public class Sidekick extends PIDSubsystem {
 
     public double shooterFeedForward(double desiredSetpoint) {
         //double ff = (0.00211 * desiredSetpoint) - 2; // 0.051
+<<<<<<< HEAD
         double ff = (0.0024 * desiredSetpoint); //0.3//0.00147x - 0.2; // 0
+=======
+        double ff = (0.002 * desiredSetpoint); //0.3//0.00147x - 0.2; // 0
+>>>>>>> dbce5214a90903a17bde1474fd84632fb6c85779
         if (getSetpoint() != 0) {
             return ff;
         } else {
@@ -186,6 +194,8 @@ public class Sidekick extends PIDSubsystem {
     // }
 
     public boolean isReady() {
+        if (atSetpoint())
+            Log.info("Sidekick","at Setpoint");
         return (isPlateaued());
         //return true;
     }

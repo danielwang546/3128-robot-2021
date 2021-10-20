@@ -16,14 +16,14 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class CmdBallIntake extends SequentialCommandGroup {
 
-    public CmdBallIntake(FalconDrive drive, Hopper hopper, AHRS ahrs, Limelight ballLimelight, DriveCommandRunning driveCmdRunning) {       
+    public CmdBallIntake(FalconDrive drive, Intake intake, AHRS ahrs, Limelight ballLimelight, DriveCommandRunning driveCmdRunning) {       
         addCommands(
             new ParallelCommandGroup(
-                new InstantCommand(() -> hopper.runIntake()),
+                new RunCommand(() -> intake.runIntake()),
                 new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,20 * Angle.DEGREES)
                     //new CmdStreamUpdate(bottomLimelight, topLimelight, useBottom)
             ),
-            new InstantCommand(() -> hopper.stopIntake())
+            new InstantCommand(() -> intake.stopIntake())
         );
     }
 }

@@ -8,6 +8,10 @@ import org.team3128.common.generics.RobotConstants;
 import com.kauailabs.navx.frc.AHRS;
 
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+
+
 import org.team3128.common.NarwhalRobot;
 import org.team3128.common.control.trajectory.Trajectory;
 import org.team3128.common.control.trajectory.TrajectoryGenerator;
@@ -84,7 +88,7 @@ public class MainGrogu extends NarwhalRobot {
 
     public double startTime = 0;
 
-    public int reverse = 1;
+    public int reverse = -1;
 
     public String trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
 
@@ -99,8 +103,29 @@ public class MainGrogu extends NarwhalRobot {
     public Hopper hopper = Hopper.getInstance();
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
+    public Intake intake = Intake.getInstance();
 
-    public CmdAlignShoot alignCmd;
+    private boolean teleopKinematics = false;
+
+    static EKF ekf = new EKF(0, 0, Math.PI/2, 0, 0, 10, 10, 0.66,//0.9652,
+    0.01, 1e-3, 0.01, 0.01);
+
+    ArrayList<Double> KxList = new ArrayList<Double>();
+    ArrayList<Double> KyList = new ArrayList<Double>();
+    ArrayList<Double> KthetaList = new ArrayList<Double>();
+    ArrayList<Double> KvlList = new ArrayList<Double>();
+    ArrayList<Double> KvrList = new ArrayList<Double>();
+
+    private double[] inputArray = new double[4];
+    private double[] kinematicArray = new double[6];
+    private double[] outputArray;
+    private double currentTime, previousTime, printerTime, initTime;
+
+    public static Pose2d ekfPosition;
+
+    public CmdAlignShootTeleop alignCmd;
+    public AutoSimple autoSimple;
+    public AutoLessSimple autoLessSimple;
 
     public ErrorCatcherUtility errorCatcher;
 
@@ -126,9 +151,8 @@ public class MainGrogu extends NarwhalRobot {
 
         // initialization of limelights
 
-        //REVERSED
-        ballLimelight = new Limelight("limelight-pog", -26.0, 0, 0, 30);
-        shooterLimelight = new Limelight("limelight-sog", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
+        shooterLimelight = new Limelight("limelight-sog", -26.0, 0, 0, 30);
+        ballLimelight = new Limelight("limelight-pog", Constants.VisionConstants.BOTTOM_LIMELIGHT_ANGLE,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_HEIGHT,
                 Constants.VisionConstants.BOTTOM_LIMELIGHT_DISTANCE_FROM_FRONT, 14.5 * Length.in);
         drive.resetGyro();
@@ -141,7 +165,7 @@ public class MainGrogu extends NarwhalRobot {
         sidekick.setState(Sidekick.ShooterState.DEFAULT);
 
         shooter.setState(Shooter.ShooterState.MID_RANGE);
-        alignCmd = new CmdAlignShoot(shooterLimelight, driveCmdRunning, 0, 26);
+        alignCmd = new CmdAlignShootTeleop(shooterLimelight, driveCmdRunning, 0, 26);
 
         
 
@@ -159,20 +183,8 @@ public class MainGrogu extends NarwhalRobot {
             }
         });
         */
-    }
 
-    @Override
-    protected void constructAutoPrograms() {
-        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
-        //scheduler.schedule(cmdBallPursuit);
-        
-        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
-
-        NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
-
-        //cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
-
-        //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
+        setupLimelights(ballLimelight,shooterLimelight);
     }
 
     @Override
@@ -180,12 +192,13 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
         listenerRight.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
         listenerRight.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
-        listenerRight.nameControl( ControllerExtreme3D.TRIGGER, "Intake");
+        listenerRight.nameControl(ControllerExtreme3D.TRIGGER, "Intake");
 
         listenerRight.nameControl(new Button(10), "MoveArmDown");
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
+        // listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
 
@@ -195,12 +208,17 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.nameControl(new Button(12), "ResetBallCount");
 
+        
+
         listenerLeft.nameControl(ControllerExtreme3D.TRIGGER, "REVERSE");
 
-        listenerLeft.nameControl(new Button(12), "SetGreen");
-        listenerLeft.nameControl(new Button(11), "SetYellow");
-        listenerLeft.nameControl(new Button(9), "SetBlue");
-        listenerLeft.nameControl(new Button(7), "SetRed");
+        // listenerLeft.nameControl(new Button(12), "SetGreen");
+        // listenerLeft.nameControl(new Button(11), "SetYellow");
+        // listenerLeft.nameControl(new Button(9), "SetBlue");
+        // listenerLeft.nameControl(new Button(7), "SetRed");
+
+        listenerLeft.nameControl(new Button(11), "Increment Ball Count");
+        listenerLeft.nameControl(new Button(12), "Decrement Ball Count");
 
         listenerRight.addMultiListener(() -> {
             if (driveCmdRunning.isRunning) {
@@ -213,49 +231,58 @@ public class MainGrogu extends NarwhalRobot {
         }, "MoveTurn", "MoveForwards", "Throttle");
 
         listenerRight.addButtonDownListener("Intake", () -> {
-            hopper.runIntake();
-            scheduler.schedule(cmdBallIntake);
-            Log.info("Joystick","Button 3 pressed");
+            intake.runIntake();
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
-            hopper.stopIntake();
-            cmdBallIntake.cancel();
-            Log.info("Joystick","Button 3 unpressed");
+            intake.stopIntake();
         });
 
         listenerRight.addButtonDownListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
+            intake.runIntake();
             sidekick.shoot();
             shooter.shoot();
             scheduler.schedule(alignCmd);
-            Log.info("Joystick","Button 4 pressed");
+
         });
 
         listenerRight.addButtonUpListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.OFF);
+            intake.stopIntake();
             sidekick.counterShoot();
             shooter.counterShoot();
             hopper.unshoot = true;
             alignCmd.cancel();
+            
             //shooter.setSetpoint(0);
             driveCmdRunning.isRunning = true;
             shooter.isAligned = false;
-            Log.info("Joystick","Button 4 unpressed");
         });
+
+        // listenerRight.addButtonDownListener("Auto Intake", () -> {
+        //     hopper.runIntake();
+        //     scheduler.schedule(cmdBallPursuit);
+        // });
+
+        // listenerRight.addButtonUpListener("Auto Intake", () -> {
+        //     hopper.stopIntake();
+        //     cmdBallPursuit.cancel();
+        //     driveCmdRunning.isRunning = true;
+        // });
 
         listenerRight.addButtonDownListener("EmptyHopper", () -> {
             hopper.runHopperOpp();
-            hopper.runIntakeOpp();
+            intake.runIntakeOpp();
         });
 
         listenerRight.addButtonUpListener("EmptyHopper", () -> {
             hopper.stopHopper();
-            hopper.stopIntake();
+            intake.stopIntake();
         });
 
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
-            hopper.moveArmDown();
+            intake.moveArmDown();
         });
 
         listenerRight.addButtonUpListener("MoveArmDown", () -> {
@@ -263,7 +290,7 @@ public class MainGrogu extends NarwhalRobot {
         });
 
         listenerRight.addButtonDownListener("MoveArmUp", () -> {
-            hopper.moveArmUp();
+            intake.moveArmUp();
         });
 
         listenerRight.addButtonUpListener("MoveArmUp", () -> {
@@ -278,6 +305,15 @@ public class MainGrogu extends NarwhalRobot {
             reverse *= -1;
         });
 
+        /*
+        listenerLeft.addButtonDownListener("REVERSEHOPPER", () -> {
+           hopper.reverseIntake();
+        });
+
+        listenerLeft.addButtonUpListener("REVERSEHOPPER", () -> {
+            hopper.stopHopper();
+         });
+         */
         listenerRight.addButtonDownListener("SetOverYonder", () -> {
             shooter.setState(Shooter.ShooterState.LONG_RANGE);
         });
@@ -288,24 +324,88 @@ public class MainGrogu extends NarwhalRobot {
             shooter.setState(Shooter.ShooterState.SHORT_RANGE);
         });
 
-        listenerLeft.addButtonDownListener("SetGreen", () -> {
-            shooter.setState(Shooter.ShooterState.GREEN);
+        // listenerLeft.addButtonDownListener("SetGreen", () -> {
+        //     shooter.setState(Shooter.ShooterState.GREEN);
+        // });
+        // listenerLeft.addButtonDownListener("SetYellow", () -> {
+        //     shooter.setState(Shooter.ShooterState.YELLOW);
+        //     //shooter.setSetpoint(Shooter.ShooterState.YELLOW.shooterRPM);
+        // });
+        // listenerLeft.addButtonDownListener("SetBlue", () -> {
+        //     shooter.setState(Shooter.ShooterState.BLUE);
+        // });
+        // listenerLeft.addButtonDownListener("SetRed", () -> {
+        //     shooter.setState(Shooter.ShooterState.RED);
+        // });
+
+        listenerLeft.addButtonDownListener("Increment Ball Count", () -> {
+            hopper.ballCount++;
         });
-        listenerLeft.addButtonDownListener("SetYellow", () -> {
-            shooter.setState(Shooter.ShooterState.YELLOW);
-            //shooter.setSetpoint(Shooter.ShooterState.YELLOW.shooterRPM);
-        });
-        listenerLeft.addButtonDownListener("SetBlue", () -> {
-            shooter.setState(Shooter.ShooterState.BLUE);
-        });
-        listenerLeft.addButtonDownListener("SetRed", () -> {
-            shooter.setState(Shooter.ShooterState.RED);
+
+        listenerLeft.addButtonDownListener("Decrement Ball Count", () -> {
+            hopper.ballCount--;
         });
 
     }
 
     @Override
+    protected void constructAutoPrograms() {
+        cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        //scheduler.schedule(cmdBallPursuit);
+        
+        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
+        autoLessSimple = new AutoLessSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
+
+        NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
+
+        // cmdBallPursuit = new CmdBallPursuit(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+
+        //NarwhalDashboard.addAuto("pog", cmdBallPursuit);
+    }
+
+    @Override
     protected void teleopPeriodic() {
+        if (teleopKinematics){
+            currentTime=RobotController.getFPGATime()/1000000.0;
+            //currentTime = currentTime*1e-06;
+            //I'm not sure how to check if new readings are available so right now we are running predict and update every time
+            inputArray[0] = drive.getAngle() * Math.PI / 180.0;
+            inputArray[1] = drive.getLeftSpeed() * 0.0254;
+            inputArray[2] = drive.getRightSpeed() * 0.0254;
+            inputArray[3] = currentTime-previousTime;
+            // where EKF is run
+            outputArray = ekf.runFilter(inputArray);
+
+            
+            kinematicArray[0] = KxList.get(KxList.size()-1);
+            kinematicArray[1] = KyList.get(KyList.size()-1);
+            kinematicArray[2] = drive.getAngle() * Math.PI / 180.0;
+            kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
+            kinematicArray[4] = drive.getRightSpeed() * 0.0254;
+            kinematicArray[5] = currentTime-previousTime;
+
+            outputArray = ekf.testFunction(kinematicArray);
+
+            KxList.add(outputArray[0]);
+            KyList.add(outputArray[1]);
+            KthetaList.add(outputArray[2]);
+            KvlList.add(outputArray[3]);
+            KvrList.add(outputArray[4]);
+        
+            //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
+            ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
+            Log.info("EKF", ekfPosition.toString());
+
+
+
+
+            previousTime=currentTime;
+            //Log.info("MainAthos", ((Double) robotTracker.getOdometry().getTranslation().getX()).toString());
+
+        }
+
     }
 
     double maxLeftSpeed = 0;
@@ -340,20 +440,106 @@ public class MainGrogu extends NarwhalRobot {
 
     @Override
     protected void teleopInit() {
+        hopper.stopHopper();
         shooterLimelight.setLEDMode(LEDMode.OFF);
         Log.info("MainGrogu", "TeleopInit has started. Setting arm state to ArmState.STARTING");
         driveCmdRunning.isRunning = true;
+
+        if (teleopKinematics){
+            drive.resetGyro();
+            //scheduler.resume();
+
+            KxList.add((double) 0);
+            KyList.add((double) 0);
+            KthetaList.add(Math.PI/2);
+            KvlList.add((double) 0);
+            KvrList.add((double) 0);
+
+            initTime=RobotController.getFPGATime()/1000000.0;
+        }
+
+
+
     }
 
     @Override
     protected void autonomousInit() {
+        Log.info("MainGrogu", "moving arm down");
+        // hopper.moveArmDown();
+        //hopper.moveArmUpAuto();
+
+       // hopper.stopHopper();
         drive.resetGyro();
         
-        cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
+        // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
-        //cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
-        scheduler.schedule(cmdBallIntake);
+        // trackerCSV = "Time, X, Y, Theta, Xdes, Ydes";
+        // Log.info("MainAthos", "going into autonomousinit");
+        // //scheduler.resume();
+        // //drive.setAutoTrajectory(trajectory, false);
+        // //drive.startTrajectory();
+        // //scheduler.resume();
+
+        KxList.add((double) 0);
+        KyList.add((double) 0);
+        KthetaList.add(Math.PI/2);
+        KvlList.add((double) 0);
+        KvrList.add((double) 0);
+
+
+        // //use this for galactic search
+        // hopper.runIntake();
+        // PathFinding pathfinder = new PathFinding();
+        // new PathRunner(pathfinder, drive).schedule();
+        
+        // startTime = Timer.getFPGATimestamp();
+
+        // initTime=RobotController.getFPGATime()/1000000.0;
+
+
+        // cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
+        // scheduler.schedule(cmdBallIntake);
+
+        scheduler.schedule(autoSimple);
+        //scheduler.schedule(autoLessSimple);
     }
+
+
+    // Prints EKF pos in autonomous
+    @Override
+    protected void autonomousPeriodic() {
+        //hopper.resetBallCount();
+        currentTime=RobotController.getFPGATime()/1000000.0;
+        //currentTime = currentTime*1e-06;
+        //I'm not sure how to check if new readings are available so right now we are running predict and update every time
+        inputArray[0] = drive.getAngle() * Math.PI / 180.0;
+        inputArray[1] = drive.getLeftSpeed() * 0.0254;
+        inputArray[2] = drive.getRightSpeed() * 0.0254;
+        inputArray[3] = currentTime-previousTime;
+       // where EKF is run
+
+        kinematicArray[0] = KxList.get(KxList.size()-1);
+        kinematicArray[1] = KyList.get(KyList.size()-1);
+        kinematicArray[2] = drive.getAngle() * Math.PI / 180.0;
+        kinematicArray[3] = drive.getLeftSpeed() * 0.0254;
+        kinematicArray[4] = drive.getRightSpeed() * 0.0254;
+        kinematicArray[5] = currentTime-previousTime;
+
+        outputArray = ekf.testFunction(kinematicArray);
+
+        KxList.add(outputArray[0]);
+        KyList.add(outputArray[1]);
+        KthetaList.add(outputArray[2]);
+        KvlList.add(outputArray[3]);
+        KvrList.add(outputArray[4]);
+       
+        //Log.info("EKF", "X: " + outputArray[0] + " Y: " + outputArray[1] + " THETA" + outputArray[2]);
+        ekfPosition=new Pose2d(outputArray[0], outputArray[1], new Rotation2d(outputArray[2]));
+        // Log.info("EKF", ekfPosition.toString());
+
+        previousTime=currentTime;
+    }
+
 
     @Override
     protected void disabledInit() {
