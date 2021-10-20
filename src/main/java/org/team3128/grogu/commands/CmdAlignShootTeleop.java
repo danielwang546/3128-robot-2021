@@ -67,6 +67,8 @@ public class CmdAlignShootTeleop implements Command {
     int numBallsShot;
     int numBallsToShoot;
 
+    private double txThreshold = Constants.VisionConstants.TX_THRESHOLD;
+
     private enum HorizontalOffsetFeedbackDriveState {
         SEARCHING, FEEDBACK; // , BLIND;
     }
@@ -91,6 +93,7 @@ public class CmdAlignShootTeleop implements Command {
         this.goalHorizontalOffset = goalHorizontalOffset;
 
         this.numBallsToShoot = numBallsToShoot;
+
     }
 
     @Override
@@ -102,6 +105,7 @@ public class CmdAlignShootTeleop implements Command {
     public void initialize() {
         limelight.setLEDMode(LEDMode.ON);
         cmdRunning.isRunning = false;
+        previousTime = RobotController.getFPGATime() / 1e6;
         plateauCount = 0;
         // TODO: prob not helpful but sets hopper to shooting
         //hopper.setAction(Hopper.ActionState.SHOOTING);
@@ -111,6 +115,8 @@ public class CmdAlignShootTeleop implements Command {
     @Override
     public void execute() {
         //Log.info("CmdAlignShoot", "Running one loop of execute");
+        currentTime = RobotController.getFPGATime() / 1e6;
+
         switch (aimState) {
             case SEARCHING:
                 NarwhalDashboard.put("align_status", "searching");
@@ -130,7 +136,6 @@ public class CmdAlignShootTeleop implements Command {
 
                     currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);//5);
 
-                    previousTime = RobotController.getFPGATime();
                     previousError = goalHorizontalOffset - currentHorizontalOffset;
 
                     cmdRunning.isRunning = true;
@@ -164,8 +169,14 @@ public class CmdAlignShootTeleop implements Command {
 
                     currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);
 
-                    currentTime = RobotController.getFPGATime();
                     currentError = goalHorizontalOffset - currentHorizontalOffset;
+
+                    if (txThreshold < Constants.VisionConstants.TX_THRESHOLD_MAX) {
+                        Log.info("CmdAlignShoot", String.valueOf(txThreshold));
+                        Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
+                        Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
+                        txThreshold += ((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD);
+                    }
 
                     /**
                      * PID feedback loop for the left and right powers based on the horizontal
@@ -185,10 +196,9 @@ public class CmdAlignShootTeleop implements Command {
                     double rightSpeed = rightPower * Constants.DriveConstants.DRIVE_HIGH_SPEED;
                     
                     drive.setWheelPower(new DriveSignal(leftPower, rightPower));
-                    previousTime = currentTime;
                     previousError = currentError;
                 }
-                if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
+                if ((Math.abs(currentError) < (txThreshold * Constants.VisionConstants.TX_THRESHOLD))) {
                     plateauCount++;
                     if (plateauCount > 10) {
                         shooter.isAligned = true;
@@ -200,6 +210,8 @@ public class CmdAlignShootTeleop implements Command {
                 }
                 break;
         }
+
+        previousTime = currentTime;
     }
 
     @Override

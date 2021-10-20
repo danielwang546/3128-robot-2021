@@ -120,6 +120,8 @@ public class CmdAlignShoot implements Command {
     @Override
     public void execute() {
         //Log.info("CmdAlignShoot", "Running one loop of execute");
+        currentTime = RobotController.getFPGATime() / 1e6;
+
         switch (aimState) {
             case SEARCHING:
                 NarwhalDashboard.put("align_status", "searching");
@@ -129,7 +131,7 @@ public class CmdAlignShoot implements Command {
                 } else {
                     targetFoundCount = 0;
                 }
-                
+
                 if (targetFoundCount > 5) {
                     Log.info("CmdAlignShoot", "Target found.");
                     Log.info("CmdAlignShoot", "Switching to FEEDBACK...");
@@ -139,7 +141,6 @@ public class CmdAlignShoot implements Command {
 
                     currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);//5);
 
-                    previousTime = RobotController.getFPGATime();
                     previousError = goalHorizontalOffset - currentHorizontalOffset;
 
                     cmdRunning.isRunning = true;
@@ -173,11 +174,12 @@ public class CmdAlignShoot implements Command {
 
                     currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);
 
-                    currentTime = RobotController.getFPGATime() / 1e6;
                     currentError = goalHorizontalOffset - currentHorizontalOffset;
 
                     if (txThreshold < Constants.VisionConstants.TX_THRESHOLD_MAX) {
                         Log.info("CmdAlignShoot", String.valueOf(txThreshold));
+                        Log.info("CmdAlignShootagain", String.valueOf(currentTime - previousTime));
+                        Log.info("CmdAlignShootEntire", String.valueOf((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD));
                         txThreshold += ((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD);
                     }
 
@@ -199,7 +201,6 @@ public class CmdAlignShoot implements Command {
                     double rightSpeed = rightPower * Constants.DriveConstants.DRIVE_HIGH_SPEED;
                     
                     drive.setWheelPower(new DriveSignal(leftPower, rightPower));
-                    previousTime = currentTime;
                     previousError = currentError;
                 }
                 if ((Math.abs(currentError) < (txThreshold * Constants.VisionConstants.TX_THRESHOLD))) {
@@ -214,6 +215,8 @@ public class CmdAlignShoot implements Command {
                 }
                 break;
         }
+
+        previousTime = currentTime;
     }
 
     @Override

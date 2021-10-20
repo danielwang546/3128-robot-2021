@@ -119,7 +119,7 @@ public class Sidekick extends PIDSubsystem {
 
         prevError = error;
 
-        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_PERCENT * setpoint) /*&& Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD_PERCENT * setpoint)*/ && (setpoint != 0)) {
+        if ((Math.abs(value - preValue) <= Constants.ShooterConstants.RPM_PLATEAU_PERCENT * setpoint) && (Math.abs(value - setpoint) <= Constants.ShooterConstants.RPM_THRESHOLD_PERCENT * setpoint) && (setpoint != 0)) {
             plateauCount++;
         } else {
             plateauCount = 0;

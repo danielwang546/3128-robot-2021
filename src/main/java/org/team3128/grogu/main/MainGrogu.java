@@ -436,6 +436,15 @@ public class MainGrogu extends NarwhalRobot {
         SmartDashboard.putNumber("Left Velocity", currentLeftSpeed);
         SmartDashboard.putNumber("Right Velocity", currentRightSpeed);
 
+        SmartDashboard.putNumber("Shooter RPM", shooter.getMeasurement());
+        SmartDashboard.putNumber("Sidekick RPM", sidekick.getMeasurement());
+        SmartDashboard.putString("Shooter isReady", String.valueOf(shooter.isReady()));
+        SmartDashboard.putString("Sidekick isReady", String.valueOf(sidekick.isReady()));
+
+        SmartDashboard.putNumber("Hopper Ball Count", hopper.ballCount);
+        SmartDashboard.putString("Hopper State", hopper.getState().toString());
+
+
     }
 
     @Override

@@ -70,7 +70,6 @@ public class Shooter extends PIDSubsystem {
 
         configMotors();
         configEncoders();
-        super.setSetpoint(0);
         preTime = RobotController.getFPGATime()/ 1e6;
     }
 
@@ -124,7 +123,7 @@ public class Shooter extends PIDSubsystem {
         
         double accel = (value - preValue) / (time - preTime);
 
-        Log.info("Shooter",getMeasurement()+" RPM");
+        // Log.info("Shooter",getMeasurement()+" RPM");
 
         if (atSetpoint() && (setpoint != 0)) {
             plateauCount++;
@@ -228,9 +227,9 @@ public class Shooter extends PIDSubsystem {
 
     public boolean isReady() {
         if (atSetpoint())
-            Log.info("Shooter","at Setpoint");
+          // Log.info("Shooter","at Setpoint");
         if (isAligned)
-            Log.info("Shooter","is Aligned");
+          // Log.info("Shooter","is Aligned");
         return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
         //return true;
     }
