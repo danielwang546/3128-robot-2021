@@ -67,6 +67,8 @@ public class CmdAlignShoot implements Command {
     int numBallsShot;
     int numBallsToShoot;
 
+    private double txThreshold = Constants.VisionConstants.TX_THRESHOLD;
+
     private enum HorizontalOffsetFeedbackDriveState {
         SEARCHING, FEEDBACK; // , BLIND;
     }
@@ -164,8 +166,13 @@ public class CmdAlignShoot implements Command {
 
                     currentHorizontalOffset = limelight.getValue(LimelightKey.HORIZONTAL_OFFSET, Constants.VisionConstants.SAMPLE_RATE);
 
-                    currentTime = RobotController.getFPGATime();
+                    currentTime = RobotController.getFPGATime() / 1e6;
                     currentError = goalHorizontalOffset - currentHorizontalOffset;
+
+                    if (txThreshold < Constants.VisionConstants.TX_THRESHOLD_MAX) {
+                        Log.info("CmdAlignShoot", String.valueOf(txThreshold));
+                        txThreshold += ((currentTime - previousTime) * ((Constants.VisionConstants.TX_THRESHOLD_MAX - Constants.VisionConstants.TX_THRESHOLD)) / Constants.VisionConstants.TIME_TO_MAX_THRESHOLD);
+                    }
 
                     /**
                      * PID feedback loop for the left and right powers based on the horizontal
@@ -188,7 +195,7 @@ public class CmdAlignShoot implements Command {
                     previousTime = currentTime;
                     previousError = currentError;
                 }
-                if ((Math.abs(currentError) < Constants.VisionConstants.TX_THRESHOLD)) {
+                if ((Math.abs(currentError) < (txThreshold * Constants.VisionConstants.TX_THRESHOLD))) {
                     plateauCount++;
                     if (plateauCount > 10) {
                         shooter.isAligned = true;

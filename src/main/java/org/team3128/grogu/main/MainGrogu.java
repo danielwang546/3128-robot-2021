@@ -136,7 +136,7 @@ public class MainGrogu extends NarwhalRobot {
         hopper.register();
 
         shooter.enable();
-        shooter.setSetpoint(0);
+        shooter.setSetpointAndTolerance(0);
         sidekick.enable();
         sidekick.setState(Sidekick.ShooterState.DEFAULT);
 
