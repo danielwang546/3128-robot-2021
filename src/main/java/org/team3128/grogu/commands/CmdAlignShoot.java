@@ -208,6 +208,7 @@ public class CmdAlignShoot implements Command {
 
     @Override
     public void end(boolean interrupted) {
+        Log.info("CmdAlignShoot", "end");
         limelight.setLEDMode(LEDMode.OFF);
         drive.stopMovement();
         stateTracker.exitShoot();
