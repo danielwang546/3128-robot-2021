@@ -120,7 +120,7 @@ public class Constants extends RobotConstants {
                 public static final PIDConstants VISION_PID = new PIDConstants(0, 0.01, 0.02, 0.00006);
                 public static final PIDConstants BALL_PID = new PIDConstants(0.57, 0.02, 0.0, 0.00003);
                 public static final PIDConstants BLIND_BALL_PID = new PIDConstants(0.23, 0, 0, 0);
-                public static final double AUTO_ALIGN_TIMEOUT = 5; // seconds to wait before canceling 
+                public static final double AUTO_ALIGN_TIMEOUT = 10; // seconds to wait before canceling 
         }
 
 
@@ -185,6 +185,9 @@ public class Constants extends RobotConstants {
                 public static final int ARM_MOTOR_ID = 7;
                 public static final int BRUSH_MOTOR_ID = 5;
                 public static final int INTAKE_MOTOR_ID = 4;
+
+                public static final int TOP_LIMIT_SWITCH_ID = 0;
+                public static final int BOTTOM_LIMIT_SWITCH_ID = 1;
 
                 public static final NeutralMode ARM_NEUTRAL_MODE = NeutralMode.Brake;
 

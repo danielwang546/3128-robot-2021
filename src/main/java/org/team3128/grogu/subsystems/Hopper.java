@@ -1,39 +1,15 @@
 package org.team3128.grogu.subsystems;
 
-import org.team3128.common.hardware.motor.LazyCANSparkMax;
-import org.team3128.common.control.RateLimiter;
-import org.team3128.common.control.AsynchronousPid;
-import org.team3128.common.control.motion.RamseteController;
-import org.team3128.common.control.trajectory.Trajectory;
-import org.team3128.common.control.trajectory.Trajectory.State;
-import org.team3128.common.drive.AutoDriveSignal;
-import org.team3128.common.drive.DriveSignal;
-import org.team3128.common.utility.math.Rotation2D;
-import org.team3128.common.utility.NarwhalUtility;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
-import org.team3128.common.hardware.motor.LazyTalonFX;
-import org.team3128.common.hardware.motor.LazyTalonSRX;
-import org.team3128.common.hardware.motor.LazyVictorSPX;
-import org.team3128.common.utility.RobotMath;
-
-import edu.wpi.first.wpilibj.Timer;
-
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.team3128.common.hardware.motor.LazyCANSparkMax;
+import org.team3128.common.hardware.motor.LazyTalonSRX;
+import org.team3128.common.hardware.motor.LazyVictorSPX;
 import org.team3128.common.utility.Log;
-import org.team3128.common.drive.Drive;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Hopper implements Subsystem {
 
@@ -42,9 +18,7 @@ public class Hopper implements Subsystem {
     }
 
     public static final Hopper instance = new Hopper();
-    private LazyTalonSRX ARM_MOTOR, HOPPER_MOTOR_1;
-    private LazyVictorSPX BRUSH_MOTOR, INTAKE_MOTOR;
-
+    private LazyTalonSRX HOPPER_MOTOR_1;
     private LazyCANSparkMax HOPPER_MOTOR_2;
 
     private DigitalInput BOTTOM_SENSOR, TOP_SENSOR;
@@ -59,8 +33,7 @@ public class Hopper implements Subsystem {
     public boolean unshoot = false;
     public boolean intakeShooting = false;
 
-    //TODO: set this boolean to boolean in shooter class 
-    private boolean isShooterReady = false;
+    public boolean isShooterReady = false;
 
     public static Hopper getInstance() { 
         return instance;
@@ -74,15 +47,8 @@ public class Hopper implements Subsystem {
     }
 
     private void configMotors() {
-        ARM_MOTOR = new LazyTalonSRX(Constants.IntakeConstants.ARM_MOTOR_ID);
-        BRUSH_MOTOR = new LazyVictorSPX(Constants.IntakeConstants.BRUSH_MOTOR_ID);
-        INTAKE_MOTOR = new LazyVictorSPX(Constants.IntakeConstants.INTAKE_MOTOR_ID);
         HOPPER_MOTOR_1 = new LazyTalonSRX(Constants.HopperConstants.HOPPER_MOTOR_1_ID);
         HOPPER_MOTOR_2 = new LazyCANSparkMax(Constants.HopperConstants.HOPPER_MOTOR_2_ID, MotorType.kBrushless);
-
-
-        ARM_MOTOR.setNeutralMode(Constants.IntakeConstants.ARM_NEUTRAL_MODE);
-
     }
     
     private void configSensors() {
@@ -92,17 +58,14 @@ public class Hopper implements Subsystem {
 
     @Override
     public void periodic() {
-      //  Log.info("Hopper","ball count: " + ballCount);
-      //  Log.info("Hopper","action state: " + actionState);
+        // Log.info("Hopper","ball count: " + ballCount);
+        // Log.info("Hopper","action state: " + actionState);
         switch(actionState) {
             case IDLE:
                 //stopIntake();
                 //stopArm();
                 stopHopper();
-                if (isShooterReady) {
-                    setState(HopperState.SHOOTING);
-                    Log.info("Hopper","I don't feel so good (SHOOTER)");
-                } else if (getBottom() && ballCount < 3) {
+                if (getBottom() && ballCount < 3) {
                     setState(HopperState.INTAKING);
                     Log.info("Hopper","Ball is close enough to eat");
                 }
@@ -125,10 +88,6 @@ public class Hopper implements Subsystem {
         wasTriggeredBottom = getBottom();
         wasTriggeredTop = getTop();
         //Log.info("hopper", "Ball in bottom = " + getBottom());
-        //TODO: update this variable
-        //Log.info("Hopper", "Sidekick isReady " + Sidekick.getInstance().isReady());
-        //Log.info("Hopper", "Shooter isReady " + Shooter.getInstance().isReady());
-        isShooterReady = (Sidekick.getInstance().isReady() && Shooter.getInstance().isReady());
     }
 
     private void intake() {
@@ -211,39 +170,6 @@ public class Hopper implements Subsystem {
     public void stopHopper() {
         HOPPER_MOTOR_1.set(ControlMode.PercentOutput, 0);
         HOPPER_MOTOR_2.set(0);
-    }
-
-    public void runIntake() {
-        INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.BRUSH_MOTOR_POWER);
-    }
-
-    public void runIntakeOpp() {
-        //INTAKE_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.INTAKE_MOTOR_POWER);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.BRUSH_MOTOR_POWER);
-    }
-
-    public void stopIntake() {
-        INTAKE_MOTOR.set(ControlMode.PercentOutput, 0);
-        BRUSH_MOTOR.set(ControlMode.PercentOutput, 0);
-    }
-
-    public void moveArmDown() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, -Constants.IntakeConstants.ARM_MOTOR_POWER);
-    }
-
-    public void moveArmUp() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER);
-    }
-
-    public void moveArmUpAuto() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, Constants.IntakeConstants.ARM_MOTOR_POWER_AUTO);
-    }
-
-
-
-    public void stopArm() {
-        ARM_MOTOR.set(ControlMode.PercentOutput, 0);
     }
 
     public void resetBallCount() {
