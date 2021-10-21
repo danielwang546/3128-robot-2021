@@ -460,6 +460,7 @@ public class MainGrogu extends NarwhalRobot {
 
         SmartDashboard.putNumber("Hopper Ball Count", hopper.ballCount);
         SmartDashboard.putString("Hopper State", hopper.getState().toString());
+        SmartDashboard.putBoolean("Shooter isAligned", shooter.isAligned);
 
 
     }
@@ -526,7 +527,7 @@ public class MainGrogu extends NarwhalRobot {
         // cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
         // scheduler.schedule(cmdBallIntake);
 
-        scheduler.schedule(autoSimple);
+        scheduler.schedule(autoLessSimple);
         //scheduler.schedule(autoLessSimple);
     }
 
