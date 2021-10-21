@@ -1349,13 +1349,13 @@ public class PathFinding {
                                 // Add kinematics to ensure max speed is actually obeyed
                                 .setKinematics(Constants.RamseteConstants.kDriveKinematics)
                                 // Apply the voltage constraint
-                                .addConstraint(autoVoltageConstraint).setReversed(true);
+                                .addConstraint(autoVoltageConstraint).setReversed(false);
                 
                                 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                                         new Pose2d(0, 0, new Rotation2d(-0.404)),
                                         List.of(
-                                        new Translation2d(-52 * inToM, 14 * inToM)),
-                                        new Pose2d(-108 * inToM, 15 * inToM, new Rotation2d(0.419)),
+                                        new Translation2d(52 * inToM, -14 * inToM)),
+                                        new Pose2d(108 * inToM, -15 * inToM, new Rotation2d(0.419)),
                                         config);
 
                 // try {

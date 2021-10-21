@@ -103,7 +103,6 @@ public class MainGrogu extends NarwhalRobot {
     public Hopper hopper = Hopper.getInstance();
     public Shooter shooter = Shooter.getInstance();
     public Sidekick sidekick = Sidekick.getInstance();
-    public Intake intake = Intake.getInstance();
 
     private boolean teleopKinematics = false;
 
@@ -160,7 +159,7 @@ public class MainGrogu extends NarwhalRobot {
         hopper.register();
 
         shooter.enable();
-        shooter.setSetpoint(0);
+        shooter.setSetpointAndTolerance(0);
         sidekick.enable();
         sidekick.setState(Sidekick.ShooterState.DEFAULT);
 
@@ -198,6 +197,8 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
+        listenerLeft.nameControl(new Button(2), "ShootNotAligned");
+        
         // listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
@@ -231,16 +232,16 @@ public class MainGrogu extends NarwhalRobot {
         }, "MoveTurn", "MoveForwards", "Throttle");
 
         listenerRight.addButtonDownListener("Intake", () -> {
-            intake.runIntake();
+            hopper.runIntake();
         });
 
         listenerRight.addButtonUpListener("Intake", () -> {
-            intake.stopIntake();
+            hopper.stopIntake();
         });
 
         listenerRight.addButtonDownListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.MID_RANGE);
-            intake.runIntake();
+            hopper.runIntake();
             sidekick.shoot();
             shooter.shoot();
             scheduler.schedule(alignCmd);
@@ -249,7 +250,7 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonUpListener("Shoot", () -> {
             //sidekick.setState(Sidekick.ShooterState.OFF);
-            intake.stopIntake();
+            hopper.stopIntake();
             sidekick.counterShoot();
             shooter.counterShoot();
             hopper.unshoot = true;
@@ -258,6 +259,22 @@ public class MainGrogu extends NarwhalRobot {
             //shooter.setSetpoint(0);
             driveCmdRunning.isRunning = true;
             shooter.isAligned = false;
+        });
+
+        listenerLeft.addButtonDownListener("ShootNotAligned", () -> {
+            shooter.isAligned = true; // kind of weird but need it to shoot 
+            hopper.runIntake();
+            sidekick.shoot();
+            shooter.shoot();
+        });
+
+        listenerLeft.addButtonUpListener("ShootNotAligned", () -> {
+            hopper.stopIntake();
+            sidekick.counterShoot();
+            shooter.counterShoot();
+            hopper.unshoot = true;
+            driveCmdRunning.isRunning = true;
+            shooter.isAligned = false; // make sure we stop lying to the robot
         });
 
         // listenerRight.addButtonDownListener("Auto Intake", () -> {
@@ -273,16 +290,16 @@ public class MainGrogu extends NarwhalRobot {
 
         listenerRight.addButtonDownListener("EmptyHopper", () -> {
             hopper.runHopperOpp();
-            intake.runIntakeOpp();
+            hopper.runIntakeOpp();
         });
 
         listenerRight.addButtonUpListener("EmptyHopper", () -> {
             hopper.stopHopper();
-            intake.stopIntake();
+            hopper.stopIntake();
         });
 
         listenerRight.addButtonDownListener("MoveArmDown", () -> {
-            intake.moveArmDown();
+            hopper.moveArmDown();
         });
 
         listenerRight.addButtonUpListener("MoveArmDown", () -> {
@@ -290,7 +307,7 @@ public class MainGrogu extends NarwhalRobot {
         });
 
         listenerRight.addButtonDownListener("MoveArmUp", () -> {
-            intake.moveArmUp();
+            hopper.moveArmUp();
         });
 
         listenerRight.addButtonUpListener("MoveArmUp", () -> {
@@ -355,8 +372,8 @@ public class MainGrogu extends NarwhalRobot {
         
         // cmdBallIntake = new CmdBallIntake(drive, hopper, ahrs, ballLimelight, driveCmdRunning);
 
-        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
-        autoLessSimple = new AutoLessSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, intake);
+        autoSimple = new AutoSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, hopper);
+        autoLessSimple = new AutoLessSimple(shooterLimelight, driveCmdRunning, 0, new PathFinding(), drive, hopper);
 
         NarwhalDashboard.addAuto("Find ball maybe", cmdBallIntake);
 
@@ -436,6 +453,16 @@ public class MainGrogu extends NarwhalRobot {
         SmartDashboard.putNumber("Left Velocity", currentLeftSpeed);
         SmartDashboard.putNumber("Right Velocity", currentRightSpeed);
 
+        SmartDashboard.putNumber("Shooter RPM", shooter.getMeasurement());
+        SmartDashboard.putNumber("Sidekick RPM", sidekick.getMeasurement());
+        SmartDashboard.putString("Shooter isReady", String.valueOf(shooter.isReady()));
+        SmartDashboard.putString("Sidekick isReady", String.valueOf(sidekick.isReady()));
+
+        SmartDashboard.putNumber("Hopper Ball Count", hopper.ballCount);
+        SmartDashboard.putString("Hopper State", hopper.getState().toString());
+        SmartDashboard.putBoolean("Shooter isAligned", shooter.isAligned);
+
+
     }
 
     @Override
@@ -466,7 +493,7 @@ public class MainGrogu extends NarwhalRobot {
     protected void autonomousInit() {
         Log.info("MainGrogu", "moving arm down");
         // hopper.moveArmDown();
-        //hopper.moveArmUpAuto();
+        hopper.moveArmUpAuto();
 
        // hopper.stopHopper();
         drive.resetGyro();
@@ -500,7 +527,7 @@ public class MainGrogu extends NarwhalRobot {
         // cmdBallPursuit = new CmdBallPursuit(ahrs, ballLimelight, driveCmdRunning,  0.472441 * Constants.MechanismConstants.inchesToMeters, Constants.VisionConstants.BALL_PID, 0, 2.5*Length.ft, 0.6666666666666666666666 * Length.ft, Constants.VisionConstants.BLIND_BALL_PID,42 * Angle.DEGREES);
         // scheduler.schedule(cmdBallIntake);
 
-        scheduler.schedule(autoSimple);
+        scheduler.schedule(autoLessSimple);
         //scheduler.schedule(autoLessSimple);
     }
 
