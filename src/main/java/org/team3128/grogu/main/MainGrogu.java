@@ -197,6 +197,8 @@ public class MainGrogu extends NarwhalRobot {
         listenerRight.nameControl(new Button(8), "MoveArmUp");
 
         listenerRight.nameControl(new Button(2), "Shoot");
+        listenerLeft.nameControl(new Button(2), "ShootNotAligned");
+        
         // listenerRight.nameControl(new Button(4), "Auto Intake");
 
         listenerRight.nameControl(new Button(3), "EmptyHopper");
@@ -257,6 +259,22 @@ public class MainGrogu extends NarwhalRobot {
             //shooter.setSetpoint(0);
             driveCmdRunning.isRunning = true;
             shooter.isAligned = false;
+        });
+
+        listenerLeft.addButtonDownListener("ShootNotAligned", () -> {
+            shooter.isAligned = true; // kind of weird but need it to shoot 
+            hopper.runIntake();
+            sidekick.shoot();
+            shooter.shoot();
+        });
+
+        listenerLeft.addButtonUpListener("ShootNotAligned", () -> {
+            hopper.stopIntake();
+            sidekick.counterShoot();
+            shooter.counterShoot();
+            hopper.unshoot = true;
+            driveCmdRunning.isRunning = true;
+            shooter.isAligned = false; // make sure we stop lying to the robot
         });
 
         // listenerRight.addButtonDownListener("Auto Intake", () -> {

@@ -49,7 +49,7 @@ public class CmdAlignShoot implements Command {
     private double currentHorizontalOffset;
 
     private double currentError, previousError;
-    private double currentTime, previousTime;
+    private double currentTime, previousTime, initialTime;
 
     private double feedbackPower;
 
@@ -115,6 +115,7 @@ public class CmdAlignShoot implements Command {
         //sidekick.shoot();
         Log.info("CmdAlignShoot", "initialized limelight, aren't I cool!");
         hopper.ballCount = 3;
+        initialTime = RobotController.getFPGATime() / 1e6;
     }
 
     @Override
@@ -226,7 +227,8 @@ public class CmdAlignShoot implements Command {
         // } else {
         // return false;
         // }
-        return shooter.isAligned && hopper.getBallCount() == 0;
+        // return shooter.isAligned && hopper.getBallCount() == 0;
+        return (shooter.isAligned && hopper.getBallCount() == 0) || (currentTime - initialTime > Constants.VisionConstants.AUTO_ALIGN_TIMEOUT);
     }
 
     @Override
