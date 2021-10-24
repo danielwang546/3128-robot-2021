@@ -39,7 +39,6 @@ public class Shooter extends PIDSubsystem {
     public double output = 0;
     double accumulator = 0;
     double prevError = 0;
-    public boolean isAligned = false;
 
     double value = 0, preValue = 0, time = 0, preTime = 0;
 
@@ -218,7 +217,7 @@ public class Shooter extends PIDSubsystem {
           // Log.info("Shooter","at Setpoint");
         // if (isAligned)
           // Log.info("Shooter","is Aligned");
-        return ((isAligned || SHOOTER_STATE == ShooterState.GREEN) && isPlateaued());
+        return (/*(isAligned || SHOOTER_STATE == ShooterState.GREEN) &&*/ isPlateaued());
         //return true;
     }
 }

@@ -27,7 +27,7 @@ public class StateTracker implements Subsystem {
 
     @Override
     public void periodic() {
-        boolean isShooterReady = shooter.isReady() && sidekick.isReady();
+        boolean isShooterReady = shooter.isReady() && sidekick.isReady() && isAligned;
 
         if (isShooterReady)
             hopper.setState(HopperState.SHOOTING);
